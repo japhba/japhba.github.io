@@ -1,5 +1,5 @@
 ---
-title: Uncertainty alters expectations
+title: Uncertainty shifts expectations
 subtitle: Systems that undergo a noisy environment show fluctuating behavior. The assumption that those perturbations are finite allows the prediction of the typical state of the system. Surprisingly, our expectations change qualitatively if we allow for fluctuations of finite size. 
 
 # Summary for listings and search engines
