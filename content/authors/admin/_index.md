@@ -74,8 +74,8 @@ email: ''
 highlight_name: true
 ---
 
-Alice Bighetti is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+I am a PhD student in Jonathan Kadmon's group at the Edmond and Lily Safra Center for Brain Sciences at Hebrew University, Jerusalem. We are fascinated by the **vast generalization properties that enable biological agents to adapt to a variety of tasks**. Is the rich structure of the brain a skillfully crafted toolbox to cope with a multifaceted world, or are its compartments essentially a hysteresis artifact of evolution? 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque elit, tristique placerat feugiat ac, facilisis vitae arcu. Proin eget egestas augue. Praesent ut sem nec arcu pellentesque aliquet. Duis dapibus diam vel metus tempus vulputate.
+To tackle this question, we incorporate such symmetry breaking into machine learning models and compare learning to experiment. By doing so, we hope to contribute to the mutual insights that the fields of Neuroscience and Artificial Intelligence have enjoyed throughout their history. 
 
-{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/demo_resume.pdf" "newtab" >}}resumé{{< /staticref >}}.
+{{< icon name="download" pack="fas" >}} Download my {{< staticref "uploads/CV.pdf" "newtab" >}}CV{{< /staticref >}}.
