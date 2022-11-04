@@ -4,7 +4,7 @@
 # This file is formatted using YAML syntax - learn more at https://learnxinyminutes.com/docs/yaml/
 
 title: Jan Bauer # Website name
-baseURL: 'https://janbauer.github.io/' # Website URL
+baseURL: 'https://japhba.github.io/' # Website URL
 
 ############################
 ## LANGUAGE
