@@ -1,2 +1,0 @@
-- name: Hugo Deploy GitHub Pages
-  uses: benmatselby/hugo-deploy-gh-pages@v2.0.0
