@@ -1,0 +1,3 @@
+User-agent: *
+
+Sitemap: https://janbauer.github.io/sitemap.xml
