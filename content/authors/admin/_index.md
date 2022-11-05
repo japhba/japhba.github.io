@@ -78,4 +78,4 @@ I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/researc
 
 To tackle this question, we incorporate such [symmetry breaking]() into machine learning models and compare learning to experiment. By doing so, we hope to contribute to the {{< staticref "https://arxiv.org/abs/2210.08340" >}}mutual insights{{< /staticref >}} that the fields of Neuroscience and Artificial Intelligence have enjoyed throughout their history. 
 
-{{< icon name="download" pack="fas" >}} Here's my {{< staticref "uploads/CV.pdf" "newtab" >}}CV{{</staticref>}}.
+#{{< icon name="download" pack="fas" >}} Here's my {{< staticref "uploads/CV.pdf" "newtab" >}}CV{{</staticref>}}.
