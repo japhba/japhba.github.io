@@ -1,0 +1,187 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+In statistical physics, we are often dealing with systems that comprise
+ many components.
+ In order to calculate their statistics, high-dimensional integrals over
+ those variables 
+\begin_inset Formula $\bm{x}\in\mathbb{R}^{N}$
+\end_inset
+
+ with 
+\begin_inset Formula $N\gg1$
+\end_inset
+
+ are required.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Z=\int d\bm{x}\:e^{S_{\text{0}}(\bm{x})+S_{V}(\bm{x})}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Even if 
+\begin_inset Formula $S_{V}$
+\end_inset
+
+ were a complicated function, in 1D such integrals would be tractable by
+ numerical methods.
+ This ceases to be the case in higher dimensions, where the Curse of Dimensional
+ity manifests.
+ In general, 
+\begin_inset Formula $S_{V}(\bm{x})$
+\end_inset
+
+ couples variables in such a way that the integration does not factorize.
+ 
+\end_layout
+
+\begin_layout Standard
+To illustrate how DMFT can be of help here, let's consider a toy problem,
+ with
+\begin_inset Formula 
+\begin{align*}
+S_{0}(\bm{x}) & =-\bm{x}^{T}\bm{x}\\
+S_{V}(\bm{x}) & =\left(A\bm{x}\right)^{T}\left(A\bm{x}\right),
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $A_{ij}=1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+This introduces an interdependence between variables that prevents factorization.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Decoupling
+\end_layout
+
+\begin_layout Standard
+To mitigate this, DMFT introduces an auxiliary field that caps the threads
+ between 
+\begin_inset Formula $\bm{x}$
+\end_inset
+
+ and 
+\begin_inset Formula $A\bm{x}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+ & \int d\bm{x}\:d\bm{y}\:e^{S_{0}(\bm{x})+\bm{y}^{T}\bm{y}}\,\delta\left(\bm{y}-A\bm{x}\right)\\
+= & \int d\bm{x}\:d\bm{y}\:d\tilde{\bm{y}}e^{S_{0}(\bm{x})+\bm{y}^{T}\bm{y}}\,\exp\left(i\tilde{\bm{y}}^{T}\left(\bm{y}-A\bm{x}\right)\right)\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\int d\bm{x}\:e^{S_{0}(\bm{x})-i\tilde{\bm{y}}^{T}A\bm{x}}\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\Pi_{i}^{N}\int dx_{i}\:e^{S_{0}(x_{i})-i\tilde{y}_{i}x_{i}}\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\left(\int dx\:e^{S_{0}(x)-i\tilde{y}x}\right)^{N}\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:e^{N\ln Z(y,\tilde{y})}.
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

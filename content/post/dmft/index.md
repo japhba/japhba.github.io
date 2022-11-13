@@ -366,7 +366,7 @@ $$ f^* = \langle f(x) \rangle_{f^*,\tilde f^*} $$
 that needs to be solved by interative methods. Generally speaking, this is an easier problem than the integration. 
 
 So far, the agreement between our DMFT approach and the exact solution is not particularly overwhelming. 
-(file-types:notebooks)=
+
 ## Overview
 A common problem in statistical physics is the calculation of so-called observables. These quantities contain special, aggregated information about a system with many constituents. For example, pressure is a particular observable for a system of gas particles confined in a box. This gives useful information on its physical properties and sweps the details, such as the position of every single atom in the box, under the rug. 
 
