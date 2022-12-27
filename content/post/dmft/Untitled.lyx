@@ -163,15 +163,15 @@ To mitigate this, DMFT introduces an auxiliary field that caps the threads
 :
 \end_layout
 
-\begin_layout Standard
+\begin_layout Subsection*
 \begin_inset Formula 
 \begin{align*}
  & \int d\bm{x}\:d\bm{y}\:e^{S_{0}(\bm{x})+\bm{y}^{T}\bm{y}}\,\delta\left(\bm{y}-A\bm{x}\right)\\
 = & \int d\bm{x}\:d\bm{y}\:d\tilde{\bm{y}}e^{S_{0}(\bm{x})+\bm{y}^{T}\bm{y}}\,\exp\left(i\tilde{\bm{y}}^{T}\left(\bm{y}-A\bm{x}\right)\right)\\
-= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\int d\bm{x}\:e^{S_{0}(\bm{x})-i\tilde{\bm{y}}^{T}A\bm{x}}\\
-= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\Pi_{i}^{N}\int dx_{i}\:e^{S_{0}(x_{i})-i\tilde{y}_{i}x_{i}}\\
-= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\left(\int dx\:e^{S_{0}(x)-i\tilde{y}x}\right)^{N}\\
-= & \int d\bm{y}\:d\tilde{\bm{y}}e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:e^{N\ln Z(y,\tilde{y})}.
+= & \int d\bm{y}\:d\tilde{\bm{y}}\:e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:\int d\bm{x}\:e^{S_{0}(\bm{x})-i\tilde{\bm{y}}^{T}A\bm{x}}\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}\:e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:\Pi_{i}^{N}\int dx_{i}\:e^{S_{0}(x_{i})-i\tilde{y}_{i}x_{i}}\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}\:e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:\left(\int dx\:e^{S_{0}(x)-i\tilde{y}x}\right)^{N}\\
+= & \int d\bm{y}\:d\tilde{\bm{y}}\:e^{i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:e^{N\ln Z(y,\tilde{y})}.
 \end{align*}
 
 \end_inset
@@ -180,7 +180,531 @@ To mitigate this, DMFT introduces an auxiliary field that caps the threads
 \begin_inset Newline newline
 \end_inset
 
+Application to the Ising model
+\end_layout
 
+\begin_layout Standard
+We can apply the developed formalism to the Ising model.
+ 
+\begin_inset Formula 
+\[
+Z(j)=\int dxe^{-xJx+jx}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The mean-field approach typically gets introduced in an ad-hoc fashion,
+ in the sense that one replaces the value of each spin in the partition
+ function by its average plus a small fluctuation and discards quartic terms
+ in 
+\begin_inset Formula $\delta x$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Z=\int d(\bar{x}+\delta x)\:e^{-\bar{x}J\bar{x}-2\bar{x}J(\bar{x}+\delta x)+j\left(\bar{x}+\delta x\right)}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This renders the partition function tractable, and we obtain the expectation
+ by 
+\begin_inset Formula $\bar{x}\equiv\langle\bar{x}+\delta x\rangle_{\bar{x}}=\partial_{j}\ln Z(j)|_{j=0}$
+\end_inset
+
+, yielding
+\begin_inset Formula 
+\begin{align*}
+\bar{x} & =\frac{1}{Z(0)}\int d(\bar{x}+\delta x)\:e^{-2\bar{x}J(\bar{x}+\delta x)}\\
+ & =\tanh(-2J\bar{x}).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This exposes 
+\begin_inset Formula $-2J\bar{x}$
+\end_inset
+
+ as an effective mean field that controls the statistics of 
+\begin_inset Formula $\bar{x}+\delta x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection*
+A more formal approach
+\end_layout
+
+\begin_layout Standard
+We can also solve the Ising model by the formal technique developed above.
+ To this end, we again first decouple the action and then identify a field
+ that influences all neurons.
+ 
+\end_layout
+
+\begin_layout Standard
+We start again from 
+\begin_inset Formula 
+\begin{align*}
+Z(j) & =\int dxe^{-xJx+jx}.\\
+ & =\int dfd\tilde{f}\:\int dxe^{-x^{T}f+\tilde{f}^{T}(f-Jx)+jx}\\
+ & =\int dfd\tilde{f}e^{\tilde{f}^{T}f}\:\int dxe^{-x^{T}f-\tilde{f}^{T}Jx+jx}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Unfortunately, we cannot yet decouple the later integrand, as 
+\begin_inset Formula $Jx=J_{ij}x_{j}$
+\end_inset
+
+ does in general depend on 
+\begin_inset Formula $i$
+\end_inset
+
+.
+ However, we can proceed by averaging over 
+\begin_inset Formula $J_{ij}$
+\end_inset
+
+, assuming that its entries are identically distributed:
+\begin_inset Formula 
+\[
+J_{ij}\sim\mathcal{N}\left(0,\,\sigma^{2}\right).
+\]
+
+\end_inset
+
+Hence, we get
+\begin_inset Formula 
+\[
+\langle e^{\tilde{f}_{i}J_{ij}x_{j}}\rangle_{J_{ij}\sim\mathcal{N}}=e^{-\frac{1}{2}\sigma^{2}\tilde{f}_{i}^{2}\,x^{T}x},
+\]
+
+\end_inset
+
+which is called the Hubbard trick.
+ 
+\end_layout
+
+\begin_layout Standard
+This allows us to decouple
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\langle Z(j)\rangle_{J} & =\int dfd\tilde{f}\,e^{\tilde{f}^{T}f}\:\int dxe^{-x^{T}f-\tilde{f}^{T}Jx+jx}\\
+ & =\int dfd\tilde{f}\,e^{\tilde{f}^{T}f}\:\prod_{i}^{N}\int dx_{i}e^{-x_{i}f_{i}-\tilde{f}_{i}\sigma^{2}x_{i}^{2}+j_{i}x_{i}}\\
+ & =\int dfd\tilde{f}\,e^{\tilde{f}^{T}f}\:e^{N\ln Z_{1}(f,\tilde{f})}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Moving towards the saddle point approximation, we get
+\begin_inset Formula 
+\begin{align*}
+\tilde{f}^{*} & =0\\
+-f^{*} & =\frac{N}{Z_{1}(f^{*},0)}\int dx\,\sigma^{2}x^{2}e^{-xf^{*}+jx}=N\sigma^{2}\langle x^{2}\rangle_{f^{*}}=N\sigma^{2}\frac{1}{\cosh^{2}f^{*}}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Equivalently, we can write the last equation as
+\begin_inset Formula 
+\[
+f^{*}=\cosh^{-2}(-N\sigma^{2}f^{*}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+Note that 
+\begin_inset Formula $f^{*}$
+\end_inset
+
+ can be related to the mean-field 
+\begin_inset Formula $\bar{x}$
+\end_inset
+
+ above in our ad-hoc approach, if we identify
+\begin_inset Formula 
+\[
+\left(J\bar{x}\right)_{i}=N\sigma^{2}f^{*}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+This result is perhaps surprising, as a naive guess would have been
+\begin_inset Formula 
+\[
+\langle|\left(Jx\right)_{i}|\rangle\approx\sqrt{\langle\left(Jx\right)_{i}^{2}\rangle}=\sqrt{\langle\sum_{kj}J_{ik}x_{k}J_{ij}x_{j}\rangle}\propto\sigma\sqrt{x\cdot x}\simeq\sigma\sqrt{N}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Plugging in this solution into the integral, we end up with
+\begin_inset Formula 
+\begin{align*}
+\langle Z(j)\rangle_{J,\,\text{MF}} & =\left(\int dxe^{-xf^{*}+jx}\right)^{N}\\
+ & =\left(2\cosh\left(-f^{*}+j\right)\right)^{N}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From this, we can see that 
+\begin_inset Formula $f^{*}$
+\end_inset
+
+ naturally appears as a field influencing the statistics of 
+\begin_inset Formula $x$
+\end_inset
+
+.
+ In particular, we get
+\begin_inset Formula 
+\[
+\bar{x}=\frac{\partial\ln\langle Z(j)\rangle_{J,\,\text{MF}}}{\partial j}_{j=0}=\tanh(-f^{*}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Advanced MFT cookbook
+\end_layout
+
+\begin_layout Standard
+When tackling more complicated problems, there are a couple of identities
+ that can take a large part of the way in decoupling an integral.
+ These are
+\end_layout
+
+\begin_layout Subsubsection*
+\begin_inset Formula $e^{-\frac{1}{2\sigma^{2}}y}=\int_{x\tilde{x}}e^{-\frac{1}{2}\sigma^{-2}\tilde{y}^{2}+i\tilde{y}y}$
+\end_inset
+
+ decoupling (Hubbard-Stratonovich transform)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+e^{-\frac{1}{2}y^{T}A^{-1}y}=\frac{1}{\left(2\pi\det A^{-1}\right)^{d/2}}\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}A\tilde{y}+iy^{T}\tilde{y}}=\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,A^{-1})}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This can be especially useful to get rid of the inverse 
+\begin_inset Formula $A^{-1}$
+\end_inset
+
+ at the cost of introducing an integral.
+ Note that this is just the Fourier transform of the input Gaussian.
+ To remember the workings of this formula, note that the integrating exchanges
+ 
+\begin_inset Formula $x$
+\end_inset
+
+ for 
+\begin_inset Formula $y$
+\end_inset
+
+ in the Gaussian, removes the linearity and inverts the variance.
+ 
+\end_layout
+
+\begin_layout Standard
+As a special case, we can take the denominator to the other side and get
+ with 
+\begin_inset Formula $A\rightarrow0$
+\end_inset
+
+ and get
+\begin_inset Formula 
+\[
+\frac{\left(2\pi\right)^{d}}{\left(2\pi\det A\right)^{d/2}}e^{-\frac{1}{2}y^{T}A^{-1}y}\rightarrow\left(2\pi\right)^{d}\delta(y)=\int d\tilde{y}\,e^{iy^{T}\tilde{y}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+\begin_inset Formula $\delta(y)=\int_{\tilde{y}}e^{i\tilde{y}y}$
+\end_inset
+
+ decoupling
+\end_layout
+
+\begin_layout Standard
+This presents a more general and powerful technique.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+ & \int dx\,e^{S_{0}(x)+y(x)}\\
+= & \int dx\int dy\,e^{S_{0}(x)+y}\,\delta(y-y(x))\\
+= & \int dx\int dy\int d\tilde{y}\,e^{S_{0}(x)+i\tilde{y}(y-y(x))}\\
+= & \int dy\int d\tilde{y}\,e^{i\tilde{y}y}C(\tilde{y})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Using this, it is for example possible to derive the Fourier transform of
+ a Gaussian, defining a constraint 
+\begin_inset Formula $y\overset{!}{=}y(x)=A^{-1}x$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+e^{-\frac{1}{2}x^{T}A^{-1}x} & =\int dy\,e^{-\frac{1}{2}y^{T}Ay}\,\delta(y-A^{-1}x)\\
+ & =\int dyd\tilde{y}\,e^{-\frac{1}{2}y{}^{T}Ay+i\tilde{y}\left(y-A^{-1}x\right)}\\
+ & =\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}A^{-1}\tilde{y}-i\tilde{y}A^{-1}x}\\
+\tilde{y}\rightarrow A\tilde{y}\: & =\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}A\tilde{y}-i\tilde{y}x},
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where we did a transformation of variables in the last step.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is interesting to see how these two approaches relate: Any hard 
+\begin_inset Formula $\delta$
+\end_inset
+
+-constraint may be implemented as a smooth 
+\begin_inset Quotes eld
+\end_inset
+
+relaxation
+\begin_inset Quotes erd
+\end_inset
+
+ via a Hubbard-Stratonovich transform:
+\begin_inset Formula 
+\begin{align*}
+ & \int dx\int dy\,e^{S_{0}(x)+y(x)}\,\delta_{\sigma}(y-y(x))\\
+= & \int dx\int dye^{-\frac{1}{2\sigma^{2}}(y-y(x))^{2}}\\
+\overset{\text{H.S.}}{=} & \int dx\int dy\int d\tilde{y}e^{-\frac{1}{2}\sigma^{2}\tilde{y}^{2}+i\tilde{y}(y-y(x))}\\
+= & \int dy\int d\tilde{y}e^{-\frac{1}{2}\sigma^{2}\tilde{y}^{2}+i\tilde{y}y}\,C(\tilde{y}).
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The first term becomes approximately constant as we take the limit 
+\begin_inset Formula $\sigma\rightarrow0$
+\end_inset
+
+, approximating the 
+\begin_inset Formula $\delta$
+\end_inset
+
+-function.
+\end_layout
+
+\begin_layout Subsubsection*
+Lagrange multipliers as realizable constraints
+\end_layout
+
+\begin_layout Standard
+Suppose we strive to optimize a function 
+\begin_inset Formula $\mathcal{L}(x)$
+\end_inset
+
+ under a constraint 
+\begin_inset Formula $g(x)=0$
+\end_inset
+
+.
+ The method of Lagrange multipliers prescribes to introduce dummy parameter
+ 
+\begin_inset Formula $\tilde{y}$
+\end_inset
+
+.
+ Then, an auxiliary objective is to be minimized
+\begin_inset Formula 
+\[
+\tilde{\mathcal{L}}(x;\tilde{y})=\mathcal{L}(x)+\tilde{y}y(x)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+via requiring 
+\begin_inset Formula $\partial_{x}\tilde{\mathcal{L}}(x^{\star};\tilde{y}^{\star})=0$
+\end_inset
+
+ and 
+\begin_inset Formula $\partial_{\tilde{y}}\tilde{\mathcal{L}}(x^{\star};\tilde{y}^{\star})=0$
+\end_inset
+
+.
+ Then, the constraint is satisfied by construction.
+ There is however a caveat that we will dig into below.
+ 
+\end_layout
+
+\begin_layout Standard
+How does this relate to our former method? Let us rewrite the objective
+ as an integral by superimposing all possible solutions.
+ 
+\begin_inset Formula 
+\[
+\int dx\,e^{-\mathcal{L}(x)}\,\delta(y(x)-0).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We would like to find the 
+\begin_inset Formula $x$
+\end_inset
+
+ that maximizes the integrand.
+ It will become clear in a moment while it is useful to exponentiate the
+ loss.
+ To this end, let's again raise the 
+\begin_inset Formula $\delta$
+\end_inset
+
+-constraint via our newly learned trick:
+\begin_inset Formula 
+\[
+\int dx\int d\tilde{y}\,e^{-\mathcal{L}(x)+i\tilde{y}\left(y(x)-0\right)}\eqqcolon\int dx\int d\tilde{y}\,e^{-\tilde{\mathcal{L}}(x)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At this point, we can look for the point that maximizes the integrand.
+ This leads to saddle-point equations
+\begin_inset Formula 
+\begin{align*}
+\partial_{x}\tilde{\mathcal{L}}(x^{\star};\tilde{y}^{\star}) & =0\\
+\partial_{\tilde{y}}\tilde{\mathcal{L}}(x^{\star};\tilde{y}^{\star}) & =0.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is precisely the prescription of the Lagrange paradigm! The Lagrange
+ multiplier can hence be thought of as an auxiliary field in disguise that
+ penalizes the objective's values to comply with the constraint.
+ Crucially however, we generally have no guarantee that the saddle point
+ equations have a solution.
+\end_layout
+
+\begin_layout Standard
+This perhaps also reveals that an optimization via Lagrange multipliers
+ may not have a solution.
+ What to do then? We could employ a 
+\begin_inset Formula $\delta_{\sigma}$
+\end_inset
+
+-relaxation, which will ensure that an optimum exists.
+ This allows for slightly (
+\begin_inset Formula $\sigma$
+\end_inset
+
+) violating the constraint until a minimum exists.
+ 
 \end_layout
 
 \end_body
