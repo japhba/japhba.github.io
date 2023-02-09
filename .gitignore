@@ -11,8 +11,3 @@ go.sum
 
 # Mac 
 .DS_Store
-*.lyx#
-*.lyx~
-
-content/post/dmft/_build
-**/.ipynb_checkpoints
