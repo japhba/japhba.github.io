@@ -44,7 +44,7 @@ url_poster: 'uploads/pub/poster_cosyne_23.pdf'
 # url_project: ''
 # url_slides: ''
 # url_source: '#'
-url_video: 'uploads/pub/poster_cosyne_23.mp4'
+url_video: 'https://youtu.be/I5ewYQxewo0'
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder. 
