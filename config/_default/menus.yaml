@@ -16,3 +16,7 @@ main:
   - name: CV
     url: uploads/CV/CV_Jan_BAUER.pdf
     weight: 70
+
+  - name: Publications
+    url: '#featured'
+    weight: 50
