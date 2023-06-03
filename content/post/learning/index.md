@@ -1,3 +1,41 @@
+---
+title: What is meta in meta-learning?
+subtitle: Meta-learning is a term that has paramount usage. What gives rise to its usefulness, and how does it relate to transfer learning, and learning in general?
+
+# Summary for listings and search engines
+summary: Systems that undergo a noisy environment show fluctuating behavior. The assumption that those perturbations are finite allows the prediction of the typical state of the system. Surprisingly, our expectations change qualitatively if we allow for fluctuations of finite size. 
+
+# Link this post with a project
+projects: []
+
+# Date published
+date: '2023-06-03T00:00:00Z'
+
+# Date updated
+date: '2023-06-03T00:00:00Z'
+
+# Is this an unpublished draft?
+draft: false
+
+# Show this page in the Featured widget?
+featured: true
+
+# Featured image
+# Place an image named `featured.jpg/png` in this page's folder and customize its options here.
+# image:
+#  caption: "The sorcerer's apprentice. "
+#  focal_point: ''
+#  placement: 2
+#  preview_only: false
+
+authors:
+  - admin
+
+tags:
+  - Machine Learning
+  - Probabilistic Inference
+---
+
 There is a saying: "Give a man a fish, and you feed him for a day. Teach a man to fish, and you feed him for a lifetime." What folklore refers to here is immediately clear: In adapting skills from tutors, individuals will be able to ensure their survival. In learning *how* to fish, the man will likely be able to feed himself for days to come.
 
 In artificial intelligence, **meta-learning** has become knwon as an extension to this paradigm, often referred to as "learning to learn". In our colloquial example, one might think of the fisherman's apprentice as being unknownledgable about fishing, but curious, equipped with a camera and a Swiss army knife, so that he will be ready to absorb the knowledge and repeat his mentor's actions.
@@ -5,7 +43,7 @@ In artificial intelligence, **meta-learning** has become knwon as an extension t
 In this blogpost, we will try to distill a more formal notion about different kinds of learning in the context of machine learning.\
 What would be a useful **definition of learning**? Tutorship has been successful if an individual is able to apply the gained knowledge independently, that is to situations that it wasn't exposed to during training. Quite generally, action can be phrased as getting the right output on a given input. Therefore, we introduce a set of training examples $X$ and the correct outputs $Y$, and make learning the task of inferring the right output $y^{\star}$ on an unseen input $x^{\ast}$.
 
-Let $f=\mathcal{T}\left[\emptyset,\left(X,Y\right)\right]$ be a learned function from scratch from $\left(X,Y\right)$, where $\mathcal{T}:\left(X,Y\right)\mapsto f$ is a "training" operator that turns data $\left(X,Y\right)$ into functions $f$. While it can be defined purely abstractly, it in practice needs to be implemented. This is usually done by employing a model $\mathcal{M}$, and highly dependent on the inductive biases that come with it. Notably, in the machine learning setting, this includes architecture and the optimization procedure, where the latter is influenced by algorithm (ADAM, SGD,\...) and hyperparameters (learning rate): $$\mathcal{T}=\mathcal{T}_{\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}_{\left(\text{CNN},\,\text{ADAM\,\,}\text{lr}=01\,N_{\text{epoch}}=42\right)}.$$
+Let $f=\mathcal{T}\left[\emptyset,\left(X,Y\right)\right]$ be a learned function from scratch from $\left(X,Y\right)$, where $\mathcal{T}:\left(X,Y\right)\mapsto f$ is a "training" operator that turns data $\left(X,Y\right)$ into functions $f$. While it can be defined purely abstractly, it in practice needs to be implemented. This is usually done by employing a model $\mathcal{M}$, and highly dependent on the inductive biases that come with it. Notably, in the machine learning setting, this includes architecture and the optimization procedure, where the latter is influenced by algorithm (ADAM, SGD,\...) and hyperparameters (learning rate): $$\mathcal{T}=\mathcal{T}\_{\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}\_{\left(\text{CNN},\,\text{ADAM\,\,}\text{lr}=01\,N_{\text{epoch}}=42\right)}.$$
 
 Note that we here did not introduce any parameters. Yet, we can implement a $\mathcal{T}$ by using a *parametric model*, that is starting from some parameter set $\theta$ and determining an optimal $\theta^{\star}$ according to some metric.
 
@@ -24,7 +62,7 @@ Finn17 discuss the notion of transfer learning in the context of $\theta$-parame
 <figcaption>Model-agnostic meta learning of Finn17.</figcaption>
 </figure>
 
-Note that fine-tuning such a $\theta^{\ast}\rightarrow\theta^{+,1},\,\theta^{+,2},\,\ldots$ is not strictly necessary in order to have a model transfer learn. We can restate Finn17's finding about transfer learning in the meta-learning framework, by reading it as a specific local statement about the nature of the model selection function $\tilde{f}$: For any task, there exist desirable "outlook" parameters $\theta^{\ast}$ such that adjacent tasks will have high performance for adjacent models. Formally, this would read something like $$\forall\text{\text{task}}\,\exists\mathcal{M_{\theta^{\ast}}}\forall\text{\text{dtask}}\,\exists d\theta:\,\tilde{f}(\text{task}+\text{dtask},\mathcal{M}_{\theta^{\ast}+d\theta})=\text{high}.$$
+Note that fine-tuning such a $\theta^{\ast}\rightarrow\theta^{+,1},\,\theta^{+,2},\,\ldots$ is not strictly necessary in order to have a model transfer learn. We can restate Finn17's finding about transfer learning in the meta-learning framework, by reading it as a specific local statement about the nature of the model selection function $\tilde{f}$: For any task, there exist desirable "outlook" parameters $\theta^{\ast}$ such that adjacent tasks will have high performance for adjacent models. Formally, this would read something like $$\forall\text{task}\,\exists\mathcal{M_{\theta^{\ast}}}\forall {\text{dtask}}\,\exists d\theta:\,\tilde{f}(\text{task}+\text{dtask},\mathcal{M}_{\theta^{\ast}+d\theta})=\text{high}.$$
 
 Put differently yet again, a good model selection strategy for NNs is to look for NNs pretrained on similar tasks, and only do incremental updates.
 
@@ -37,8 +75,8 @@ Note that transfer learning can happen without the need for parameter updates. A
 <figcaption>An LLM transfer learns without a parameter update.</figcaption>
 </figure>
 
-Relating this back to the fisher's apprentice, he or she would be *quickly* learn how to catch wild animals by *tranferring* the skills learnt from the fisher, with the having to be tutored only very briefly by the hunter.\
-Lastly, we can ask how this relates to **generalization**. Generalization ability is about finding the right inductive bias, i.e. the question of choosing the right $\mathcal{T_{\mathcal{M}}}$ for a given task upfront. That is, for as many unseen inputs $x^{\ast}$, it should hold that $$\mathcal{T}_{\mathcal{M}}\left[f,\left(X,Y\right)\right](x^{\ast})=y^{\star}(x^{\ast}).$$
+Relating this back to the fisher's apprentice, he or she would be *quickly* learn how to catch wild animals by *transferring* the skills learnt from the fisher, with the having to be tutored only very briefly by the hunter.\
+Lastly, we can ask how this relates to **generalization**. Generalization ability is about finding the right inductive bias, i.e. the question of choosing the right $\mathcal{T_{\mathcal{M}}}$ for a given task upfront. That is, for as many unseen inputs $x^{\ast}$, it should hold that $$\mathcal{T}\_{\mathcal{M}}\left\[f,\left(X,Y\right)\right](x^{\ast})=y^{\star}(x^{\ast}).$$
 
 If $x^{\ast}$ is quite different in some sense (possibly semantically), this is sometimes termed *extrapolation* (as opposed to *interpolation*) or *out-of-distribution learning*.
 

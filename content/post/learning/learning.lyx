@@ -75,30 +75,100 @@
 
 \begin_body
 
+\begin_layout Title
+What is meta in meta-learning?
+\end_layout
+
 \begin_layout Standard
-Outline
+
 \end_layout
 
-\begin_layout Itemize
-define 
+\begin_layout Standard
+There is a saying: 
+\begin_inset Quotes eld
+\end_inset
+
+Give a man a fish, and you feed him for a day.
+ Teach a man to fish, and you feed him for a lifetime.
+\begin_inset Quotes erd
+\end_inset
+
+ What folklore refers to here is immediately clear: In adapting skills from
+ tutors, individuals will be able to ensure their survival.
+ In learning 
+\emph on
+how
+\emph default
+ to fish, the man will likely be able to feed himself for days to come.
+\end_layout
+
+\begin_layout Standard
+In artificial intelligence,
 \series bold
-learning
+ meta-learning 
 \series default
-: given some input-output training set, generalize to new inputs based on
- inferred priors.
- This is, in its general definition, independent of any parametric substrate!
+has become knwon as an extension to this paradigm, often referred to as
+ 
+\begin_inset Quotes eld
+\end_inset
+
+learning to learn
+\begin_inset Quotes erd
+\end_inset
+
+.
+ In our colloquial example, one might think of the fisherman's apprentice
+ as being unknownledgable about fishing, but curious, equipped with a camera
+ and a Swiss army knife, so that he will be ready to absorb the knowledge
+ and repeat his mentor's actions.
+ 
 \end_layout
 
-\begin_layout Itemize
-Formal definition: Let 
+\begin_layout Standard
+In this blogpost, we will try to distill a more formal notion about different
+ kinds of learning in the context of machine learning.
+ 
+\begin_inset Newline newline
+\end_inset
+
+What would be a useful 
+\series bold
+definition of learning
+\series default
+? Tutorship has been successful if an individual is able to apply the gained
+ knowledge independently, that is to situations that it wasn't exposed to
+ during training.
+ Quite generally, action can be phrased as getting the right output on a
+ given input.
+ Therefore, we introduce a set of training examples 
+\begin_inset Formula $X$
+\end_inset
+
+ and the correct outputs 
+\begin_inset Formula $Y$
+\end_inset
+
+, and make learning the task of inferring the right output 
+\begin_inset Formula $y^{\star}$
+\end_inset
+
+ on an unseen input 
+\begin_inset Formula $x^{\ast}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Let 
 \begin_inset Formula $f=\mathcal{T}\left[\emptyset,\left(X,Y\right)\right]$
 \end_inset
 
- be a learned function on 
+ be a learned function from scratch from 
 \begin_inset Formula $\left(X,Y\right)$
 \end_inset
 
- from scratch, where 
+, where 
 \begin_inset Formula $\mathcal{T}:\left(X,Y\right)\mapsto f$
 \end_inset
 
@@ -119,18 +189,19 @@ training
 \end_inset
 
 .
- While it can be defined purely abstractly, it is highly dependent on the
- inductive bias of the model 
+ While it can be defined purely abstractly, it in practice needs to be implement
+ed.
+ This is usually done by employing a model 
 \begin_inset Formula $\mathcal{M}$
 \end_inset
 
- .
- Notably, in the ML setting, this includes architecture and the optimization
- procedure, where the latter is influenced by algorithm (ADAM, SGD,...) and
- hyperparameters (learning rate).
+, and highly dependent on the inductive biases that come with it.
+ Notably, in the machine learning setting, this includes architecture and
+ the optimization procedure, where the latter is influenced by algorithm
+ (ADAM, SGD,...) and hyperparameters (learning rate):
 \begin_inset Formula 
 \[
-\mathcal{T}=\mathcal{T}_{\text{model}\,\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}_{\left(\text{CNN},\,\text{ADAM\,@}\text{lr}=.01\,N_{\text{epoch}}=42\right)}.
+\mathcal{T}=\mathcal{T}_{\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}_{\left(\text{CNN},\,\text{ADAM\,@\,}\text{lr}=.01\,N_{\text{epoch}}=42\right)}.
 \]
 
 \end_inset
@@ -138,45 +209,85 @@ training
 
 \end_layout
 
-\begin_layout Itemize
-
-\series bold
-meta-learning
-\series default
- is being referred to as learning to learn.
- 
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-finding good parameters that control the learning process
-\end_layout
-
-\begin_layout Itemize
-learn a function by optimizing 
-\begin_inset Formula $\Omega$
+\begin_layout Standard
+Note that we here did not introduce any parameters.
+ Yet, we can implement a 
+\begin_inset Formula $\mathcal{T}$
 \end_inset
 
- 
-\begin_inset Formula 
-\[
-f_{\Omega}:\:(\text{model}=\text{(architecture},\text{hyperparameters)},\text{task})\mapsto\text{performance}
-\]
-
-\end_inset
-
- as opposed to learning a function by optimizing 
+ by using a 
+\emph on
+parametric model
+\emph default
+, that is starting from some parameter set 
 \begin_inset Formula $\theta$
 \end_inset
 
- on 
-\begin_inset Formula $(x,y)\in\text{task}$
+ and determining an optimal 
+\begin_inset Formula $\theta^{\star}$
 \end_inset
 
+ according to some metric.
+ 
+\end_layout
 
+\begin_layout Standard
+How does 
+\series bold
+meta-learning
+\series default
+ now fit into this picture? It corresponds to finding a good setup to conduct
+ the learning, potentially depending on the task at hand.
+ We can hence view it as a meta-operator 
 \begin_inset Formula 
 \[
-f_{\theta}:x\mapsto y
+\mathcal{\tilde{T}}:(\tilde{X}=\left(\text{task},\text{model}\,\mathcal{M}\right),\tilde{Y}=\text{performance})\mapsto\tilde{f}.
+\]
+
+\end_inset
+
+Provided the performance of some models on some tasks, it outputs a strategy
+ 
+\begin_inset Formula $\tilde{f}\left(\tilde{x}^{\ast}=(\text{task}^{\ast},\text{model}\,\mathcal{M^{\ast}})\right)$
+\end_inset
+
+ that predicts the performance 
+\begin_inset Formula $\tilde{y}^{\ast}$
+\end_inset
+
+ of 
+\begin_inset Formula $\mathcal{M^{\ast}}$
+\end_inset
+
+ on some unseen 
+\begin_inset Formula $\text{task}^{\ast}$
+\end_inset
+
+.
+ This for example can then be used to assess the prospects of hyperparameters
+ before the potentially costly training run.
+ Again, we did not talk about how to implement this, but we could again
+ parametrize 
+\begin_inset Formula $\tilde{f}=\tilde{f}_{\Omega}$
+\end_inset
+
+ and for example run a gradient-based optimization on 
+\begin_inset Formula $\Omega$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Connecting it back to the notion of meta-learning that we introduced first,
+ the past experience of apprenticeships at a carpenter, scholar and soldier
+ might have taught our apprentice that a useful model for the being tutored
+ by the practically oriented fisher will not necessarily include a notepad,
+ but rather
+\begin_inset Formula 
+\[
+\mathcal{M}=\left(\text{camera},\,\text{Swiss army knife},\,\text{patience}\right).
 \]
 
 \end_inset
@@ -184,37 +295,21 @@ f_{\theta}:x\mapsto y
 
 \end_layout
 
-\begin_layout Itemize
-where in either case we are only provided with a finite 
+\begin_layout Standard
+There is the concept of 
 \series bold
-training set
+transfer learning
 \series default
- of examples from which we generalize
-\end_layout
-
-\end_deeper
-\begin_layout Itemize
-
+, often called 
 \series bold
-transfer learning/few-shot learning/continual learning/fine-tuning
+few-shot learning, continual learning, or fine-tuning
 \series default
-: use the learned repr to 
-\series bold
-efficiently incorporate new information
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-definition.
- A continual learning paradigm 
-\begin_inset Formula $\tilde{\mathcal{T}}$
+.
+ It is about improving a previously found 
+\begin_inset Formula $f$
 \end_inset
 
- that results in 
-\begin_inset Formula $\tilde{f}=\tilde{\mathcal{T}}[f,X^{+}]$
-\end_inset
-
- is successful if for new 
+ by novel 
 \begin_inset Quotes eld
 \end_inset
 
@@ -222,86 +317,319 @@ fine-tuning
 \begin_inset Quotes erd
 \end_inset
 
- training data 
+ information 
 \begin_inset Formula $\left(X^{+},Y^{+}\right)$
 \end_inset
 
-, it holds
-\begin_inset Formula 
-\[
-\mathcal{T}\left[f,\left(X^{+},Y^{+}\right)\right]=\tilde{\mathcal{T}}\left[\emptyset,\left(X,X^{+},Y,Y^{+}\right)\right]
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-Probabilistic models such as GPs fulfil this by definition.
- It is a notion of consistency.
-\end_layout
-
-\begin_layout Itemize
-Note: overfitting prevents this, by definition
-\end_layout
-
-\begin_layout Itemize
-few shot learning does not require a parameter change, it can happen in
- the activity only! -> chatGPT
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-give the demonstration
-\end_layout
-
-\end_deeper
-\end_deeper
-\end_deeper
-\begin_layout Itemize
-
-\series bold
-Generalization
-\end_layout
-
-\begin_deeper
-\begin_layout Itemize
-generalization is about finding the right inductive bias, i.e.
- the question of choosing the right 
-\begin_inset Formula $\mathcal{T}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-in this sense, learning how to interpret unexpected input by accounting
- for its possibility in the inductive bias enables one to deal well with
- unseen data,
-\begin_inset Formula 
-\[
-\mathcal{T}\left[f,\left(X,Y\right)\right](x^{*})=f^{\star}(x^{*})
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Itemize
-even on esoteric 
-\begin_inset Formula $x^{*}$
+ by means of some update procedure 
+\begin_inset Formula $f^{+}=\mathcal{U}[f,\left(X^{+},Y^{+}\right)]$
 \end_inset
 
 .
+ By consistency, we would like
+\begin_inset Formula 
+\[
+\mathcal{U}\left[f,\left(X^{+},Y^{+}\right)\right]=\mathcal{T}\left[\emptyset,\left(X,X^{+},Y,Y^{+}\right)\right],
+\]
+
+\end_inset
+
+
 \end_layout
+
+\begin_layout Standard
+that is that it shouldn't matter whether we update an 
+\begin_inset Formula $f$
+\end_inset
+
+ incrementally, or would have digested all available evidence upfront.
+ Note that probabilistic models such as Gaussian processes that have no
+ notion of training time naturally fulfill this consistency requirement.
+ On the other hand, any 
+\begin_inset Formula $\mathcal{T}$
+\end_inset
+
+ that would not fulfill this can be said to have 
+\series bold
+overfitted
+\series default
+.
+\end_layout
+
+\begin_layout Standard
+Finn17 discuss the notion of transfer learning in the context of 
+\begin_inset Formula $\theta$
+\end_inset
+
+-parametrized models, such as neural networks.
+ In their view, a good transfer learner corresponds to finding a good 
+\begin_inset Quotes eld
+\end_inset
+
+outlook-spot
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Formula $\theta^{\ast}$
+\end_inset
+
+ from which new information, even be it somewhat unexpected, can be gracefully
+ incorporated.
+ This typically requires only a small change in 
+\begin_inset Formula $\theta$
+\end_inset
+
+.
+ 
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename MAML_finn17_transfer_learning.png
+	width 50text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Model-agnostic meta learning of Finn17.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that fine-tuning such a 
+\begin_inset Formula $\theta^{\ast}\rightarrow\theta^{+,1},\,\theta^{+,2},\,\ldots$
+\end_inset
+
+ is not strictly necessary in order to have a model transfer learn.
+ We can restate Finn17's finding about transfer learning in the meta-learning
+ framework, by reading it as a specific local statement about the nature
+ of the model selection function 
+\begin_inset Formula $\tilde{f}$
+\end_inset
+
+: For any task, there exist desirable 
+\begin_inset Quotes eld
+\end_inset
+
+outlook
+\begin_inset Quotes erd
+\end_inset
+
+ parameters 
+\begin_inset Formula $\theta^{\ast}$
+\end_inset
+
+ such that adjacent tasks will have high performance for adjacent models.
+ Formally, this would read something like
+\begin_inset Formula 
+\[
+\forall\text{task}\,\exists\mathcal{M_{\theta^{\ast}}}\forall\text{dtask}\,\exists d\theta:\,\tilde{f}(\text{task}+\text{dtask},\mathcal{M}_{\theta^{\ast}+d\theta})=\text{high}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Put differently yet again, a good model selection strategy for NNs is to
+ look for NNs pretrained on similar tasks, and only do incremental updates.
+ 
+\end_layout
+
+\begin_layout Standard
+Note that transfer learning can happen without the need for parameter updates.
+ An example might be LLMs.
+ In what is below, we prompt the model to solve our extended task, and it
+ does so without changing its parameters.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
 
 \begin_layout Itemize
-ChatGPT can also do this.
+\begin_inset Graphics
+	filename chatgpt_transfer_learns.png
+	width 50theight%
+
+\end_inset
+
+
 \end_layout
 
-\end_deeper
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+An LLM transfer learns without a parameter update.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Relating this back to the fisher's apprentice, he or she would be 
+\emph on
+quickly
+\emph default
+ learn how to catch wild animals by 
+\emph on
+tranferring 
+\emph default
+the skills learnt from the fisher, with the having to be tutored only very
+ briefly by the hunter.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Lastly, we can ask how this relates to 
+\series bold
+generalization
+\series default
+.
+ Generalization ability is about finding the right inductive bias, i.e.
+ the question of choosing the right 
+\begin_inset Formula $\mathcal{T_{\mathcal{M}}}$
+\end_inset
+
+ for a given task upfront.
+ That is, for as many unseen inputs 
+\begin_inset Formula $x^{\ast}$
+\end_inset
+
+, it should hold that
+\begin_inset Formula 
+\[
+\mathcal{T}_{\mathcal{M}}\left[f,\left(X,Y\right)\right](x^{\ast})=y^{\star}(x^{\ast}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $x^{\ast}$
+\end_inset
+
+ is quite different in some sense (possibly semantically), this is sometimes
+ termed 
+\emph on
+extrapolation
+\emph default
+ (as opposed to 
+\emph on
+interpolation
+\emph default
+) or 
+\emph on
+out-of-distribution learning
+\emph default
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Choosing 
+\begin_inset Formula $\mathcal{M}$
+\end_inset
+
+ correctly is typically based on experience, for example by having gone
+ through a meta-learning procedure as defined above.
+ As it turns out, choosing 
+\begin_inset Formula 
+\[
+\mathcal{M}=\left(\text{veryverylarge NN},\,\text{SGD}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+comprises a very versatile 
+\begin_inset Formula $\mathcal{T_{\mathcal{M}}}$
+\end_inset
+
+, working on many different tasks.
+ An apprentice that carries a lot of tools and is curious will be a very
+ able learner.
+ 
+\begin_inset Newline newline
+\end_inset
+
+In conclusion, 
+\series bold
+meta-learning
+\series default
+, 
+\series bold
+transfer learning 
+\series default
+and
+\series bold
+ generalization 
+\series default
+are intimidly related: Good, even 
+\begin_inset Quotes eld
+\end_inset
+
+out-of-distribution
+\begin_inset Quotes erd
+\end_inset
+
+ generalization can be achieved by having chosen the right model 
+\begin_inset Formula $\mathcal{M}$
+\end_inset
+
+, possibly by help of a meta-learning scheme.
+ Transfer learning, in constrast, learns how to handle novel input by incorporat
+ing 
+\emph on
+new
+\emph default
+ training data in an efficient manner.
+ 
+\end_layout
+
 \end_body
 \end_document
