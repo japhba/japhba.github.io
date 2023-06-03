@@ -1,0 +1,76 @@
+%% LyX 2.3.7 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[english]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{amsmath}
+\usepackage{babel}
+\begin{document}
+Outline
+\begin{itemize}
+\item define \textbf{learning}: given some input-output training set, generalize
+to new inputs based on inferred priors. This is, in its general definition,
+independent of any parametric substrate!
+\item Formal definition: Let $f=\mathcal{T}\left[\emptyset,\left(X,Y\right)\right]$
+be a learned function on $\left(X,Y\right)$ from scratch, where $\mathcal{T}:\left(X,Y\right)\mapsto f$
+is a ``training'' operator that turns data $\left(X,Y\right)$ into
+functions $f$. While it can be defined purely abstractly, it is highly
+dependent on the inductive bias of the model $\mathcal{M}$ . Notably,
+in the ML setting, this includes architecture and the optimization
+procedure, where the latter is influenced by algorithm (ADAM, SGD,...)
+and hyperparameters (learning rate).
+\[
+\mathcal{T}=\mathcal{T}_{\text{model}\,\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}_{\left(\text{CNN},\,\text{ADAM\,@}\text{lr}=.01\,N_{\text{epoch}}=42\right)}.
+\]
+\item \textbf{meta-learning} is being referred to as learning to learn. 
+\begin{itemize}
+\item finding good parameters that control the learning process
+\item learn a function by optimizing $\Omega$ 
+\[
+f_{\Omega}:\:(\text{model}=\text{(architecture},\text{hyperparameters)},\text{task})\mapsto\text{performance}
+\]
+ as opposed to learning a function by optimizing $\theta$ on $(x,y)\in\text{task}$
+\[
+f_{\theta}:x\mapsto y
+\]
+\item where in either case we are only provided with a finite \textbf{training
+set} of examples from which we generalize
+\end{itemize}
+\item \textbf{transfer learning/few-shot learning/continual learning/fine-tuning}:
+use the learned repr to \textbf{efficiently incorporate new information}
+\begin{itemize}
+\item definition. A continual learning paradigm $\tilde{\mathcal{T}}$ that
+results in $\tilde{f}=\tilde{\mathcal{T}}[f,X^{+}]$ is successful
+if for new ``fine-tuning'' training data $\left(X^{+},Y^{+}\right)$,
+it holds
+\[
+\mathcal{T}\left[f,\left(X^{+},Y^{+}\right)\right]=\tilde{\mathcal{T}}\left[\emptyset,\left(X,X^{+},Y,Y^{+}\right)\right]
+\]
+
+\begin{itemize}
+\item Probabilistic models such as GPs fulfil this by definition. It is
+a notion of consistency.
+\item Note: overfitting prevents this, by definition
+\item few shot learning does not require a parameter change, it can happen
+in the activity only! -> chatGPT
+\begin{itemize}
+\item give the demonstration
+\end{itemize}
+\end{itemize}
+\end{itemize}
+\item \textbf{Generalization}
+\begin{itemize}
+\item generalization is about finding the right inductive bias, i.e. the
+question of choosing the right $\mathcal{T}$
+\item in this sense, learning how to interpret unexpected input by accounting
+for its possibility in the inductive bias enables one to deal well
+with unseen data,
+\[
+\mathcal{T}\left[f,\left(X,Y\right)\right](x^{*})=f^{\star}(x^{*})
+\]
+\item even on esoteric $x^{*}$.
+\item ChatGPT can also do this.
+\end{itemize}
+\end{itemize}
+
+\end{document}
