@@ -20,6 +20,8 @@ draft: false
 # Show this page in the Featured widget?
 featured: true
 
+share: false
+
 # Featured image
 # Place an image named `featured.jpg/png` in this page's folder and customize its options here.
 # image:
@@ -38,7 +40,7 @@ tags:
 
 There is a saying: "Give a man a fish, and you feed him for a day. Teach a man to fish, and you feed him for a lifetime." What folklore refers to here is immediately clear: In adapting skills from tutors, individuals will be able to ensure their survival. In learning *how* to fish, the man will likely be able to feed himself for days to come.
 
-In artificial intelligence, **meta-learning** has become knwon as an extension to this paradigm, often referred to as "learning to learn". In our colloquial example, one might think of the fisherman's apprentice as being unknownledgable about fishing, but curious, equipped with a camera and a Swiss army knife, so that he will be ready to absorb the knowledge and repeat his mentor's actions.
+In artificial intelligence, **meta-learning** has become known as an extension to this paradigm, often referred to as "learning to learn". In our colloquial example, one might think of the fisherman's apprentice as not being knownledgable about fishing, but curious, equipped with a camera and a Swiss army knife, so that he will be ready to absorb the knowledge and repeat his mentor's actions.
 
 In this blogpost, we will try to distill a more formal notion about different kinds of learning in the context of machine learning.\
 What would be a useful **definition of learning**? Tutorship has been successful if an individual is able to apply the gained knowledge independently, that is to situations that it wasn't exposed to during training. Quite generally, action can be phrased as getting the right output on a given input. Therefore, we introduce a set of training examples $X$ and the correct outputs $Y$, and make learning the task of inferring the right output $y^{\star}$ on an unseen input $x^{\ast}$.
@@ -55,7 +57,7 @@ There is the concept of **transfer learning**, often called **few-shot learning,
 
 that is that it shouldn't matter whether we update an $f$ incrementally, or would have digested all available evidence upfront. Note that probabilistic models such as Gaussian processes that have no notion of training time naturally fulfill this consistency requirement. On the other hand, any $\mathcal{T}$ that would not fulfill this can be said to have **overfitted**.
 
-Finn17 discuss the notion of transfer learning in the context of $\theta$-parametrized models, such as neural networks. In their view, a good transfer learner corresponds to finding a good "outlook-spot" $\theta^{\ast}$ from which new information, even be it somewhat unexpected, can be gracefully incorporated. This typically requires only a small change in $\theta$.
+Finn17 discusses the notion of transfer learning in the context of $\theta$-parametrized models, such as neural networks. In their view, a good transfer learner corresponds to finding a good "outlook-spot" $\theta^{\ast}$ from which new information, even be it somewhat unexpected, can be gracefully incorporated. This typically requires only a small change in $\theta$.
 
 <figure>
 <img src="MAML_finn17_transfer_learning.png" style="width:50.0%" />
@@ -75,12 +77,12 @@ Note that transfer learning can happen without the need for parameter updates. A
 <figcaption>An LLM transfer learns without a parameter update.</figcaption>
 </figure>
 
-Relating this back to the fisher's apprentice, he or she would be *quickly* learn how to catch wild animals by *transferring* the skills learnt from the fisher, with the having to be tutored only very briefly by the hunter.\
+Relating this back to the fisher's apprentice, he or she would be *quickly* learn how to catch wild animals by *transferring* the skills learned from the fisher, with the having to be tutored only very briefly by the hunter.\
 Lastly, we can ask how this relates to **generalization**. Generalization ability is about finding the right inductive bias, i.e. the question of choosing the right $\mathcal{T_{\mathcal{M}}}$ for a given task upfront. That is, for as many unseen inputs $x^{\ast}$, it should hold that $$\mathcal{T}\_{\mathcal{M}}\left\[f,\left(X,Y\right)\right](x^{\ast})=y^{\star}(x^{\ast}).$$
 
 If $x^{\ast}$ is quite different in some sense (possibly semantically), this is sometimes termed *extrapolation* (as opposed to *interpolation*) or *out-of-distribution learning*.
 
 Choosing $\mathcal{M}$ correctly is typically based on experience, for example by having gone through a meta-learning procedure as defined above. As it turns out, choosing $$\mathcal{M}=\left(\text{veryverylarge NN},\,\text{SGD}\right)$$
 
-comprises a very versatile $\mathcal{T_{\mathcal{M}}}$, working on many different tasks. An apprentice that carries a lot of tools and is curious will be a very able learner.\
-In conclusion, **meta-learning**, **transfer learning** and **generalization** are intimidly related: Good, even "out-of-distribution" generalization can be achieved by having chosen the right model $\mathcal{M}$, possibly by help of a meta-learning scheme. Transfer learning, in constrast, learns how to handle novel input by incorporating *new* training data in an efficient manner.
+constitutes a very versatile $\mathcal{T_{\mathcal{M}}}$, working on many different tasks. An apprentice that carries a lot of tools and is curious will be a very able learner.\
+In conclusion, **meta-learning**, **transfer learning** and **generalization** are intimately related: Good, even "out-of-distribution" generalization can be achieved by having chosen the right model $\mathcal{M}$, possibly by help of a meta-learning scheme. Transfer learning, in contrast, learns how to handle novel input by incorporating *new* training data efficiently.
