@@ -1,6 +1,6 @@
 ---
 # Display name
-title: Jan Philipp Bauer
+title: Jan Bauer
 
 # Full name (for SEO)
 first_name: Jan Philipp
@@ -14,7 +14,7 @@ role: PhD student in Computational Neuroscience
 
 # Organizations/Affiliations to show in About widget
 organizations:
-  - name: ELSC, Hebrew University, Jerusalem
+  - name: ELSC, The Hebrew University of Jerusalem, Israel
     url: http://elsc.huji.ac.il
 
 # Short bio (displayed in user profile at end of posts)
@@ -29,12 +29,15 @@ organizations:
 # Education to show in About widget
 education:
   courses:
+    - course: PhD in Theoretical Neuroscience
+      institution: ELSC, The Hebrew University of Jerusalem, Israel
+      year: 2022–
     - course: MSc in Statistical Physics
       institution: Juelich Research Center, Germany
-      year: 2022
+      year: 2019–2022
     - course: BSc in Physics
       institution: RWTH Aachen University, Germany
-      year: 2019
+      year: 2016–2019
 
 # Social/Academic Networking
 # For available icons, see: https://wowchemy.com/docs/getting-started/page-builder/#icons
@@ -44,11 +47,11 @@ social:
   - icon: envelope
     icon_pack: fas
     # link: '/#contact'
-    link: 'mailto:j.bauer@mail.huji.ac.il'
+    link: 'mailto:contact+j.bauer@mail.huji.ac.il'
   - icon: twitter
     icon_pack: fab
     link: https://twitter.com/japhba
-    label: Follow me on Twitter
+    label: Twitter
     display:
       header: true
 #  - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
