@@ -10,7 +10,7 @@ last_name: Bauer
 superuser: true
 
 # Role/position/tagline
-role: PhD student in Computational Neuroscience
+role: PhD student in Theoretical Neuroscience
 
 # Organizations/Affiliations to show in About widget
 organizations:
@@ -78,8 +78,6 @@ email: ''
 highlight_name: true
 ---
 
-I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) at the Edmond and Lily Safra Center for Brain Sciences at the Hebrew University, Jerusalem. We are fascinated by the **vast generalization properties that enable biological agents to adapt to a variety of tasks**. Is the rich structure of the brain a skillfully crafted toolbox to cope with a multifaceted world, or are its compartments essentially a [hysteresis artifact]() of evolution? 
+I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) in Jerusalem, studying the inductive bias of **chaos in the brain**. Before that, I worked with Moritz Helias on the **kernel limit of recurrent neural networks**. 
 
-To tackle this question, we study analytically tractable models of intelligence, and aim to derive mechanistics insights with the methods of statistical physics. By doing so, we hope to contribute to the {{< staticref "https://arxiv.org/abs/2210.08340" >}}mutual insights{{< /staticref >}} that the fields of neuroscience and artificial intelligence have enjoyed throughout their history. 
-
-
+More broadly, I am fascinated in the detail and structure that evolution has equipped the brain with. Yet, we see that challenging computation is incresingly possible with artifical neural networks. This points towards the suitability of networks as a universal substrate of intelligence. To me, this makes the quest for the brain all the more exciting: It points to not just any, but a especially efficient solution to intelligence that it implements. 
