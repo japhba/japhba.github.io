@@ -7,7 +7,7 @@ What would be a useful **definition of learning**? Tutorship has been successful
 
 Let $f=\mathcal{T}\left[\emptyset,\left(X,Y\right)\right]$ be a learned function from scratch from $\left(X,Y\right)$, where $\mathcal{T}:\left(X,Y\right)\mapsto f$ is a "training" operator that turns data $\left(X,Y\right)$ into functions $f$. While it can be defined purely abstractly, it in practice needs to be implemented. This is usually done by employing a model $\mathcal{M}$, and highly dependent on the inductive biases that come with it. Notably, in the machine learning setting, this includes architecture and the optimization procedure, where the latter is influenced by algorithm (ADAM, SGD,\...) and hyperparameters (learning rate): 
 
-$$\mathcal{T}=\mathcal{T}_{\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}_{\left(\text{CNN},\text{ADAM}\text{lr}=01 N_{\text{epoch}}=42\right)}.$$
+$$\mathcal{T}=\mathcal{T}_{\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}\_{\left(\text{CNN},\text{ADAM}\text{lr}=0.1, N\_{\text{epoch}}=42\right)}.$$
 
 
 Note that we here did not introduce any parameters. Yet, we can implement a $\mathcal{T}$ by using a *parametric model*, that is starting from some parameter set $\theta$ and determining an optimal $\theta^{\star}$ according to some metric.
