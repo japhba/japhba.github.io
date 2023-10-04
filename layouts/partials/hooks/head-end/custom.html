@@ -1,3 +1,6 @@
-{{ $faviconTemplate := resources.Get "media/favicon.svg" -}}
+<!-- {{ $faviconTemplate := resources.Get "media/favicon.svg" -}}
 {{ $favicon := $faviconTemplate | resources.Minify | resources.ExecuteAsTemplate "media/favicon.svg" . -}}
-<link rel="icon" href={{ $favicon.Permalink }} />
+<link rel="icon" href={{ $favicon.Permalink }} /> -->
+
+<!-- https://geoffruddock.com/math-typesetting-in-hugo/ -->
+<!-- {{ partial "mathjax_support.html" . }} -->
