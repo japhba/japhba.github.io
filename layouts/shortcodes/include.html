@@ -1,0 +1,24 @@
+{{ $file := .Get 0 }}
+{{ $page := .Page }}
+
+{{/* Fetch the resource from the page bundle */}}
+{{ with .Page.Resources.GetMatch $file }}
+{{ $renderedContent := .Content | $page.RenderString }}
+
+{{/* Use greedy matching to capture everything between $$ delimiters */}}
+{{ $modifiedContent := $renderedContent | replaceRE "(\\$\\$.*\\$\\$)" "<div>$1</div>" }}
+
+{{ $modifiedContent | safeHTML }}
+
+
+{{/* Plain output for inspection */}}
+<pre>{{ $modifiedContent }}</pre>
+
+{{ else }}
+{{ "Resource not found" | safeHTML }}
+{{ end }}
+
+{{ printf "Debug - file: %s" $file }}
+{{ printf "Debug - page: %s" $page }}
+
+<!-- https://www.fabriziomusacchio.com/blog/2021-08-10-How_to_use_LaTeX_in_Markdown/ --> 
