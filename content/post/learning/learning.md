@@ -9,16 +9,16 @@ Let $f=\mathcal{T}\left[\emptyset,\left(X,Y\right)\right]$ be a learned function
 
 
 $$
-\mathcal{T}=\mathcal{T}_{\mathcal{M}}\overset{\text{e.g.}}{=}\mathcal{T}\_{\left(\text{CNN},\text{ADAM},\text{lr}=0.1, N\_{\text{epoch}}=42\right)}.
+\mathcal{T}=\mathcal{T}\_{\mathcal{M}}\overset{\mathrm{e.g.}}{=}\mathcal{T}\_{\left(\mathrm{CNN},\mathrm{ADAM},\mathrm{lr}=0.1, N_{\mathrm{epoch}}=42\right)}.
 $$
 
 
 
 Note that we here did not introduce any parameters. Yet, we can implement a $\mathcal{T}$ by using a *parametric model*, that is starting from some parameter set $\theta$ and determining an optimal $\theta^{\star}$ according to some metric.
 
-How does **meta-learning** now fit into this picture? It corresponds to finding a good setup to conduct the learning, potentially depending on the task at hand. We can hence view it as a meta-operator $$\mathcal{\tilde{T}}:(\tilde{X}=\left(\text{task},\text{model}\mathcal{M}\right),\tilde{Y}=\text{performance})\mapsto\tilde{f}.$$ Provided the performance of some models on some tasks, it outputs a strategy $\tilde{f}\left(\tilde{x}^{\ast}=(\text{task}^{\ast},\text{model}\mathcal{M^{\ast}})\right)$ that predicts the performance $\tilde{y}^{\ast}$ of $\mathcal{M^{\ast}}$ on some unseen $\text{task}^{\ast}$. This for example can then be used to assess the prospects of hyperparameters before the potentially costly training run. Again, we did not talk about how to implement this, but we could again parametrize $\tilde{f}=\tilde{f}_{\Omega}$ and for example run a gradient-based optimization on $\Omega$.
+How does **meta-learning** now fit into this picture? It corresponds to finding a good setup to conduct the learning, potentially depending on the task at hand. We can hence view it as a meta-operator $$\mathcal{\tilde{T}}:(\tilde{X}=\left(\mathrm{task},\mathrm{model}\mathcal{M}\right),\tilde{Y}=\mathrm{performance})\mapsto\tilde{f}.$$ Provided the performance of some models on some tasks, it outputs a strategy $\tilde{f}\left(\tilde{x}^{\ast}=(\mathrm{task}^{\ast},\mathrm{model}\mathcal{M^{\ast}})\right)$ that predicts the performance $\tilde{y}^{\ast}$ of $\mathcal{M^{\ast}}$ on some unseen $\mathrm{task}^{\ast}$. This for example can then be used to assess the prospects of hyperparameters before the potentially costly training run. Again, we did not talk about how to implement this, but we could again parametrize $\tilde{f}=\tilde{f}_{\Omega}$ and for example run a gradient-based optimization on $\Omega$.
 
-Connecting it back to the notion of meta-learning that we introduced first, the past experience of apprenticeships at a carpenter, scholar and soldier might have taught our apprentice that a useful model for the being tutored by the practically oriented fisher will not necessarily include a notepad, but rather $$\mathcal{M}=\left(\text{camera},\text{Swiss army knife},\text{patience}\right).$$
+Connecting it back to the notion of meta-learning that we introduced first, the past experience of apprenticeships at a carpenter, scholar and soldier might have taught our apprentice that a useful model for the being tutored by the practically oriented fisher will not necessarily include a notepad, but rather $$\mathcal{M}=\left(\mathrm{camera},\mathrm{Swiss army knife},\mathrm{patience}\right).$$
 
 There is the concept of **transfer learning**, often called **few-shot learning, continual learning, or fine-tuning**. It is about improving a previously found $f$ by novel "fine-tuning" information $\left(X^{+},Y^{+}\right)$ by means of some update procedure $f^{+}=\mathcal{U}[f,\left(X^{+},Y^{+}\right)]$. By consistency, we would like $$\mathcal{U}\left[f,\left(X^{+},Y^{+}\right)\right]=\mathcal{T}\left[\emptyset,\left(X,X^{+},Y,Y^{+}\right)\right],$$
 
@@ -33,7 +33,7 @@ Finn17 discuss the notion of transfer learning in the context of $\theta$-parame
 
 Note that fine-tuning such a $\theta^{\ast}\rightarrow\theta^{+,1},\theta^{+,2},\ldots$ is not strictly necessary in order to have a model transfer learn. We can restate Finn17's finding about transfer learning in the meta-learning framework, by reading it as a specific local statement about the nature of the model selection function $\tilde{f}$: For any task, there exist desirable "outlook" parameters $\theta^{\ast}$ such that adjacent tasks will have high performance for adjacent models. Formally, this would read something like 
 
-$$\forall\text{task}\exists\mathcal{M_{\theta^{\ast}}}\forall\text{dtask}\exists d\theta:\tilde{f}(\text{task}+\text{dtask},\mathcal{M}_{\theta^{\ast}+d\theta})=\text{high}.$$
+$$\forall\mathrm{task}\exists\mathcal{M_{\theta^{\ast}}}\forall\mathrm{dtask}\exists d\theta:\tilde{f}(\mathrm{task}+\mathrm{dtask},\mathcal{M}_{\theta^{\ast}+d\theta})=\mathrm{high}.$$
 
 Put differently yet again, a good model selection strategy for NNs is to look for NNs pretrained on similar tasks, and only do incremental updates.
 
@@ -50,12 +50,12 @@ Relating this back to the fisher's apprentice, he or she would be *quickly* lear
 Lastly, we can ask how this relates to **generalization**. Generalization ability is about finding the right inductive bias, i.e. the question of choosing the right $\mathcal{T_{\mathcal{M}}}$ for a given task upfront. That is, for as many unseen inputs $x^{\ast}$, it should hold that 
 
 $$
-\mathcal{T}_{\mathcal{M}} \left(f,\left(X,Y\right) \right)(x^{\ast}) =y^{\star}(x^{\ast}).
+\mathcal{T}_{\mathcal{M}} (f,\left(X,Y\right) )(x^{\ast}) =y^{\star}(x^{\ast}).
 $$
 
 If $x^{\ast}$ is quite different in some sense (possibly semantically), this is sometimes termed *extrapolation* (as opposed to *interpolation*) or *out-of-distribution learning*.
 
-Choosing $\mathcal{M}$ correctly is typically based on experience, for example by having gone through a meta-learning procedure as defined above. As it turns out, choosing $$\mathcal{M}=\left(\text{veryverylarge NN},\text{SGD}\right)$$
+Choosing $\mathcal{M}$ correctly is typically based on experience, for example by having gone through a meta-learning procedure as defined above. As it turns out, choosing $$\mathcal{M}=\left(\mathrm{veryverylarge NN},\mathrm{SGD}\right)$$
 
 comprises a very versatile $\mathcal{T_{\mathcal{M}}}$, working on many different tasks. An apprentice that carries a lot of tools and is curious will be a very able learner.\
 In conclusion, **meta-learning**, **transfer learning** and **generalization** are intimidly related: Good, even "out-of-distribution" generalization can be achieved by having chosen the right model $\mathcal{M}$, possibly by help of a meta-learning scheme. Transfer learning, in constrast, learns how to handle novel input by incorporating *new* training data in an efficient manner.
