@@ -54,6 +54,15 @@ Modern devices communicate over a protocol called HTTPS. This by default encrypt
 Airport Wi-Fis are pretty secure from this point of view, yet, they have everybody on the same network. Sometimes, one wants a little more privacy, for exampel to prevent your neighbors from slowing down your connection or using your printer. This is where password-protected Wi-Fis come in. They are, a priori, vulnarable to a related honeypot attack: 
 Let's say your Wi-Fis name (SSID) is ```Lan Solo```. Your neighbor Eve could take note of this, and just set up a very strong access point next door. The moment you come home, your phone would connect to their honeypot, broadcasting to be ```Lan Solo```. Your phone falls for it, sends them your passphrase (the PMK), and mission succeeded – free prints forever. Or do they?
 
+
+### A naive solution
+The advantage over the scenario with the airport from before is that both parties, router and client, have a shared secret, the WiFi passwort which we'll call PMK in the following. They could now just both encrypt their traffic with it. When trying to decode incoming signals, they would just discard everything that decodes to gibberish according to some standard. While this works in principle, [current WiFi protocols](https://en.wikipedia.org/wiki/Wi-Fi_Protected_Access) have extended this.
+
+## The WPA protocols
+While there is a range of flavors, we'll focus on the case of common secrets ('pre-shared keys') mentioned before. 
+### WEP
+This is a predecessor to WPA. 
+
 #### The four-way handshake
 Wi-Fi clients such as your phone don't send out your secret readily, in the same way that you would not teach random people how to fake your signature. Instead, access point and client follow a protocol that does what they need: The access point wants to whether the client is authenticated, and the client wants to ensure that the access point is no honeypot. 
 
