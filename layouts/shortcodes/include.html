@@ -3,12 +3,15 @@
 
 {{/* Fetch the resource from the page bundle */}}
 {{ with .Page.Resources.GetMatch $file }}
-{{ $renderedContent := .Content | $page.RenderString }}
+{{ $modifiedContent := .Content | $page.RenderString }}
 
 {{/* Use greedy matching to capture everything between $$ delimiters */}}
-{{ $modifiedContent := $renderedContent | replaceRE "(\\$\\$.*\\$\\$)" "<div>$1</div>" }}
+<!-- {{ $modifiedContent := $modifiedContent | replaceRE "(\\$+[^$]+\\$+)" "{{< math >}}$1{{< /math >}}" }} -->
+
+{{/* Render the modified content as HTML */}}
 
 {{ $modifiedContent | safeHTML }}
+
 {{ end }}
 
 

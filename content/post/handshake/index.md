@@ -1,6 +1,6 @@
 ---
 title: Is public Wi-Fi safe?
-subtitle: Open Wi-Fi's are a dilemma: There is a clear preference to personal cellular data on matters like messaging or banking, but everybody who has foudn themselves in a foreign country's aiport without internet access is quickly willing to bend their morals. What are the real risks. 
+subtitle: Open Wi-Fi's are a dilemma – there is a clear preference to personal cellular data on matters like messaging or banking, but everybody who has foudn themselves in a foreign country's aiport without internet access is quickly willing to bend their morals. What are the real risks?
 
 # Summary for listings and search engines
 summary: Meta-learning summarizes the concept of learning a more general framework to learn – hence the name. Yet, this concept subsumizes a range of multiple concepts, including transfer learning, few-shot learning, continual learning, and fine-tuning. We develop an abstracted framework that unifies these notions. This extends beyond parametric models. 
