@@ -29,7 +29,7 @@ organizations:
 # Education to show in About widget
 education:
   courses:
-    - course: PhD in Theoretical Neuroscience
+    - course: PhD student in Theoretical Neuroscience
       institution: ELSC, The Hebrew University of Jerusalem, Israel
       year: 2022–
     - course: MSc in Statistical Physics

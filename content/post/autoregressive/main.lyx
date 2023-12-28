@@ -93,82 +93,34 @@ Subsection -> ## and so on
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-- data processing inequality
-\end_layout
-
-\begin_layout Plain Layout
-- specific example: Bayes
-\end_layout
-
-\begin_layout Plain Layout
-- discovery
-\end_layout
-
-\begin_layout Plain Layout
-conclude
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-Do auto-regressive models bite their own tail? The value of Gedankenexperiments
-\end_layout
-
-\begin_layout Standard
 Autoregressive models use their output to arrive at predictions.
- In machine learning, this amounts to training on the output, i.e.
- generated data.
- Their existence justifies this apparent conundrum, there seems to be a
- benefit.
- 
+ In machine learning, this amounts to 
+\begin_inset Quotes eld
+\end_inset
+
+training on the output
+\begin_inset Quotes erd
+\end_inset
+
+, i.e., generated data.
+ More broadly, intelligent behavior is often accompanied by deep thought
+ or even dreaming between actions.
+ In both of these cases, the system is decoupled from the ground truth.
+ Despite this apparent conundrum, there seems to be a benefit.
 \end_layout
 
 \begin_layout Standard
-Or is there? The data processing inequality asserts that no pipeline, however
- deep, can arrive at new information.
+Or is there? 
+\begin_inset CommandInset href
+LatexCommand href
+name "The data processing inequality"
+target "https://en.wikipedia.org/wiki/Data_processing_inequality"
+literal "false"
+
+\end_inset
+
+ asserts that no procedure, however deep, can arrive increase information.
  How can this be reconciled?
-\end_layout
-
-\begin_layout Subsection
-The autoregressor
-\end_layout
-
-\begin_layout Standard
-Consider a stream of data samples, 
-\begin_inset Formula $\bm{x}_{\leq t}=\left(x_{1},\ldots,x_{t}\right)$
-\end_inset
-
-, for example elements of a time series, or images of cats.
- The autoregressor then is a model 
-\begin_inset Formula $p$
-\end_inset
-
- that generates the next output, 
-\begin_inset Formula 
-\[
-\hat{x}_{t+1}\sim p\left(\bm{x}_{\leq t}\right),
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-where we denote model-generated outputs with a hat 
-\begin_inset Formula $\hat{x}$
-\end_inset
-
-.
- The model now becomes autoregressive if part of its input is its output.
- 
 \end_layout
 
 \begin_layout Subsection
@@ -176,15 +128,23 @@ The data-processing inequality
 \end_layout
 
 \begin_layout Standard
-The data-processing inequality posits that for any processing pipeline 
-\begin_inset Formula $Y=f(X)$
+The data-processing inequality posits that for any processing procedure
+ 
+\begin_inset Formula $\hat{X}=f(X)$
 \end_inset
 
-, the pipeline cannot increase the information that the input contains about
- the source, 
+, the information that the ground truth data 
+\begin_inset Formula $X$
+\end_inset
+
+ contains about the source 
+\begin_inset Formula $X^{\ast}$
+\end_inset
+
+ cannot increase, 
 \begin_inset Formula 
 \[
-\mathbb{I}\left[Z=f(Y);X\right]\leq\mathbb{I}\left[Y;X\right]\quad\forall\,f.
+\mathbb{I}\left[\hat{X}=f(X);X^{\ast}\right]\leq\mathbb{I}\left[X^{\ast};X\right]\quad\forall\,f.
 \]
 
 \end_inset
@@ -192,34 +152,59 @@ The data-processing inequality posits that for any processing pipeline
 
 \end_layout
 
+\begin_layout Subsubsection
+Bayesian inference
+\end_layout
+
 \begin_layout Standard
-Now, the autoregressor suggests that such a pipeline does exist: Namely,
- let's consider a ground truth distribution that we want to model, 
-\begin_inset Formula $p^{*}$
+We can now extend this notion towards making 
+\begin_inset Formula $f$
+\end_inset
+
+ probabilistic: Namely, let's consider a ground truth distribution that
+ we want to model, 
+\begin_inset Formula $Y\sim p^{\ast}$
 \end_inset
 
 .
- Ideally, the model should be as close as possible to 
-\begin_inset Formula $p^{*}$
+ Ideally, the model 
+\begin_inset Formula $\hat{X}\sim\hat{p}$
 \end_inset
 
-, that is the loss 
-\begin_inset Formula $\mathbb{I}\left[\hat{p};p^{*}\right]$
+ should be as close as possible to 
+\begin_inset Formula $p^{\ast}$
+\end_inset
+
+, that is the 
+\begin_inset Quotes eld
+\end_inset
+
+loss
+\begin_inset Quotes erd
+\end_inset
+
+ 
+\begin_inset Formula $\mathbb{I}\left[\hat{p};p^{\ast}\right]$
 \end_inset
 
  should be minimized.
- However, there is only a finite amount of samples from 
-\begin_inset Formula $p^{*}$
+ However, there is only a finite amount of samples 
+\begin_inset Formula $X$
+\end_inset
+
+ from 
+\begin_inset Formula $p^{\ast}$
 \end_inset
 
  available to fit 
 \begin_inset Formula $\hat{p}.$
 \end_inset
 
- Can we hence use autoregressive feedback to define a sequence of predictors
+ The data processing inequality now boils down to whether we can find a
+ sampling sequence
 \begin_inset Formula 
 \[
-X\rightarrow\hat{p}^{(1)}\sim X^{(1)}\rightarrow\hat{p}^{(2)}\sim X^{(2)}\rightarrow\ldots\rightarrow\hat{p}^{(n)}\sim X^{(n)}
+X\rightarrow\hat{p}^{(1)}\sim\hat{X}^{(1)}\rightarrow\hat{p}^{(2)}\sim\hat{X}^{(2)}\rightarrow\ldots\rightarrow\hat{p}^{(n)}\sim\hat{X}^{(n)}
 \]
 
 \end_inset
@@ -228,34 +213,43 @@ X\rightarrow\hat{p}^{(1)}\sim X^{(1)}\rightarrow\hat{p}^{(2)}\sim X^{(2)}\righta
 \end_layout
 
 \begin_layout Standard
-such that 
+with the arrows denote ways to translate samples 
+\begin_inset Formula $X$
+\end_inset
+
+ to (probabilistic) models 
+\begin_inset Formula $\hat{p}$
+\end_inset
+
+.
+ Is it possible to achieve 
 \begin_inset Formula $\mathbb{I}\left[X;X^{(n)}\right]\geq\mathbb{I}\left[X;X^{(1)}\right]$
 \end_inset
 
 ?
 \end_layout
 
-\begin_layout Subsection
-Real World
-\end_layout
-
 \begin_layout Standard
-Imagination, hallucination or dreaming are basically autoregressive: Decoupled
- from a finite data sample, the brain ponders what it remembers, hopefully
- arriving at a better model.
- Even more clearly, closing your eyes and giving things a good thought can
- definitely improve your actions.
- 
-\end_layout
+In fact, we can prove that such a procedure can't yield an improvement on
+ average.
+ Suppose we constrain our model class 
+\begin_inset Formula $\hat{p}$
+\end_inset
 
-\begin_layout Standard
-Another expression of this is [prove]
-\end_layout
+ towards a posterior 
+\begin_inset Formula $\hat{p}(x|X)$
+\end_inset
 
-\begin_layout Standard
+.
+ Now, if we sample from this model, it turns out that we on average do not
+ gain anything over the previous model by incorporating generated data 
+\begin_inset Formula $\hat{X}$
+\end_inset
+
+, i.e.,
 \begin_inset Formula 
 \[
-\hat{p}(y|x,YX)=\langle\hat{p}(y|x,\hat{Y}\hat{X},YX)\rangle_{\hat{Y},\hat{X}\sim\hat{p}(y|x,YX)}.
+\langle\hat{p}(x|\hat{X},X)\rangle_{\hat{X}\sim\hat{p}(x|X)}=\hat{p}(x|X).
 \]
 
 \end_inset
@@ -264,33 +258,32 @@ Another expression of this is [prove]
 \end_layout
 
 \begin_layout Standard
-I.e., sampling from your existing model on average does not improve the model.
-\begin_inset Note Note
-status open
+The proof is a straightforward application of Bayes' theorem:
+\end_layout
 
-\begin_layout Plain Layout
+\begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\langle\hat{p}(y|\hat{Y}Y)\rangle_{\hat{Y},\hat{X}\sim\hat{p}(\hat{Y}|YX)} & =\int_{\hat{Y}}\frac{\hat{p}(y,\hat{Y}|Y)\cancel{\hat{p}(\hat{Y}|Y)}}{\cancel{\hat{p}(\hat{Y}|Y)}}\\
- & =\hat{p}(y|Y).
+\langle\hat{p}(x|\hat{X}X)\rangle_{\hat{X}\sim\hat{p}(\hat{X}|X)} & =\int_{\hat{X}}\frac{\hat{p}(y,\hat{X}|X)\cancel{\hat{p}(\hat{X}|X)}}{\cancel{\hat{p}(\hat{X}|X)}}\\
+ & =\hat{p}(x|X).
 \end{align*}
-
-\end_inset
-
-
-\end_layout
 
 \end_inset
 
  
 \end_layout
 
-\begin_layout Standard
-So what is it good for? 
+\begin_layout Subsection
+Can we safely stop thinking?
 \end_layout
 
-\begin_layout Subsection
-Reasoning
+\begin_layout Standard
+Imagination, hallucination, and dreaming are all autoregressive in this
+ sense: Decoupled from a finite data sample, the brain ponders what it remembers
+, hopefully arriving at a better model.
+ Even more clearly, closing your eyes and giving things a good thought can
+ definitely improve your actions.
+ So can it really be in vain?
 \end_layout
 
 \begin_layout Standard
@@ -300,14 +293,28 @@ So far, we have adopted a puristic Bayesian inference view.
 be made accesible
 \emph default
 .
- This helps to reconcile it with our everyday intuition of pondering indeed
- being helpful for action.
+ In practice, this is key and is the reason why we need brains or computers
+ at all to make sense of the world despite the information processing equality.
  
 \end_layout
 
 \begin_layout Standard
-The idea is that sampling from even a premature model will help with exploration
-: Maybe you'll get an idea that helps you downstream.
+The intuitive idea is that sampling from even a premature model will help
+ with exploration: Maybe you'll get an idea that helps you downstream.
+ While easy to write, it is in general very hard to calculate the above
+ posterior 
+\begin_inset Formula $\hat{p}(x|X)$
+\end_inset
+
+, as it involved to an optimization over an infitely large function space.
+ Bootstrapping the model with its own samples may help: Sampling a premature
+ model 
+\begin_inset Formula $\hat{X}\sim\hat{p}^{(1)}(x|X)$
+\end_inset
+
+ can for example be seen as introducing noise.
+ This can have similar benefits to stochastic gradient descent, helping
+ exploration towards a better global minimum – a better world model.
  
 \end_layout
 
