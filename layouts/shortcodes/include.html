@@ -6,7 +6,7 @@
 {{ $modifiedContent := .Content | $page.RenderString }}
 
 {{/* Use greedy matching to capture everything between $$ delimiters */}}
-<!-- {{ $modifiedContent := $modifiedContent | replaceRE "(\\$+[^$]+\\$+)" "{{< math >}}$1{{< /math >}}" }} -->
+{{ $modifiedContent := $modifiedContent | replaceRE "(\\$+[^$]+\\$+)" "$1" }}
 
 {{/* Render the modified content as HTML */}}
 
