@@ -62,6 +62,26 @@ sitemap:
   _merge: deep
 minify:
   _merge: deep
+
+markup:
+  _merge: deep
+  goldmark:
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - - \[
+              - \]
+            - - $$
+              - $$
+          inline:
+            - - \(
+              - \)
+            - - $
+              - $
+params:
+  math: true
   
 security:
   funcs:
