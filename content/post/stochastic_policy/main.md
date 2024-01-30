@@ -14,29 +14,29 @@ This is a fallacy known as probability matching that human behavior has been sho
 
 #### Probability matching {#probability-matching .unnumbered}
 
-$$\begin{aligned}
-\langle R\rangle= & 0 & \cdot p(\text{aim }L)p(\text{jump }L)\\
-+ & 1 & \cdot p(\text{aim }L)p(\text{jump }R)\\
-+ & 1 & \cdot p(\text{aim }R)p(\text{jump }L)\\
-+ & 0 & \cdot p(\text{aim }R)p(\text{jump }R)\\
-= & 0 & \cdot.6\cdot.4\\
-+ & 1 & \cdot.6\cdot.6\\
-+ & 1 & \cdot.4\cdot.4\\
-+ & 0 & \cdot.4\cdot.6\\
-= & 0 & +0.12+0.12+0=0.52.
-\end{aligned}$$
+$$\begin{array}{ccccccc}
+\langle R\rangle & = & 0 & \cdot & p(\text{aim }L) & \cdot & p(\text{jump }L)\\
+ & + & 1 & \cdot & p(\text{aim }L) & \cdot & p(\text{jump }R)\\
+ & + & 1 & \cdot & p(\text{aim }R) & \cdot & p(\text{aim }L)\\
+ & + & 0 & \cdot & p(\text{aim }R) & \cdot & p(\text{aim }R)\\
+ & = & 0 & \cdot & .6 & \cdot & .4\\
+ & + & 1 & \cdot & .6 & \cdot & .6\\
+ & + & 1 & \cdot & .4 & \cdot & .4\\
+ & + & 0 & \cdot & .4 & \cdot & .6\\
+ & = & 0 & + & .12 & +.12 & +0\\
+ & = & 0.52.
+\end{array}$$
 
 #### Maximum reward {#maximum-reward .unnumbered}
 
-Instead, let's always aim for the most likely side, $p(\text{aim }\text{L})=1$:
-
-$$\begin{aligned}
-\langle R\rangle= & 0\cdot1\cdot.4\\
-+ & 1\cdot1\cdot.6\\
-+ & 1\cdot0\cdot.4\\
-+ & 0\cdot0\cdot.6\\
-= & 0.6.
-\end{aligned}$$
+Instead, let's always aim for the most likely side, $p(\text{aim }\text{L})=1$:\
+$$\begin{array}{ccccccc}
+\langle R\rangle & = & 0 & \cdot & 1 & \cdot & .4\\
+ & + & 1 & \cdot & 1 & \cdot & .6\\
+ & + & 1 & \cdot & 0 & \cdot & .4\\
+ & + & 0 & \cdot & 0 & \cdot & .6\\
+ & = & 0.6.
+\end{array}$$
 
 This reveals that probability matching is actually not the right strategy!
 

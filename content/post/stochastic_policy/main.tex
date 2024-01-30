@@ -3,7 +3,7 @@
 \documentclass[english]{article}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
-\usepackage{amsmath}
+\usepackage{amstext}
 \usepackage{amssymb}
 \usepackage{babel}
 \begin{document}
@@ -40,30 +40,34 @@ reward however, we see a difference:
 
 \paragraph*{Probability matching}
 
-\begin{eqnarray*}
-\langle R\rangle= & 0 & \cdot p(\text{aim }L)p(\text{jump }L)\\
-+ & 1 & \cdot p(\text{aim }L)p(\text{jump }R)\\
-+ & 1 & \cdot p(\text{aim }R)p(\text{jump }L)\\
-+ & 0 & \cdot p(\text{aim }R)p(\text{jump }R)\\
-= & 0 & \cdot.6\cdot.4\\
-+ & 1 & \cdot.6\cdot.6\\
-+ & 1 & \cdot.4\cdot.4\\
-+ & 0 & \cdot.4\cdot.6\\
-= & 0 & +0.12+0.12+0=0.52.
-\end{eqnarray*}
+\[
+\begin{array}{ccccccc}
+\langle R\rangle & = & 0 & \cdot & p(\text{aim }L) & \cdot & p(\text{jump }L)\\
+ & + & 1 & \cdot & p(\text{aim }L) & \cdot & p(\text{jump }R)\\
+ & + & 1 & \cdot & p(\text{aim }R) & \cdot & p(\text{aim }L)\\
+ & + & 0 & \cdot & p(\text{aim }R) & \cdot & p(\text{aim }R)\\
+ & = & 0 & \cdot & .6 & \cdot & .4\\
+ & + & 1 & \cdot & .6 & \cdot & .6\\
+ & + & 1 & \cdot & .4 & \cdot & .4\\
+ & + & 0 & \cdot & .4 & \cdot & .6\\
+ & = & 0 & + & .12 & +.12 & +0\\
+ & = & 0.52.
+\end{array}
+\]
 
 
 \paragraph*{Maximum reward}
 
-Instead, let's always aim for the most likely side, $p(\text{aim }\text{L})=1$:
-
-\begin{align*}
-\langle R\rangle= & 0\cdot1\cdot.4\\
-+ & 1\cdot1\cdot.6\\
-+ & 1\cdot0\cdot.4\\
-+ & 0\cdot0\cdot.6\\
-= & 0.6.
-\end{align*}
+Instead, let's always aim for the most likely side, $p(\text{aim }\text{L})=1$:\\
+\[
+\begin{array}{ccccccc}
+\langle R\rangle & = & 0 & \cdot & 1 & \cdot & .4\\
+ & + & 1 & \cdot & 1 & \cdot & .6\\
+ & + & 1 & \cdot & 0 & \cdot & .4\\
+ & + & 0 & \cdot & 0 & \cdot & .6\\
+ & = & 0.6.
+\end{array}
+\]
 
 This reveals that probability matching is actually not the right strategy!
 
