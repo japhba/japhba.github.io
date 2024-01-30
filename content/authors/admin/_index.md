@@ -118,6 +118,5 @@ email: ''
 highlight_name: true
 ---
 
-I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) in Jerusalem, studying the inductive bias of **chaos in the brain**. Before that, I worked with Moritz Helias on the **kernel limit of recurrent neural networks**. 
-
-More broadly, I am fascinated in the detail and structure that evolution has equipped the brain with. Yet, we see that challenging computation is incresingly possible with artifical neural networks. This points towards the suitability of networks as a universal substrate of intelligence. To me, this makes the quest for the brain all the more exciting: It points to not just any, but a especially efficient solution to intelligence that it implements. 
+I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) in Jerusalem, studying the cognitive implications of **chaos in the brain**. Before that, I worked with [Moritz Helias]() to build a **theoretical framework based on the kernel method** to  disentangle apparently conflicting sides to chaos: Expressivity by virtue of its high-dimensional dynamics and instability due to the entailed sensitivity to initial conditions.  
+More broadly, I am excited about the synergies between artificial and biological neural systems that have empowered both machine learning and neuroscience throughout their history. 
