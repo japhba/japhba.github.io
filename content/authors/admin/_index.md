@@ -118,5 +118,5 @@ email: ''
 highlight_name: true
 ---
 
-I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) in Jerusalem, studying the cognitive implications of **chaos in the brain**. Before that, I worked with [Moritz Helias]() to build a **theoretical framework based on the kernel method** to  disentangle apparently conflicting sides to chaos: Expressivity by virtue of its high-dimensional dynamics and instability due to the entailed sensitivity to initial conditions.  
+I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) in Jerusalem, studying the cognitive implications of **chaos in the brain**. Before that, I worked with [Moritz Helias](https://www.fz-juelich.de/en/inm/inm-6/forschung/theory-of-multi-scale-neuronal-networks) to build a **theoretical framework based on the kernel method** to  disentangle apparently conflicting sides to chaos: Expressivity by virtue of its high-dimensional dynamics and instability due to the entailed sensitivity to initial conditions.  
 More broadly, I am excited about the synergies between artificial and biological neural systems that have empowered both machine learning and neuroscience throughout their history. 
