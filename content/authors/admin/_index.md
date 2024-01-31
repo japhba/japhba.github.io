@@ -109,7 +109,7 @@ social:
 # and uncomment the lines below.
   - icon: cv
     icon_pack: ai
-    link: uploads/CV/CV_Jan_BAUER.pdf
+    link: uploads/CV/CV_Jan_Bauer.pdf
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
 email: ''
