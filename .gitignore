@@ -16,3 +16,6 @@ go.sum
 
 content/post/dmft/_build
 **/.ipynb_checkpoints
+
+# LyX
+*.eps
