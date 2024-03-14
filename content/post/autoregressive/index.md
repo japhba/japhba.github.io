@@ -32,7 +32,8 @@ image:
 # https://roneo.org/en/hugo-include-another-file-with-a-shortcode/
 
 authors:
-  - admin
+  # - admin
+reading_time: false
 
 tags:
   - Machine Learning

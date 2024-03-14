@@ -1,5 +1,5 @@
 ---
-title: Posts
+title: Blog
 cms_exclude: false
 
 # View.
@@ -12,4 +12,6 @@ view: 2
 header:
   caption: ''
   image: ''
+
+
 ---
