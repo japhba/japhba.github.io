@@ -39,14 +39,14 @@ sections:
   - block: about.biography
     id: about
     content:
-      title: Biography
+      title: About
       # Choose a user profile to display (a folder name within `content/authors/`)
       username: admin
 
   - block: collection
     id: posts
     content:
-      title: Recent Posts
+      title: Blog
       subtitle: ''
       text: ''
       # Choose how many pages you would like to display (0 = all pages)

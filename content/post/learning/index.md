@@ -21,6 +21,7 @@ draft: false
 featured: true
 
 share: false
+reading_time: false
 
 # Featured image
 # Place an image named `featured.jpg/png` in this page's folder and customize its options here.
@@ -35,7 +36,7 @@ share: false
 # https://roneo.org/en/hugo-include-another-file-with-a-shortcode/
 
 authors:
-  - admin
+  # - admin
 
 tags:
   - Machine Learning

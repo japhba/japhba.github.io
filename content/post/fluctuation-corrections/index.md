@@ -29,7 +29,9 @@ featured: false
 #  preview_only: false
 
 authors:
-  - admin
+  # - admin
+
+reading_time: false
 
 tags:
   - Physics
