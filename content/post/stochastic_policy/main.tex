@@ -88,20 +88,21 @@ on to this strategy, he would never score a goal again! So should
 he just alternate the sides he targets? The goalkeeper could counteract
 this with likewise just changing sides. In fact, any more complicated
 schedule will eventually be learned by a sufficiently clever goalkeeper
-and hence only give a temporary. Even more, throwing a dice every
-ten shoots will not change this in principle. The best we can do here
-is to either come up with an insanely complicated schedule that decides
-when to shoot left or right (a \emph{pseudorandom} schedule). This,
-as the name suggests, is then indistinguishable in principle from
-a completely random schedule: The captain throws a dice every time
-and minimizes the mutual information of his policy and the action
+and hence only give a temporary advantage. Even more, throwing a dice
+every ten shoots will not change this in principle. The best we can
+do here is to either come up with an insanely complicated schedule
+that decides when to shoot left or right (a \emph{pseudorandom} schedule).
+This, as the name suggests, is then practically indistinguishable
+from a completely random schedule: The captain throws a dice every
+time and minimizes the mutual information of his policy and the action
 $\pi^{\star}=\text{argmin}_{\pi}\mathbb{I}\left[a_{t},a_{t+1}\right],$
 where we now understand $\pi=\pi\left(\left\{ a_{t}\right\} \right)$
 as a distribution over sequences of actions $a_{t}$.
 
-So a stochastic strategy is better than being purely exploitative!
-(we are actually not random, we are using our knowledge about the
-clever gatekeeper)
+So a varying strategy can be better than being purely exploitative!
+Note that we are variable, but not random, as we are actually using
+our knowledge about the clever gatekeeper -- a model of the world
+$p(s_{t+1}|a_{t},s_{t})$). 
 
 \subsection*{A stubborn goalkeeper}
 
@@ -118,7 +119,72 @@ be a game of psychology between the two: When the goalkeeper adheres
 to his beliefs, the captain might be able to leverage an advantage
 and exploit for a couple of trials before adapting. 
 
-\subsection{Game theory}
+\subsection*{Exploration vs. exploitation}
+
+We can try to formalize this towards a general case. First, we are
+discussing the case of complete knowledge of the world model, and
+then discuss the case where the world model is insufficiently known. 
+
+\paragraph*{Knowledge of the exact world model}
+
+If the exact transition structure of the world is known ($\hat{p}=p$),
+the optimal action can be calculated as
+
+\[
+a_{t}(s_{t},p^{(t)})=\text{argmax}_{a_{t}}\:\mathbb{E}_{p^{(t)}}\left[R_{t:}\,|\,a_{t},s_{t}\right].
+\]
+
+Note that evaluating this exactly is typically intractable because
+of the exponentially growing branches of possible futures. It might
+now be the case that the argmax is not unique, i.e. two actions yield
+the same reward. In this case, choosing between at random is equally
+rewarding. 
+
+\paragraph*{Incomplete knowledge}
+
+The case of complete (though statistical) knowledge of the world transition
+structure ($\hat{p}\neq p$) is what prevents a discussion of exploration,
+as everything is already known. Here, we now relax this assumption. 
+
+Suppose we only have an incomplete model of the world, $\hat{p}^{(t)}(s_{t+1}|a_{t},s_{t})$,
+and suppose that we can acquire observations $o_{t+1}$ through specific
+actions $a_{t+1}$ that help refine it towards the actual $p$. So
+what we should really write then is 
+\[
+a_{t}(s_{t},\hat{p}^{(t)},\hat{\mathcal{P}}^{(t)})=\text{argmax}_{a_{t}}\:\mathbb{E}_{\hat{\mathcal{P}}^{(t)},\hat{p}^{(t)}}\left[R_{t:}|\Delta D^{KL}|_{SS}\bigl[\hat{p}^{(t+1)}||p\bigr](a_{t}),a_{t},s_{t}\right].
+\]
+
+Here, $\Delta D^{KL}|_{SS}\bigl[\hat{p}^{(t+1)}||p\bigr](a_{t})$
+is a meta-world model that maps actions to information gain $\Delta D^{KL}|_{SS}$
+restricted to the sufficient statistics $SS$ of under the believed
+informativeness $\hat{\mathcal{P}}\left(\Delta D^{KL}|_{SS}\,|\,a_{t}\right)$
+of the world through the sampling action $a_{t}$. It can well be
+that a certain observation convinces the agent of the poorness of
+its world model -- for example that no rewards keeps coming in, even
+though their actions are the same. The meta-world model now predicts
+higher reward under an action that will explore, as the agent \emph{believes
+it to increase} the information about the world, $\Delta D^{KL}|_{SS}(\hat{p}^{(t+1)}||p)\,|\,a_{t}$.
+If several actions now produce the same $R_{t:}$-pertinent information
+gain, they can be chosen randomly. From the outside, this may appear
+to be random exploration, whereas it actually is exploration that
+is informed by the agent's belief about pertinent information gain. 
+
+From this, we arrive what might be called a fully Bayesian way of
+acting: At every point in time, the agent uses its approximate world
+model $\hat{p}^{(t)}$ as well as an (approximate) model $\hat{\mathcal{P}}^{(t)}$
+about the information gain to choose the most rational action. If
+an exploratory action is not expected to increase pertinent information,
+then the agent \emph{exploits }according to the case of exact knowledge
+$\hat{p}=p$, otherwise it \emph{explores. }
+
+Applying this once again to soccer, it means that it might be optimal
+to aim for the left side from time to time, if our belief $\hat{\mathcal{P}}$
+about the world suggests that this will help us in determining whether
+for example the goal keeper has changed their policy. Conversely,
+if we are confident that the goalkeeper does never change his strategy,
+there is no point of exploratory action. 
+
+\subsection{Nota bene: Game theory}
 
 Game theory is a mathematical framework to handle adversarial interactions
 as in the sketched soccer scenario. It summarizes the outcome of actions
