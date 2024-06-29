@@ -733,7 +733,7 @@ When tackling more complicated problems, there are a couple of identities
 \end_layout
 
 \begin_layout Subsubsection*
-\begin_inset Formula $e^{-\frac{1}{2\sigma^{2}}y}=\int_{x\tilde{x}}e^{-\frac{1}{2}\sigma^{-2}\tilde{y}^{2}+i\tilde{y}y}$
+\begin_inset Formula $e^{-\frac{1}{2}y\sigma^{2}y}=\frac{1}{\left(2\pi\sigma^{2}\right)^{1/2}}\int_{\tilde{y}}e^{-\frac{1}{2}\frac{1}{\sigma^{2}}\tilde{y}^{2}+i\tilde{y}y}$
 \end_inset
 
  decoupling (Hubbard-Stratonovich transform)
@@ -742,12 +742,55 @@ When tackling more complicated problems, there are a couple of identities
 \begin_layout Standard
 \begin_inset Formula 
 \[
-e^{-\frac{1}{2}y^{T}A^{-1}y}=\frac{1}{\left(2\pi\det A^{-1}\right)^{d/2}}\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}A\tilde{y}+iy^{T}\tilde{y}}=\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,A^{-1})}.
+\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,\Sigma)}\coloneqq\frac{1}{\left(2\pi\det\Sigma\right)^{d/2}}\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}\Sigma^{-1}\tilde{y}+iy^{T}\tilde{y}}\equiv e^{-\frac{1}{2}y^{T}\Sigma y}.
 \]
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,\,\Sigma)}=e^{-\frac{1}{2}y^{T}\Sigma y}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It is also useful to know that 
+\begin_inset Formula 
+\[
+\langle e^{jx}\rangle=Z(j)=e^{W(j)},
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+which for 
+\begin_inset Formula $x$
+\end_inset
+
+ Gaussian gives
+\begin_inset Formula 
+\[
+\langle e^{jx}\rangle=e^{\frac{1}{2}j\Sigma j},
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+which is just Hubbard-Stratonovich from before!
 \end_layout
 
 \begin_layout Standard
