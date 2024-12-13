@@ -14,7 +14,7 @@ role: PhD student in Theoretical Neuroscience
 
 # Organizations/Affiliations to show in About widget
 organizations:
-  - name: ELSC, The Hebrew University of Jerusalem, Israel
+  - name: Gatsby Unit, UCL & ELSC, Hebrew University
     url: http://elsc.huji.ac.il
 
 # Short bio (displayed in user profile at end of posts)
@@ -30,7 +30,7 @@ organizations:
 education:
   courses:
     - course: PhD student in Theoretical Neuroscience
-      institution: ELSC, The Hebrew University of Jerusalem, Israel
+      institution: Gatsby Unit, UCL & ELSC, Hebrew University
       year: 2022–
     - course: MSc in Statistical Physics
       institution: Juelich Research Center, Germany
@@ -118,5 +118,6 @@ email: ''
 highlight_name: true
 ---
 
-I am a PhD student in [Jonathan Kadmon's group](https://neuro-theory.org/research) in Jerusalem, studying the cognitive implications of **chaos in the brain**. Before that, I worked with [Moritz Helias](https://www.fz-juelich.de/en/inm/inm-6/forschung/theory-of-multi-scale-neuronal-networks) to build a **theoretical framework based on the kernel method** to  disentangle apparently conflicting sides to chaos: Expressivity by virtue of its high-dimensional dynamics and instability due to the entailed sensitivity to initial conditions.  
-More broadly, I am excited about the synergies between artificial and biological neural systems that have empowered both machine learning and neuroscience throughout their history. 
+How do the numerous components of neural circuits implement reliably implement complex function? 
+
+I am approaching this questions by developing models that capture simple aspects of cognition, but are still easy to understand. I believe that bridging perspectives from both artificial and biological intelligence bears great synergies, as both of these fields fundamentally have the shared goal of understanding neural systems. 
