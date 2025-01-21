@@ -80,14 +80,18 @@ Poor man's kernel theory
 \end_layout
 
 \begin_layout Standard
-We consider a scalar, one-layer, linear network and a single input 
-\begin_inset Formula $x$
+We consider a scalar, one-layer, linear network and two inputs 
+\begin_inset Formula $x^{\alpha}$
 \end_inset
 
-.
+, 
+\begin_inset Formula $x^{\beta}$
+\end_inset
+
+
 \begin_inset Formula 
 \[
-f=wx
+f_{\alpha}\coloneqq a\phi(wx^{\alpha}).
 \]
 
 \end_inset
@@ -108,10 +112,33 @@ with MSE loss
 \end_layout
 
 \begin_layout Standard
+or
+\begin_inset Formula 
+\[
+\mathcal{L}=-yf
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+-yf=ya\phi(wx)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Action
 \begin_inset Formula 
 \[
-p(y,w)=\exp\left\{ -\frac{1}{2}(y-f)^{2}+\lambda w^{2}\right\} .
+p(y,w)\propto\exp\left\{ -\frac{1}{2}(y-f)^{2}+\lambda w^{2}\right\} 
 \]
 
 \end_inset
@@ -125,6 +152,63 @@ where
 \end_inset
 
  is a L2 penalty on weight magnitude.
+\end_layout
+
+\begin_layout Standard
+Langevin dynamics
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\partial_{t}\Theta(t)=−\gamma\Theta(t)−\nabla_{\Theta}\mathcal{L}(\Theta(t);Y)+\sqrt{2}T\zeta(t)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+At equilibrium (Naveh21)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\exp\left\{ -\frac{\gamma}{2T}||\Theta||^{2}-\frac{1}{T}\mathcal{L}(\Theta(t);Y)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Output distribution
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+p(y)=\int dw\,p(y,w)=\int dw\,p(y|w)\,p(w).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Posterior
+\begin_inset Formula 
+\[
+p(y|Y)\propto\int d\Theta\,p(y,Y,\Theta)=\int d\Theta\,\exp\left\{ -\frac{1}{2}(y-a\phi(wx))^{2}-\frac{1}{2}(Y-a\phi(Wx))^{2}+\lambda\Theta^{2}\right\} 
+\]
+
+\end_inset
+
+
 \end_layout
 
 \end_body

@@ -19,3 +19,7 @@ content/post/dmft/_build
 
 # LyX
 *.eps
+*.aux
+*.fls
+*.log
+*.synctex.gz
