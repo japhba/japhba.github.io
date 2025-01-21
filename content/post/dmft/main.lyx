@@ -80,7 +80,7 @@ In statistical physics, we are often dealing with systems that comprise
  many components.
  In order to calculate their statistics, high-dimensional integrals over
  those variables 
-\begin_inset Formula $\bm{x}\in\mathbb{R}^{N}$
+\begin_inset Formula $\boldsymbol{x}\in\mathbb{R}^{N}$
 \end_inset
 
  with 
@@ -94,7 +94,7 @@ In statistical physics, we are often dealing with systems that comprise
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\mathcal{Z}=\int_{\bm{x}}e^{S_{\text{0}}(\bm{x})+S_{V}(\bm{x})},
+\mathcal{Z}=\int_{\boldsymbol{x}}e^{S_{\text{0}}(\boldsymbol{x})+S_{V}(\boldsymbol{x})},
 \]
 
 \end_inset
@@ -103,7 +103,7 @@ In statistical physics, we are often dealing with systems that comprise
 \end_layout
 
 \begin_layout Standard
-where I introduced 
+where we introduced 
 \begin_inset Formula $\int_{x}:=\int_{-\infty}^{\infty}dx$
 \end_inset
 
@@ -112,15 +112,19 @@ where I introduced
 
 \begin_layout Standard
 In general, 
-\begin_inset Formula $S_{V}(\bm{x})$
+\begin_inset Formula $S_{V}(\boldsymbol{x})$
 \end_inset
 
  couples variables in such a way that the integration does not factorize.
- In 1D, such integrals would be tractable by numerical methods still, so
- there no real problem exists.
- This ceases to be the case in higher dimensions, where the Curse of Dimensional
+ If 
+\begin_inset Formula $N$
+\end_inset
+
+ is small, such integrals would be tractable by numerical methods still,
+ so there no real problem exists.
+ This ceases to be the case in higher dimensions, where the curse of dimensional
 ity manifests.
- Luckily, there is a plethora of approximation methods for this case.
+ Luckily, there are approximation methods for this case.
  Mean-field theory is a particular example for this, which will be the subject
  of this post.
  
@@ -131,13 +135,19 @@ ity manifests.
 \end_layout
 
 \begin_layout Standard
-To illustrate how DMFT can be of help here, let's first consider a toy problem,
- with
+To illustrate how DMFT can be of help here, let's first consider a toy problem
+ where we just have a single coupled 
+\begin_inset Formula $S_{V}(\boldsymbol{x})$
+\end_inset
+
+ and set 
+\begin_inset Formula $S_{0}(\boldsymbol{x})=0$
+\end_inset
+
+, with
 \begin_inset Formula 
 \begin{align*}
-S_{0}(\bm{x}) & =-\bm{x}^{T}\bm{x}\\
-S_{V}(\bm{x}) & =\left(A\bm{x}\right)^{T}\left(A\bm{x}\right)\\
- & =A_{ij}A_{ik}x_{i}x_{k},
+S_{V}(\boldsymbol{x}) & =-\boldsymbol{x}^{T}A\boldsymbol{x}=-x_{i}A_{ij}x_{j}
 \end{align*}
 
 \end_inset
@@ -146,14 +156,31 @@ S_{V}(\bm{x}) & =\left(A\bm{x}\right)^{T}\left(A\bm{x}\right)\\
 \end_layout
 
 \begin_layout Standard
-where 
-\begin_inset Formula $A_{ij}=1$
+where we set 
+\begin_inset Formula $A_{ij}=\delta_{ij}$
 \end_inset
 
  for simplicity.
- This introduces an interdependence between variables that prevents factorizatio
-n.
- 
+ This introduces an interaction between variables 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{j}$
+\end_inset
+
+ that prevents factorization and the integral from being tractable, i.e.
+ the associated probability density 
+\begin_inset Formula $p(\boldsymbol{x})\propto e^{-x_{i}A_{ij}x_{j}}$
+\end_inset
+
+ does not factorize.
+ (Note that in the case of a positive definite 
+\begin_inset Formula $A$
+\end_inset
+
+ the integral is a Gaussian and exactly solvable, but we will still use
+ the approximation for illustration.)
 \end_layout
 
 \begin_layout Subsection*
@@ -166,18 +193,18 @@ To mitigate this, DMFT introduces an
 auxiliary field
 \series default
  that caps the threads between 
-\begin_inset Formula $\bm{x}$
+\begin_inset Formula $x_{1}$
 \end_inset
 
  and 
-\begin_inset Formula $A\bm{x}$
+\begin_inset Formula $x_{2}$
 \end_inset
 
 .
- To accomplish this, we use the mathemagical identity
+ To accomplish this, we use the identity
 \begin_inset Formula 
 \[
-\delta\left(\bm{y}-\bm{x}\right)=\int_{\tilde{\bm{y}}}\,\exp\left(-i\tilde{\bm{y}}^{T}\left(\bm{y}-\bm{x}\right)\right).
+\delta\left(\boldsymbol{y}-\boldsymbol{x}\right)=\int_{\tilde{\boldsymbol{y}}}\,\exp\left(-i\tilde{\boldsymbol{y}}^{T}\left(\boldsymbol{y}-\boldsymbol{x}\right)\right).
 \]
 
 \end_inset
@@ -186,35 +213,32 @@ auxiliary field
 \end_layout
 
 \begin_layout Standard
-Further down in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:Lagrange-multipliers-delta-gauss"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, I will attempt a more intuitive picture for the identity.
+Further down, we will attempt a more intuitive picture for the identity.
  
 \end_layout
 
 \begin_layout Standard
-With this we can rewrite
+The core procedure goes in two steps: 
+\series bold
+decoupling
+\series default
+ (line 2) and 
+\series bold
+isolation
+\series default
+ (line 4).
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
- & \int_{\bm{x}\bm{y}}\:e^{S_{0}(\bm{x})+\bm{y}^{T}\bm{y}}\,\delta\left(\bm{y}-A\bm{x}\right)\\
-= & \int_{\bm{x}\bm{y}\tilde{\bm{y}}}e^{S_{0}(\bm{x})+\bm{y}^{T}\bm{y}-i\tilde{\bm{y}}^{T}\left(\bm{y}-A\bm{x}\right)}\,\\
- & \text{isolate the "microscopic" variable }\text{\ensuremath{\bm{x}}}\\
-= & \int_{\bm{y}\tilde{\bm{y}}}\:e^{-i\tilde{\bm{y}}^{T}\bm{y}+\bm{y}^{T}\bm{y}}\:\int_{\bm{x}}\:e^{S_{0}(\bm{x})+i\tilde{\bm{y}}^{T}A\bm{x}}\\
- & \text{use that now, \ensuremath{\bm{x}} decouples, and \ensuremath{A_{ij}=1}}\\
-= & \Pi_{i}^{N}\int_{y_{i}\tilde{y}_{i}}\:e^{-i\tilde{y}_{i}y_{i}}\int_{x_{i}}e^{S_{0}(x_{i})+y_{i}y_{i}+i\tilde{y}_{i}x_{i}}\\
-= & \left(\int_{y\tilde{y}}\,e^{-i\tilde{y}y+yy}\int_{x}e^{S_{0}(x)+y_{i}y_{i}+i\tilde{y}_{i}x_{i}}\right)^{N}\\
-\overset{=}{?} & \int_{y\tilde{y}}\,\underbrace{e^{-Ni\tilde{y}y}\:e^{N\ln Z_{1}(y,\tilde{y})}}_{I(y,\tilde{y})}.
+\mathcal{Z}= & \int_{\boldsymbol{x}}\:e^{-\boldsymbol{x}^{T}A\boldsymbol{x}}\\
+= & \int_{\boldsymbol{x}\boldsymbol{y}}\:e^{\boldsymbol{y}^{T}\boldsymbol{y}}\,\delta\left(\boldsymbol{y}-A\boldsymbol{x}\right)\\
+= & \int_{\boldsymbol{x}\boldsymbol{y}\tilde{\boldsymbol{y}}}e^{\boldsymbol{y}-i\tilde{\boldsymbol{y}}^{T}\left(\boldsymbol{y}-A\boldsymbol{x}\right)}\,\\
+= & \int_{\boldsymbol{y}\tilde{\boldsymbol{y}}}\:e^{-i\tilde{\boldsymbol{y}}^{T}\boldsymbol{y}+\boldsymbol{y}^{T}\boldsymbol{y}}\:\int_{\boldsymbol{x}}\:e^{i\tilde{\boldsymbol{y}}^{T}A\boldsymbol{x}}\\
+= & \prod_{i}^{N}\int_{y_{i}\tilde{y}_{i}}\:e^{-i\tilde{y}_{i}y_{i}}\int_{x_{i}}e^{y_{i}y_{i}+i\tilde{y}_{i}x_{i}}\\
+= & \left(\int_{y\tilde{y}}\,e^{-i\tilde{y}y+yy}\int_{x}e^{y_{i}y_{i}+i\tilde{y}_{i}x_{i}}\right)^{N}\\
+= & \int_{y\tilde{y}}\,\underbrace{e^{-Ni\tilde{y}y}\:e^{N\ln Z_{1}(y,\tilde{y})}}_{=:I(y,\tilde{y})}.
 \end{align*}
 
 \end_inset
@@ -242,13 +266,13 @@ single-site partition function
 
 \begin_layout Standard
 So far, all manupulations were exact.
- Unfortunately, there is no Free Lunch, so that we now have to employ an
- approximation.
+ Unfortunately, to make progress, we now have to introduce an approximation.
  This is called the 
 \series bold
 saddle point approximation
 \series default
-, and requires that the integrand is stationary,
+, and approximates the integral with the point where the integrand is stationary
+,
 \begin_inset Formula 
 \begin{align*}
 \partial_{y}I(y^{*},\tilde{y}^{*}) & =0\\
@@ -316,11 +340,57 @@ Note that curiously,
 \begin_inset Formula $S_{1}.$
 \end_inset
 
-
-\begin_inset Newline newline
+This reflects that we have decoupled the variables, so that each variable
+ sees an independent distribution 
+\begin_inset Formula $S_{1}$
 \end_inset
 
+, summarizing the 
+\emph on
+mean-field
+\emph default
+ influence of the others.
+\end_layout
 
+\begin_layout Paragraph*
+Relation to conditional independence
+\end_layout
+
+\begin_layout Standard
+One can point out a relationship to conditional independence here: If we
+ consider a probability 
+\begin_inset Formula $p(x_{i},x_{j})\propto\exp(-x_{i}A_{ij}x_{j})$
+\end_inset
+
+, the variables are said to be statistically dependent, as the distribution
+ does not factorize.
+ In the context of graphical models, such dependence typically comes about
+ from an unobserved latent confounder, coupling the variables.
+ From the transform above, we can identify 
+\begin_inset Formula $\boldsymbol{y}$
+\end_inset
+
+ as the confounder that couples the variables through 
+\begin_inset Formula $\boldsymbol{\tilde{y}}.$
+\end_inset
+
+ Conversely, fixing or observing a value of 
+\begin_inset Formula $(\boldsymbol{y},\boldsymbol{\tilde{y}})$
+\end_inset
+
+ in the integral makes 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{j}$
+\end_inset
+
+ conditionally independent, 
+\begin_inset Formula $p(x_{1},x_{2}|\boldsymbol{y},\tilde{\boldsymbol{y}})=p(x_{1}|\boldsymbol{y},\tilde{\boldsymbol{y}})p(x_{2}|\boldsymbol{y},\tilde{\boldsymbol{y}})$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -330,25 +400,7 @@ After this brief introduction, let's take a look how we can apply this to
 \end_layout
 
 \begin_layout Subsection*
-Application to the Ising model
-\end_layout
-
-\begin_layout Standard
-We can apply the developed formalism to the Ising model.
- It can be described again in terms of a partition function that depends
- on a parameter 
-\begin_inset Formula $\bm{j}$
-\end_inset
-
-,
-\begin_inset Formula 
-\[
-\mathcal{Z}(\bm{j})=\int_{\bm{x}}e^{-\bm{x}^{T}J\bm{x}+\bm{j}^{T}\bm{x}}.
-\]
-
-\end_inset
-
-
+Example: Ising model
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:ising-ham"
@@ -359,8 +411,26 @@ name "subsec:ising-ham"
 \end_layout
 
 \begin_layout Standard
-'Here, the term 
-\begin_inset Formula $\bm{x}^{T}J\bm{x}=x_{i}J_{ij}x_{j}$
+We can apply the developed formalism to the Ising model.
+ It can be described again in terms of a partition function that depends
+ on a parameter 
+\begin_inset Formula $\boldsymbol{j}$
+\end_inset
+
+,
+\begin_inset Formula 
+\[
+\mathcal{Z}(\boldsymbol{j})=\int_{\boldsymbol{x}}e^{-\boldsymbol{x}^{T}J\boldsymbol{x}+\boldsymbol{j}^{T}\boldsymbol{x}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, the term 
+\begin_inset Formula $\boldsymbol{x}^{T}J\boldsymbol{x}=x_{i}J_{ij}x_{j}$
 \end_inset
 
  takes the role of the coupling 
@@ -373,7 +443,7 @@ name "subsec:ising-ham"
 
 \begin_layout Standard
 To illustrate the main difficulty and how the mean-field approach can solve
- it, I will first discuss the ad-hoc approach that is typically introduced
+ it, we will first discuss the ad-hoc approach that is often introduced
  in undergraduate courses.
  Afterwards, we will see how this relates to the formal approach developed
  above.
@@ -387,16 +457,16 @@ Ad-hoc mean-field theory
 The mean-field approach typically gets introduced in an ad-hoc fashion,
  in the sense that one replaces the value of each spin in the partition
  function by its average 
-\begin_inset Formula $\bar{\bm{x}}$
+\begin_inset Formula $\bar{\boldsymbol{x}}$
 \end_inset
 
  plus a small fluctuation 
-\begin_inset Formula $\delta\bm{x}$
+\begin_inset Formula $\delta\boldsymbol{x}$
 \end_inset
 
 , merely amounting to a shift of integration variables.
  Subsequently, one discards quartic terms in 
-\begin_inset Formula $\delta\bm{x}$
+\begin_inset Formula $\delta\boldsymbol{x}$
 \end_inset
 
 , so that we get
@@ -405,7 +475,7 @@ The mean-field approach typically gets introduced in an ad-hoc fashion,
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\mathcal{Z}(j)=\int_{\bar{\bm{x}}+\delta\bm{x}}e^{-\bar{\bm{x}}^{T}J\bar{\bm{x}}-2\bar{\bm{x}}^{T}J(\bar{\bm{x}}+\delta\bm{x})+\bm{j}^{T}\left(\bar{\bm{x}}+\delta\bm{x}\right)}.
+\mathcal{Z}(j)=\int_{\bar{\boldsymbol{x}}+\delta\boldsymbol{x}}e^{-\bar{\boldsymbol{x}}^{T}J\bar{\boldsymbol{x}}-2\bar{\boldsymbol{x}}^{T}J(\bar{\boldsymbol{x}}+\delta\boldsymbol{x})+\boldsymbol{j}^{T}\left(\bar{\boldsymbol{x}}+\delta\boldsymbol{x}\right)}.
 \]
 
 \end_inset
@@ -418,7 +488,7 @@ This renders the partition function tractable, and we obtain the expectation
  by the self-consistency condition 
 \begin_inset Formula 
 \[
-\bar{\bm{x}}\equiv\langle\bar{\bm{x}}+\delta\bm{x}\rangle_{\delta\bm{x}}=\partial_{\bm{j}}\ln\mathcal{Z}(\bm{j})|_{\bm{j}=0},
+\bar{\boldsymbol{x}}\equiv\langle\bar{\boldsymbol{x}}+\delta\boldsymbol{x}\rangle_{\delta\boldsymbol{x}}=\partial_{\boldsymbol{j}}\ln\mathcal{Z}(\boldsymbol{j})|_{\boldsymbol{j}=0},
 \]
 
 \end_inset
@@ -426,8 +496,8 @@ This renders the partition function tractable, and we obtain the expectation
 yielding
 \begin_inset Formula 
 \begin{align*}
-\bar{\bm{x}} & =\frac{1}{\mathcal{Z}(0)}\int_{\bar{\bm{x}}+\delta\bm{x}}e^{-2\bar{x}J(\bar{\bm{x}}+\delta\bm{x})}\\
- & =\tanh(-2J\bar{\bm{x}}).
+\bar{\boldsymbol{x}} & =\frac{1}{\mathcal{Z}(0)}\int_{\bar{\boldsymbol{x}}+\delta\boldsymbol{x}}e^{-2\bar{x}J(\bar{\boldsymbol{x}}+\delta\boldsymbol{x})}\\
+ & =\tanh(-2J\bar{\boldsymbol{x}}).
 \end{align*}
 
 \end_inset
@@ -437,7 +507,7 @@ yielding
 
 \begin_layout Standard
 This exposes 
-\begin_inset Formula $-2J\bar{\bm{x}}$
+\begin_inset Formula $-2J\bar{\boldsymbol{x}}$
 \end_inset
 
  as an 
@@ -445,7 +515,7 @@ This exposes
 effective mean field
 \series default
  that controls the statistics of 
-\begin_inset Formula $\bar{\bm{x}}+\delta\bm{x}$
+\begin_inset Formula $\bar{\boldsymbol{x}}+\delta\boldsymbol{x}$
 \end_inset
 
 .
@@ -463,24 +533,12 @@ We can also solve the Ising model by the formal technique developed above.
 \end_layout
 
 \begin_layout Standard
-We start again from 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:ising-ham"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-
+We start again from
 \begin_inset Formula 
 \begin{align}
-\mathcal{Z}(\bm{j}) & =\int_{\bm{x}}e^{-\bm{x}^{T}J\bm{x}+\bm{j}^{T}\bm{x}}\nonumber \\
- & \text{\textbf{decouple} via \ensuremath{\bm{y}:=J\bm{x}}}\nonumber \\
- & =\int_{\bm{y}\tilde{\bm{y}}}\:\int_{\bm{x}}e^{-\bm{x}^{T}\bm{y}-i\tilde{\bm{y}}^{T}(\bm{y}-J\bm{x})+\bm{j}^{T}\bm{x}}\nonumber \\
- & \text{\textbf{isolate} \ensuremath{\bm{x}}}\nonumber \\
- & =\int_{\bm{y}\tilde{\bm{y}}}e^{-i\tilde{\bm{y}}^{T}\bm{y}}\:\int_{\bm{x}}e^{-\bm{x}^{T}\bm{y}+i\tilde{\bm{y}}^{T}J\bm{x}+\bm{j}^{T}\bm{x}}.\label{eq:isolated-ising}
+\mathcal{Z}(\boldsymbol{j}) & =\int_{\boldsymbol{x}}e^{-\boldsymbol{x}^{T}J\boldsymbol{x}+\boldsymbol{j}^{T}\boldsymbol{x}}\nonumber \\
+ & =\int_{\boldsymbol{y}\tilde{\boldsymbol{y}}}\:\int_{\boldsymbol{x}}e^{-\boldsymbol{x}^{T}\boldsymbol{y}-i\tilde{\boldsymbol{y}}^{T}(\boldsymbol{y}-J\boldsymbol{x})+\boldsymbol{j}^{T}\boldsymbol{x}}\nonumber \\
+ & =\int_{\boldsymbol{y}\tilde{\boldsymbol{y}}}e^{-i\tilde{\boldsymbol{y}}^{T}\boldsymbol{y}}\:\int_{\boldsymbol{x}}e^{-\boldsymbol{x}^{T}\boldsymbol{y}+i\tilde{\boldsymbol{y}}^{T}J\boldsymbol{x}+\boldsymbol{j}^{T}\boldsymbol{x}}.\label{eq:isolated-ising}
 \end{align}
 
 \end_inset
@@ -489,16 +547,45 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-Unfortunately, we cannot yet decouple the later integrand, as 
-\begin_inset Formula $J\bm{x}=J_{ij}x_{j}$
+Again, we decoupled
+\series bold
+ via 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\boldsymbol{y}:=J\boldsymbol{x}$
 \end_inset
 
- does in general depend on 
-\begin_inset Formula $i$
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\xout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ in line 2.
+ Unfortunately, we cannot yet decouple the later integrand, as 
+\begin_inset Formula $J\boldsymbol{x}=J_{ij}x_{j}$
 \end_inset
 
-.
- To move forward, we have introduce one more feat: 
+ mixes the variables.
+ To move forward, we have introduce one more trick:
 \end_layout
 
 \begin_layout Subsubsection*
@@ -507,9 +594,9 @@ Averaging over the quenched disorder
 
 \begin_layout Standard
 If a problem is too hard, it makes sense to try solving an approximate version
- of this.
- In statistical physics, this usually means putting on coarse goggles, or
- 
+ of it.
+ In statistical physics, this usually means trading exact results for a
+ statistical answer, in other words: 
 \series bold
 ignoring microscopical details of the system
 \series default
@@ -520,7 +607,7 @@ ignoring microscopical details of the system
 
  up to its statistics, and hence are interested in answers 
 \series bold
-on expectation
+in expectation
 \series default
  over them.
  
@@ -546,25 +633,15 @@ an assumption that is backed partially by the central limit theorem and
 \end_layout
 
 \begin_layout Standard
-With this, we get for the 
+With this, we can approach the 
 \begin_inset Formula $J$
 \end_inset
 
--dependent term in 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "eq:isolated-ising"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
- by analytically solving a multivariate Gaussian integral
+-dependent term by analytically solving a multivariate Gaussian integral
 \begin_inset Formula 
 \begin{align*}
- & \langle e^{i\tilde{\bm{y}}^{T}J\bm{x}}\rangle_{J_{ij}\sim\mathcal{N}(0,\sigma^{2}/N)}\\
-= & \langle e^{i\tilde{\bm{y}}^{T}\bm{J}}\rangle_{J_{i}\sim\mathcal{N}(0,x_{i}^{2}\sigma^{2}/N)}\\
+ & \langle e^{i\tilde{\boldsymbol{y}}^{T}J\boldsymbol{x}}\rangle_{J_{ij}\sim\mathcal{N}(0,\sigma^{2}/N)}\\
+= & \langle e^{i\tilde{\boldsymbol{y}}^{T}\boldsymbol{J}}\rangle_{J_{i}\sim\mathcal{N}(0,x_{i}^{2}\sigma^{2}/N)}\\
 = & e^{-\frac{1}{2}\sigma^{2}/Nx_{i}^{2}\tilde{y}_{i}^{2}},
 \end{align*}
 
@@ -572,7 +649,7 @@ noprefix "false"
 
 which is called the 
 \series bold
-Hubbard trick
+Hubbard-Stratonovich trick
 \series default
 .
 \end_layout
@@ -584,9 +661,8 @@ This finally allows us to decouple
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\langle\mathcal{Z}(\bm{j})\rangle_{J} & =\int_{\bm{y}\tilde{\bm{y}}}\,e^{-i\tilde{\bm{y}}^{T}\bm{y}}\:\int_{\bm{x}}e^{-\bm{x}^{T}\bm{y}+i\tilde{\bm{y}}^{T}J\bm{x}+\bm{j^{T}}\bm{x}}\\
- & =\int_{\bm{y}\tilde{\bm{y}}}\,e^{-i\tilde{\bm{y}}^{T}\bm{y}}\:\prod_{i}^{N}\int dx_{i}e^{-x_{i}y_{i}-\tilde{y}_{i}^{2}\sigma^{2}/Nx_{i}^{2}+j_{i}x_{i}}\\
- & \text{identify \ensuremath{Z_{1}}}\\
+\langle\mathcal{Z}(\boldsymbol{j})\rangle_{J} & =\int_{\boldsymbol{y}\tilde{\boldsymbol{y}}}\,e^{-i\tilde{\boldsymbol{y}}^{T}\boldsymbol{y}}\:\int_{\boldsymbol{x}}e^{-\boldsymbol{x}^{T}\boldsymbol{y}+i\tilde{\boldsymbol{y}}^{T}J\boldsymbol{x}+\boldsymbol{j^{T}}\boldsymbol{x}}\\
+ & =\int_{\boldsymbol{y}\tilde{\boldsymbol{y}}}\,e^{-i\tilde{\boldsymbol{y}}^{T}\boldsymbol{y}}\:\prod_{i}^{N}\int dx_{i}e^{-x_{i}y_{i}-\tilde{y}_{i}^{2}\sigma^{2}/Nx_{i}^{2}+j_{i}x_{i}}\\
  & =\int_{y\tilde{y}}\,e^{-Ni\tilde{y}y}\:e^{N\ln Z_{1}(y,\tilde{y})}.
 \end{align*}
 
@@ -596,7 +672,8 @@ This finally allows us to decouple
 \end_layout
 
 \begin_layout Standard
-Finally, we perform the saddle point approximation.
+In the last line, we have again identified the single site partition function.
+ Finally, we perform the saddle point approximation.
  After taking the derivative, we discard the subleading term 
 \begin_inset Formula $\propto\sigma^{2}/N$
 \end_inset
@@ -606,7 +683,7 @@ Finally, we perform the saddle point approximation.
 \begin{align*}
 \tilde{y}^{*} & =\frac{1}{Z_{1}(y^{*},\tilde{y}^{*})}\int_{x}\,-x\,e^{-xy^{*}+jx}=\langle-x\rangle_{S_{1}}\\
 y^{*} & =\frac{1}{Z_{1}(y^{*},\tilde{y}^{*})}\int_{x}\,-2\tilde{y}\sigma^{2}/Nx^{2}\,e^{-xy^{*}+jx}\\
- & =\frac{1}{Z_{1}(y^{*},\tilde{y}^{*})}\int_{x}\,2\langle x\rangle_{S_{1}}\left(J\bm{x}\right)^{2}e^{-xy^{*}+jx}\\
+ & =\frac{1}{Z_{1}(y^{*},\tilde{y}^{*})}\int_{x}\,2\langle x\rangle_{S_{1}}\left(J\boldsymbol{x}\right)^{2}e^{-xy^{*}+jx}\\
  & =2\langle x\rangle_{S_{1}}\sigma^{2}/N\langle x^{2}\rangle_{S_{1}}.
 \end{align*}
 
@@ -617,11 +694,11 @@ y^{*} & =\frac{1}{Z_{1}(y^{*},\tilde{y}^{*})}\int_{x}\,-2\tilde{y}\sigma^{2}/Nx^
 
 \begin_layout Standard
 Recalling the introduction of 
-\begin_inset Formula $\bm{y}$
+\begin_inset Formula $\boldsymbol{y}$
 \end_inset
 
  as 
-\begin_inset Formula $\bm{y}=J\bm{x}$
+\begin_inset Formula $\boldsymbol{y}=J\boldsymbol{x}$
 \end_inset
 
 , we can make sense of this
@@ -649,7 +726,7 @@ y^{*}=\cosh^{-2}(\sigma^{2}y^{*}).
 
 \begin_layout Standard
 \begin_inset Note Note
-status open
+status collapsed
 
 \begin_layout Plain Layout
 Note that 
@@ -742,7 +819,7 @@ When tackling more complicated problems, there are a couple of identities
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,\Sigma)}\coloneqq\frac{1}{\left(2\pi\det\Sigma\right)^{d/2}}\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}\Sigma^{-1}\tilde{y}+iy^{T}\tilde{y}}\equiv e^{-\frac{1}{2}y^{T}\Sigma y}.
+\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,A)}:=\frac{1}{\left(2\pi\det A\right)^{d/2}}\int d\tilde{y}\,e^{-\frac{1}{2}\tilde{y}^{T}A^{-1}\tilde{y}+iy^{T}\tilde{y}}\equiv e^{-\frac{1}{2}y^{T}Ay}.
 \]
 
 \end_inset
@@ -753,7 +830,7 @@ When tackling more complicated problems, there are a couple of identities
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,\,\Sigma)}=e^{-\frac{1}{2}y^{T}\Sigma y}
+\langle e^{iy^{T}\tilde{y}}\rangle_{\tilde{y}\sim\mathcal{N}(0,\,A)}=e^{-\frac{1}{2}y^{T}Ay}
 \]
 
 \end_inset
@@ -762,10 +839,18 @@ When tackling more complicated problems, there are a couple of identities
 \end_layout
 
 \begin_layout Standard
-It is also useful to know that 
+(Note that this can be seen from the general definition of 
+\series bold
+cumulant generating functions
+\series default
+ 
+\begin_inset Formula $W(j)$
+\end_inset
+
+
 \begin_inset Formula 
 \[
-\langle e^{jx}\rangle=Z(j)=e^{W(j)},
+\langle e^{jx}\rangle=Z(j)=:e^{W(j)},
 \]
 
 \end_inset
@@ -775,13 +860,13 @@ It is also useful to know that
 
 \begin_layout Standard
 which for 
-\begin_inset Formula $x$
+\begin_inset Formula $y\sim\mathcal{N}(0,\,A)$
 \end_inset
 
- Gaussian gives
+ precisely gives
 \begin_inset Formula 
 \[
-\langle e^{jx}\rangle=e^{\frac{1}{2}j\Sigma j},
+\langle e^{jx}\rangle=\frac{1}{\sqrt{|2\pi\Sigma|}}\int_{x}e^{-\frac{1}{2}xA^{-1}x}\,e^{jx}=e^{\frac{1}{2}j\Sigma j}.
 \]
 
 \end_inset
@@ -790,16 +875,20 @@ which for
 \end_layout
 
 \begin_layout Standard
-which is just Hubbard-Stratonovich from before!
+Note that this in this case is 
+\series bold
+just the Fourier transform of the Gaussian
+\series default
+, where we know that the variance inverts.
+ 
 \end_layout
 
 \begin_layout Standard
-This can be especially useful to get rid of the inverse 
+This trick can be especially useful to get rid of the inverse 
 \begin_inset Formula $A^{-1}$
 \end_inset
 
  at the cost of introducing an integral.
- Note that this is just the Fourier transform of the input Gaussian.
  To remember the workings of this formula, note that the integrating exchanges
  
 \begin_inset Formula $x$
@@ -810,7 +899,7 @@ This can be especially useful to get rid of the inverse
 \end_inset
 
  in the Gaussian, removes the linearity and inverts the variance.
- 
+ )
 \end_layout
 
 \begin_layout Standard
@@ -822,12 +911,20 @@ As a special case, we can take the denominator to the other side and get
  and get
 \begin_inset Formula 
 \[
-\frac{\left(2\pi\right)^{d}}{\left(2\pi\det A\right)^{d/2}}e^{-\frac{1}{2}y^{T}A^{-1}y}\rightarrow\left(2\pi\right)^{d}\delta(y)=\int d\tilde{y}\,e^{iy^{T}\tilde{y}}.
+\frac{1}{\sqrt{|2\pi A|}}e^{-\frac{1}{2}y^{T}A^{-1}y}\rightarrow\delta(y)=\int d\tilde{y}\,e^{iy^{T}\tilde{y}},
 \]
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+recovering the characterization of the 
+\begin_inset Formula $\delta$
+\end_inset
+
+-function.
 \end_layout
 
 \begin_layout Subsubsection*
@@ -838,8 +935,18 @@ As a special case, we can take the denominator to the other side and get
 \end_layout
 
 \begin_layout Standard
-This presents a more general and powerful technique.
- 
+The Hubbard-Stratonovich transform is useful to decouple quadratically coupled
+ variables, or to trade a matrix inversion for an integral.
+ However, not all interactions 
+\begin_inset Formula $S_{V}(x)=y(x)$
+\end_inset
+
+ can be solved this easily.
+ Using the 
+\begin_inset Formula $\delta$
+\end_inset
+
+-identity, we can still formally decouple the integral:
 \end_layout
 
 \begin_layout Standard
@@ -848,7 +955,7 @@ This presents a more general and powerful technique.
  & \int dx\,e^{S_{0}(x)+y(x)}\\
 = & \int dx\int dy\,e^{S_{0}(x)+y}\,\delta(y-y(x))\\
 = & \int dx\int dy\int d\tilde{y}\,e^{S_{0}(x)+i\tilde{y}(y-y(x))}\\
-= & \int dy\int d\tilde{y}\,e^{i\tilde{y}y}C(\tilde{y})
+= & \int dy\int d\tilde{y}\,e^{i\tilde{y}y}C(\tilde{y}).
 \end{align*}
 
 \end_inset
@@ -858,11 +965,11 @@ This presents a more general and powerful technique.
 
 \begin_layout Standard
 Using this, it is for example possible to derive the Fourier transform of
- a Gaussian, defining a constraint 
+ a Gaussian, using the constraint 
 \begin_inset Formula $y\overset{!}{=}y(x)=A^{-1}x$
 \end_inset
 
-:
+, thus recovering the Hubbard-Stratonovich identity,
 \end_layout
 
 \begin_layout Standard
@@ -889,7 +996,8 @@ where we did a transformation of variables in the last step.
 \end_layout
 
 \begin_layout Standard
-It is interesting to see how these two approaches relate: Any hard 
+Finally, it is interesting to see how these two approaches relate: Any hard
+ 
 \begin_inset Formula $\delta$
 \end_inset
 
@@ -905,9 +1013,9 @@ relaxation
 \begin_inset Formula 
 \begin{align*}
  & \int dx\int dy\,e^{S_{0}(x)+y(x)}\,\delta_{\sigma}(y-y(x))\\
-= & \int dx\int dye^{-\frac{1}{2\sigma^{2}}(y-y(x))^{2}}\\
-\overset{\text{H.S.}}{=} & \int dx\int dy\int d\tilde{y}e^{-\frac{1}{2}\sigma^{2}\tilde{y}^{2}+i\tilde{y}(y-y(x))}\\
-= & \int dy\int d\tilde{y}e^{-\frac{1}{2}\sigma^{2}\tilde{y}^{2}+i\tilde{y}y}\,C(\tilde{y}).
+= & \int dx\int dy\,e^{-\frac{1}{2\sigma^{2}}(y-y(x))^{2}}\\
+\overset{\text{H.S.}}{=} & \int dx\int dy\int d\tilde{y}\,e^{-\frac{1}{2}\sigma^{2}\tilde{y}^{2}+i\tilde{y}(y-y(x))}\\
+= & \int dy\int d\tilde{y}\,e^{-\frac{1}{2}\sigma^{2}\tilde{y}^{2}+i\tilde{y}y}\,C(\tilde{y}).
 \end{align*}
 
 \end_inset
@@ -928,7 +1036,7 @@ The first term becomes approximately constant as we take the limit
 \end_layout
 
 \begin_layout Subsubsection*
-Lagrange multipliers as realizable constraints
+Relation to Lagrange multipliers
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:Lagrange-multipliers-delta-gauss"
@@ -944,17 +1052,17 @@ Suppose we strive to optimize a function
 \end_inset
 
  under a constraint 
-\begin_inset Formula $g(x)=0$
+\begin_inset Formula $y(x)=0$
 \end_inset
 
 .
- The method of Lagrange multipliers prescribes to introduce dummy parameter
- 
+ The method of Lagrange multipliers solves this problem by introducing dummy
+ parameter 
 \begin_inset Formula $\tilde{y}$
 \end_inset
 
 .
- Then, an auxiliary objective is to be minimized
+ Then, an augmented objective is to be minimized
 \begin_inset Formula 
 \[
 \tilde{\mathcal{L}}(x;\tilde{y})=\mathcal{L}(x)+\tilde{y}y(x)
@@ -966,7 +1074,7 @@ Suppose we strive to optimize a function
 \end_layout
 
 \begin_layout Standard
-via requiring 
+by requiring 
 \begin_inset Formula $\partial_{x}\tilde{\mathcal{L}}(x^{\star};\tilde{y}^{\star})=0$
 \end_inset
 
@@ -975,15 +1083,14 @@ via requiring
 \end_inset
 
 .
- Then, the constraint is satisfied by construction.
+ The second condition by construction amounts to fulfilling the constraint.
  There is however a caveat that we will dig into below.
  
 \end_layout
 
 \begin_layout Standard
 How does this relate to our former method? Let us rewrite the objective
- as an integral by superimposing all possible solutions.
- 
+ as an integral by superimposing all possible solutions,
 \begin_inset Formula 
 \[
 \int dx\,e^{-\mathcal{L}(x)}\,\delta(y(x)-0).
@@ -995,21 +1102,21 @@ How does this relate to our former method? Let us rewrite the objective
 \end_layout
 
 \begin_layout Standard
-We would like to find the 
+We can apparently reframe the problem as finding the 
 \begin_inset Formula $x$
 \end_inset
 
  that maximizes the integrand.
- It will become clear in a moment while it is useful to exponentiate the
+ I(It will become clear in a moment while it is useful to exponentiate the
  loss.
- To this end, let's again raise the 
+ )To this end, let's again raise the 
 \begin_inset Formula $\delta$
 \end_inset
 
--constraint via our newly learned trick:
+-constraint,
 \begin_inset Formula 
 \[
-\int dx\int d\tilde{y}\,e^{-\mathcal{L}(x)+i\tilde{y}\left(y(x)-0\right)}\eqqcolon\int dx\int d\tilde{y}\,e^{-\tilde{\mathcal{L}}(x)}
+\int dx\int d\tilde{y}\,e^{-\mathcal{L}(x)+i\tilde{y}\left(y(x)-0\right)}=:\int dx\int d\tilde{y}\,e^{-\tilde{\mathcal{L}}(x)}.
 \]
 
 \end_inset
@@ -1035,8 +1142,8 @@ At this point, we can look for the point that maximizes the integrand.
 This is precisely the prescription of the Lagrange paradigm! The Lagrange
  multiplier can hence be thought of as an auxiliary field in disguise that
  penalizes the objective's values to comply with the constraint.
- Crucially however, we generally have no guarantee that the saddle point
- equations have a solution.
+ Crucially however, we have no guarantee that the saddle point equations
+ have a solution.
 \end_layout
 
 \begin_layout Standard
@@ -1047,7 +1154,7 @@ This perhaps also reveals that an optimization via Lagrange multipliers
 \end_inset
 
 -relaxation, which will ensure that an optimum exists.
- This allows for slightly (
+ This allows for slightly (according to 
 \begin_inset Formula $\sigma$
 \end_inset
 

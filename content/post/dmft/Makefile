@@ -1,9 +1,16 @@
-nb:
-	python clean_post.py index.md
-	jupyter nbconvert Untitled.ipynb --to markdown --NbConvertApp.output_files_dir=.
+# Define the default target
+all: main.md
 
-	# Copy the contents of Untitled.md and append it to index.md:
-	cat Untitled.md | tee -a index.md
+# Target for main.tex from main.lyx
+main.tex: main.lyx
+	lyx -e latex main.lyx
 
-	# Remove the temporary file:
-	rm Untitled.md
+# Target for main.md from main.tex
+main.md: main.tex
+	pandoc --wrap=none -f latex -t markdown -o main.md main.tex
+
+# Clean up generated files
+clean:
+	rm -f main.tex main.md
+
+.PHONY: all clean
