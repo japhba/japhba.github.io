@@ -8,10 +8,10 @@ projects: []
 date: '2022-11-10T22:00:00Z'
 
 # Date updated
-lastmod: '2022-11-10T22:00:00Z'
+lastmod: '2024-02-05T22:00:00Z'
 
 # Is this an unpublished draft?
-draft: true
+draft: false
 
 # Show this page in the Featured widget?
 featured: false

@@ -310,8 +310,8 @@ In any case, this gives a set of
 saddle point equations of the form
 \begin_inset Formula 
 \begin{align*}
-\tilde{y}^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}\frac{1}{2}y^{*}e^{S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x}=\frac{1}{2}y^{*}\langle1\rangle_{S_{1}}=\frac{1}{2}y^{*}.\\
-y^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}xe^{S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x}=\langle x\rangle_{S_{1}},
+\tilde{y}^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}\frac{1}{2}y^{*}e^{S_{0}(x)+\tilde{y}^{*}y^{*}+i\tilde{y}^{*}x}=\frac{1}{2}y^{*}\langle1\rangle_{S_{1}}=\frac{1}{2}y^{*}.\\
+y^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}xe^{S_{0}(x)+\tilde{y}^{*}y^{*}+i\tilde{y}^{*}x}=\langle x\rangle_{S_{1}},
 \end{align*}
 
 \end_inset
@@ -321,7 +321,7 @@ y^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}xe^{S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x
 
 \begin_layout Standard
 where we defined 
-\begin_inset Formula $S_{1}(x;y,\tilde{y})=S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x$
+\begin_inset Formula $S_{1}(x;y,\tilde{y})=S_{0}(x)+\tilde{y}^{*}y^{*}+i\tilde{y}^{*}x$
 \end_inset
 
 .
@@ -354,6 +354,56 @@ mean-field
 
 \begin_layout Paragraph*
 Relation to conditional independence
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename Sketches.png
+	lyxscale 30
+	scale 20
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+
+\series bold
+Illustration of how auxiliary fields can decouple variables.
+ 
+\series default
+Top: 
+\begin_inset Formula $\delta$
+\end_inset
+
+-coupled theory which can be understood through a soft 
+\begin_inset Formula $\delta(y-f(x))\propto e^{\frac{1}{2\epsilon}yf}$
+\end_inset
+
+ revealing the interaction in exponential form.
+ Bottom: coupling through 
+\begin_inset Formula $e^{x^{T}Ax}=e^{y^{T}x}$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -401,13 +451,6 @@ After this brief introduction, let's take a look how we can apply this to
 
 \begin_layout Subsection*
 Example: Ising model
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:ising-ham"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -1037,13 +1080,6 @@ The first term becomes approximately constant as we take the limit
 
 \begin_layout Subsubsection*
 Relation to Lagrange multipliers
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:Lagrange-multipliers-delta-gauss"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Standard
@@ -1149,7 +1185,7 @@ This is precisely the prescription of the Lagrange paradigm! The Lagrange
 \begin_layout Standard
 This perhaps also reveals that an optimization via Lagrange multipliers
  may not have a solution.
- What to do then? We could employ a 
+ What to do then? We could employ a Gaussian 
 \begin_inset Formula $\delta_{\sigma}$
 \end_inset
 
@@ -1159,6 +1195,89 @@ This perhaps also reveals that an optimization via Lagrange multipliers
 \end_inset
 
 ) violating the constraint until a minimum exists.
+ 
+\end_layout
+
+\begin_layout Subsubsection*
+Effective action
+\end_layout
+
+\begin_layout Standard
+Suppose we have an action
+\begin_inset Formula 
+\[
+Z(0)=\int_{x}e^{S(x)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We now assume that it is self-averaging, i.e.
+ it concentrates around its mean 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+.
+ Then, we can rewrite
+\begin_inset Formula 
+\begin{align*}
+Z(0) & \simeq\int_{x}e^{S(x)}\,\delta(x-x^{*})\\
+ & =\int_{x\tilde{x}}e^{S(x)+\tilde{x}(x-x^{*})}\\
+ & =\int_{x\tilde{x}}e^{S(x)+\tilde{x}(x-x^{*})}\\
+\text{sup}_{\tilde{x}}\rightarrow & \simeq e^{-\tilde{x}x^{*}}\int_{x}e^{S(x)+\tilde{x}x}\\
+ & =e^{-\tilde{x}x^{*}}e^{W(\tilde{x})}\\
+ & =e^{-\Gamma(x^{*})}.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where we took the 
+\begin_inset Formula $x$
+\end_inset
+
+-independent 
+\begin_inset Formula $\text{sup}_{\tilde{x}}$
+\end_inset
+
+ using that the integrand concentrates in 
+\begin_inset Formula $x$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+So for self-averaging theories, we can find the likelihood of 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+ if we have access to the Legendre transform 
+\begin_inset Formula $\Gamma(x^{*})=\sup_{\tilde{x}}\tilde{x}x-W(\tilde{x})$
+\end_inset
+
+.If we somehow have access to 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+, this avoids having to evaluate the intractable integral for 
+\begin_inset Formula $Z$
+\end_inset
+
+.
+ It can also be shown more generally (Helias and Dahmen, 2019) that the
+ effective action contains only non-redundant terms.
+ It is possible to get systematic perturbative expansions in 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+, which is necessary for most real cases (Kuehn 2018).
  
 \end_layout
 

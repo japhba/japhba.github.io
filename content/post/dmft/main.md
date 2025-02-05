@@ -37,21 +37,26 @@ So far, all manupulations were exact. Unfortunately, to make progress, we now ha
 Naively, this derives from the intuition that the integrand should be maximal. However, the integral in $\tilde{y}$ is complex, so what is the meaning of the variation with respect to $\tilde{y}$? Looking more closely, this is where the name **stationary phase approximation** becomes more appropriate. Essentially, this picks out the value where the integrand oscillates most slowly, and its values don't average out.
 
 In any case, this gives a set of **saddle point equations of the form $$\begin{aligned}
-\tilde{y}^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}\frac{1}{2}y^{*}e^{S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x}=\frac{1}{2}y^{*}\langle1\rangle_{S_{1}}=\frac{1}{2}y^{*}.\\
-y^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}xe^{S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x}=\langle x\rangle_{S_{1}},
+\tilde{y}^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}\frac{1}{2}y^{*}e^{S_{0}(x)+\tilde{y}^{*}y^{*}+i\tilde{y}^{*}x}=\frac{1}{2}y^{*}\langle1\rangle_{S_{1}}=\frac{1}{2}y^{*}.\\
+y^{*} & =\frac{1}{Z_{1}(y,y^{*})}\int_{x}xe^{S_{0}(x)+\tilde{y}^{*}y^{*}+i\tilde{y}^{*}x}=\langle x\rangle_{S_{1}},
 \end{aligned}$$**
 
-where we defined $S_{1}(x;y,\tilde{y})=S_{0}(x)+y^{*}y^{*}+i\tilde{y}^{*}x$.
+where we defined $S_{1}(x;y,\tilde{y})=S_{0}(x)+\tilde{y}^{*}y^{*}+i\tilde{y}^{*}x$.
 
 Note that curiously, $y^{*}$ is the average value of $x$ under this effective, one-dimensional theory $S_{1}.$This reflects that we have decoupled the variables, so that each variable sees an independent distribution $S_{1}$, summarizing the *mean-field* influence of the others.
 
 #### Relation to conditional independence {#relation-to-conditional-independence .unnumbered}
 
+<figure>
+<img src="Sketches.png" />
+<figcaption><strong>Illustration of how auxiliary fields can decouple variables.</strong> Top: <span class="math inline"><em>δ</em></span>-coupled theory which can be understood through a soft <span class="math inline">$\delta(y-f(x))\propto e^{\frac{1}{2\epsilon}yf}$</span> revealing the interaction in exponential form. Bottom: coupling through <span class="math inline"><em>e</em><sup><em>x</em><sup><em>T</em></sup><em>A</em><em>x</em></sup> = <em>e</em><sup><em>y</em><sup><em>T</em></sup><em>x</em></sup></span>.</figcaption>
+</figure>
+
 One can point out a relationship to conditional independence here: If we consider a probability $p(x_{i},x_{j})\propto\exp(-x_{i}A_{ij}x_{j})$, the variables are said to be statistically dependent, as the distribution does not factorize. In the context of graphical models, such dependence typically comes about from an unobserved latent confounder, coupling the variables. From the transform above, we can identify $\boldsymbol{y}$ as the confounder that couples the variables through $\boldsymbol{\tilde{y}}.$ Conversely, fixing or observing a value of $(\boldsymbol{y},\boldsymbol{\tilde{y}})$ in the integral makes $x_{i}$ and $x_{j}$ conditionally independent, $p(x_{1},x_{2}|\boldsymbol{y},\tilde{\boldsymbol{y}})=p(x_{1}|\boldsymbol{y},\tilde{\boldsymbol{y}})p(x_{2}|\boldsymbol{y},\tilde{\boldsymbol{y}})$.
 
 After this brief introduction, let's take a look how we can apply this to an actual physical problem.
 
-## Example: Ising model[]{#subsec:ising-ham label="subsec:ising-ham"} {#example-ising-model .unnumbered}
+## Example: Ising model {#example-ising-model .unnumbered}
 
 We can apply the developed formalism to the Ising model. It can be described again in terms of a partition function that depends on a parameter $\boldsymbol{j}$, $$\mathcal{Z}(\boldsymbol{j})=\int_{\boldsymbol{x}}e^{-\boldsymbol{x}^{T}J\boldsymbol{x}+\boldsymbol{j}^{T}\boldsymbol{x}}.$$
 
@@ -176,7 +181,7 @@ Finally, it is interesting to see how these two approaches relate: Any hard $\de
 
 The first term becomes approximately constant as we take the limit $\sigma\rightarrow0$, approximating the $\delta$-function.
 
-### Relation to Lagrange multipliers[]{#subsec:Lagrange-multipliers-delta-gauss label="subsec:Lagrange-multipliers-delta-gauss"} {#relation-to-lagrange-multipliers .unnumbered}
+### Relation to Lagrange multipliers {#relation-to-lagrange-multipliers .unnumbered}
 
 Suppose we strive to optimize a function $\mathcal{L}(x)$ under a constraint $y(x)=0$. The method of Lagrange multipliers solves this problem by introducing dummy parameter $\tilde{y}$. Then, an augmented objective is to be minimized $$\tilde{\mathcal{L}}(x;\tilde{y})=\mathcal{L}(x)+\tilde{y}y(x)$$
 
@@ -193,4 +198,21 @@ At this point, we can look for the point that maximizes the integrand. This lead
 
 This is precisely the prescription of the Lagrange paradigm! The Lagrange multiplier can hence be thought of as an auxiliary field in disguise that penalizes the objective's values to comply with the constraint. Crucially however, we have no guarantee that the saddle point equations have a solution.
 
-This perhaps also reveals that an optimization via Lagrange multipliers may not have a solution. What to do then? We could employ a $\delta_{\sigma}$-relaxation, which will ensure that an optimum exists. This allows for slightly (according to $\sigma$) violating the constraint until a minimum exists.
+This perhaps also reveals that an optimization via Lagrange multipliers may not have a solution. What to do then? We could employ a Gaussian $\delta_{\sigma}$-relaxation, which will ensure that an optimum exists. This allows for slightly (according to $\sigma$) violating the constraint until a minimum exists.
+
+### Effective action {#effective-action .unnumbered}
+
+Suppose we have an action $$Z(0)=\int_{x}e^{S(x)}$$
+
+We now assume that it is self-averaging, i.e. it concentrates around its mean $x^{*}$. Then, we can rewrite $$\begin{aligned}
+Z(0) & \simeq\int_{x}e^{S(x)}\,\delta(x-x^{*})\\
+ & =\int_{x\tilde{x}}e^{S(x)+\tilde{x}(x-x^{*})}\\
+ & =\int_{x\tilde{x}}e^{S(x)+\tilde{x}(x-x^{*})}\\
+\text{sup}_{\tilde{x}}\rightarrow & \simeq e^{-\tilde{x}x^{*}}\int_{x}e^{S(x)+\tilde{x}x}\\
+ & =e^{-\tilde{x}x^{*}}e^{W(\tilde{x})}\\
+ & =e^{-\Gamma(x^{*})}.
+\end{aligned}$$
+
+where we took the $x$-independent $\text{sup}_{\tilde{x}}$ using that the integrand concentrates in $x$.
+
+So for self-averaging theories, we can find the likelihood of $x^{*}$ if we have access to the Legendre transform $\Gamma(x^{*})=\sup_{\tilde{x}}\tilde{x}x-W(\tilde{x})$.If we somehow have access to $\Gamma$, this avoids having to evaluate the intractable integral for $Z$. It can also be shown more generally (Helias and Dahmen, 2019) that the effective action contains only non-redundant terms. It is possible to get systematic perturbative expansions in $\Gamma$, which is necessary for most real cases (Kuehn 2018).
