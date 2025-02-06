@@ -1,0 +1,25 @@
+# IDEs
+.idea/
+
+# Hugo
+resources/
+public/
+jsconfig.json
+node_modules/
+go.sum
+.hugo_build.lock
+
+# Mac 
+.DS_Store
+*.lyx#
+*.lyx~
+
+content/post/dmft/_build
+**/.ipynb_checkpoints
+
+# LyX
+*.eps
+*.aux
+*.fls
+*.log
+*.synctex.gz

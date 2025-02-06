@@ -1,0 +1,370 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Section -> #
+\end_layout
+
+\begin_layout Plain Layout
+Subsection -> ## and so on
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Modern cryptography relies on a few core technologies.
+ These go by the names of asymmetric encryption, Diffie-Helman key exchange,
+ or Z-SNARK.
+ When looking up their definition, one is quickly overwhelmed by their technical
+ implementations, which is what makes them work ultimately.
+ Here, I want to give a try for a 
+\begin_inset Quotes eld
+\end_inset
+
+poor man's
+\begin_inset Quotes erd
+\end_inset
+
+ implementation, i.e., a physical principle that accomplishes the idea.
+ 
+\end_layout
+
+\begin_layout Subsection
+Passwords
+\end_layout
+
+\begin_layout Standard
+Say you want to log into a web service.
+ This is typically done via a password.
+ To make sure the server can't store it, your browser just transmits a hash
+ of the password.
+ For numerical passwords, t
+\series bold
+he simplest version of a hash is its checksum
+\series default
+: A 
+\begin_inset Quotes eld
+\end_inset
+
+digested
+\begin_inset Quotes erd
+\end_inset
+
+ variable that results deterministically from the password, without revealing
+ it and bearing less fidelity.
+ More elaborate hashing algorithms then mainly ensure that they are collision-fr
+ee.
+\end_layout
+
+\begin_layout Subsection
+Asymmetric encryption
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename letter_seal.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Diffie-Hellman key exchange with shapes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Asymmetric encryption is another way to accomplish this.
+ The key notion here is 
+\series bold
+signatures
+\series default
+.
+ They work exactly as real-world signatures are supposed to: 
+\series bold
+Only you can create them, but everybody can verify that your signature on
+ a document matches the one on your e.g.
+ ID card.
+ 
+\end_layout
+
+\begin_layout Standard
+In asymmetric encryption, the part of your brain's motor cortex that controls
+ the hand movement necessary to draw your signature becomes your
+\series bold
+ private key
+\series default
+.
+ Obviously, it is private.
+ Your ID card corresponds to the 
+\series bold
+public key
+\series default
+, essentially being publically available information: You would not be at
+ terrible harm if it was displayed on Times Square.
+ Your natural instinct against this idea is due to the brittleness of signatures
+ – somebody might learn to emulate your motor cortex fairly well.
+ 
+\end_layout
+
+\begin_layout Standard
+We can now use this scheme to replace the authentication from before: You
+ share your public key with the web service beforehand, corresponding to
+ it saving your password's hash when you set it initially.
+ This highlights a parallel to the passwords above: Both hash and the public
+ key are information-reduced versions of your password or private key/signature
+ skill: The hash, put most simply, is shorter, while the image of signature
+ is lacking the information on how to draw it.
+ 
+\end_layout
+
+\begin_layout Standard
+Another application of this is 
+\series bold
+the integrity of documents
+\series default
+: Say you make a document containing somebody's grades.
+ You would want to prevent them from tampering with it.
+ While not done anymore for grades, a considerably robust mechanism to ensure
+ integrity is a wax seal: You put the document in an envelope, thereby 
+\begin_inset Quotes eld
+\end_inset
+
+encrypting
+\begin_inset Quotes erd
+\end_inset
+
+ it.
+ Now, you seal it with your personal seal (or just draw your signature over
+ the glued envelope).
+ This will ensure that the encryption was done by you and will expose this
+ to the recipient.
+ They can look your seal or signature up, while being unable to replicate
+ the process.
+ 
+\end_layout
+
+\begin_layout Standard
+What you do digitally is that you write up a Word document and encrypt it
+ with your public key.
+ Because you posted your public key widely available on a place on the web
+ which only you have access to – for example your personal webpage, everybody
+ .
+ It is then impossible to create a fake document, as decryption with your
+ key will yield only gibberish, immediately exposing the fraud.
+ 
+\end_layout
+
+\begin_layout Standard
+Overall, this now provides 
+\series bold
+an extra value on top on the password-hash paradigm
+\series default
+: We can use the hash's equivalent, the public key, to reverse the encryption
+ operation.
+ 
+\end_layout
+
+\begin_layout Subsection
+Exchanging secrets
+\end_layout
+
+\begin_layout Standard
+Another widely used protocol is the exchange of secret keys between two
+ parties.
+ This is for example needed for end-to-end encryption, a standard which
+ is becoming increasingly common in messaging.
+ 
+\end_layout
+
+\begin_layout Standard
+What you could do is meet up with your contacts beforehand and exchange
+ passwords, which they then use on their devices to encrypt the messages.
+ Can we also do it via the messaging service itself? This appears impossible:
+ You don't want the intermediate service provider provider to access the
+ messages, yet, all messages need to pass him.
+ However, the concept of 
+\series bold
+partial information
+\series default
+ comes to a rescue here: In only transmitting a necessary part of their
+ secrets, they can still arrive at a common key.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Diffie-Hellman.pdf
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Diffie-Hellman key exchange with shapes.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Anonymous authenticating
+\end_layout
+
+\begin_layout Standard
+In some cases, you do not need to prove that you are you, but only the weaker
+ property of membership to a larger group.
+ Say for example that you have a subscription to a gym, then the key that
+ you use to open the door does not need to bear your face or: It only needs
+ to open the door, no less, no more.
+ 
+\end_layout
+
+\begin_layout Standard
+However, in practice your key 
+\emph on
+will
+\emph default
+ be identifiable as your key: It will have unique scratches and the like
+ that in principle tie it to your identity.
+ Can we do better digitally? A typical application is citizenship of a country.
+ Let's say your respective country imprints a 10 digit password on your
+ passport, which either directly – or better, in hashed form – can be checked
+ against a database by border officials.
+ The fix for this would be to make the password bipartite: The leading five
+ digits are your own, and the trailing five are shared between all residents.
+ When approaching the border official, you will just present the last five.
+ If it is being hashed, the border officials (for example) still can't impersona
+te a proper citizen, as they only have the hash digest.
+ 
+\end_layout
+
+\begin_layout Standard
+The key idea of Zk-SNARK is to make this protocol more flexible, allowing
+ for arbitrary statements to be proven to a validator.
+ In the passport example, the proof relies on the hashing function being
+ collision-free: It is hard to fake a 5-digit number that will give the
+ valid hash of the country.
+ Furthermore, as soon as one passport is exposed, suddenly everybody can
+ impersonate that country's citizens.
+ 
+\end_layout
+
+\end_body
+\end_document

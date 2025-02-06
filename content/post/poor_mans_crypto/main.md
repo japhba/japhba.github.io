@@ -1,0 +1,30 @@
+Autoregressive models use their output to arrive at predictions. In machine learning, this amounts to "training on the output", i.e., generated data. More broadly, intelligent behavior is often accompanied by deep thought or even dreaming between actions. In both of these cases, the system is decoupled from the ground truth. Despite this apparent conundrum, there seems to be a benefit.
+
+Or is there? [The data processing inequality](https://en.wikipedia.org/wiki/Data_processing_inequality) asserts that no procedure, however deep, can arrive increase information. How can this be reconciled?
+
+## The data-processing inequality
+
+The data-processing inequality posits that for any processing procedure $\hat{X}=f(X)$, the information that the ground truth data $X$ contains about the source $X^{\ast}$ cannot increase, $$\mathbb{I}\left[\hat{X}=f(X);X^{\ast}\right]\leq\mathbb{I}\left[X^{\ast};X\right]\quad\forall\,f.$$
+
+### Bayesian inference
+
+We can now extend this notion towards making $f$ probabilistic: Namely, let's consider a ground truth distribution that we want to model, $Y\sim p^{\ast}$. Ideally, the model $\hat{X}\sim\hat{p}$ should be as close as possible to $p^{\ast}$, that is the "loss" $\mathbb{I}\left[\hat{p};p^{\ast}\right]$ should be minimized. However, there is only a finite amount of samples $X$ from $p^{\ast}$ available to fit $\hat{p}.$ The data processing inequality now boils down to whether we can find a sampling sequence $$X\rightarrow\hat{p}^{(1)}\sim\hat{X}^{(1)}\rightarrow\hat{p}^{(2)}\sim\hat{X}^{(2)}\rightarrow\ldots\rightarrow\hat{p}^{(n)}\sim\hat{X}^{(n)}$$
+
+with the arrows denote ways to translate samples $X$ to (probabilistic) models $\hat{p}$. Is it possible to achieve $\mathbb{I}\left[X;X^{(n)}\right]\geq\mathbb{I}\left[X;X^{(1)}\right]$?
+
+In fact, we can prove that such a procedure can't yield an improvement on average. Suppose we constrain our model class $\hat{p}$ towards a posterior $\hat{p}(x|X)$. Now, if we sample from this model, it turns out that we on average do not gain anything over the previous model by incorporating generated data $\hat{X}$, i.e., $$\langle\hat{p}(x|\hat{X},X)\rangle_{\hat{X}\sim\hat{p}(x|X)}=\hat{p}(x|X).$$
+
+The proof is a straightforward application of Bayes' theorem:
+
+$$\begin{aligned}
+\langle\hat{p}(x|\hat{X}X)\rangle_{\hat{X}\sim\hat{p}(\hat{X}|X)} & =\int_{\hat{X}}\frac{\hat{p}(y,\hat{X}|X)\cancel{\hat{p}(\hat{X}|X)}}{\cancel{\hat{p}(\hat{X}|X)}}\\
+ & =\hat{p}(x|X).
+\end{aligned}$$
+
+## Can we safely stop thinking?
+
+Imagination, hallucination, and dreaming are all autoregressive in this sense: Decoupled from a finite data sample, the brain ponders what it remembers, hopefully arriving at a better model. Even more clearly, closing your eyes and giving things a good thought can definitely improve your actions. So can it really be in vain?
+
+So far, we have adopted a puristic Bayesian inference view. However, in practice information needs not only to be present, but *be made accesible*. In practice, this is key and is the reason why we need brains or computers at all to make sense of the world despite the information processing equality.
+
+The intuitive idea is that sampling from even a premature model will help with exploration: Maybe you'll get an idea that helps you downstream. While easy to write, it is in general very hard to calculate the above posterior $\hat{p}(x|X)$, as it involved to an optimization over an infitely large function space. Bootstrapping the model with its own samples may help: Sampling a premature model $\hat{X}\sim\hat{p}^{(1)}(x|X)$ can for example be seen as introducing noise. This can have similar benefits to stochastic gradient descent, helping exploration towards a better global minimum -- a better world model.
