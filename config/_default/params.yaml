@@ -4,63 +4,55 @@
 # This file is formatted using YAML syntax - learn more at https://learnxinyminutes.com/docs/yaml/
 
 # Appearance
-
 appearance:
-  theme_day: minimal
-  theme_night: minimal
-  font: myfont
-  font_size: m
+  mode: light
+  color: blue
 
 # SEO
-
 marketing:
   seo:
     site_type: Person
     local_business_type: ''
     org_name: ''
-    description: 'A highly-customizable Hugo academic resume theme powered by Hugo Blox Builder.'
+    description: 'The highly-customizable Hugo Academic theme powered by Hugo Blox Builder. Easily create your personal academic website.'
     twitter: 'GetResearchDev'
   analytics:
     google_analytics: 'G-4JLYNF6J9P'
     baidu_tongji: ''
-    google_tag_manager: ''
-    microsoft_clarity: ''
+    plausible: ''
+    fathom: ''
+    pirsch: ''
   verification:
     google: 'qPhFyrT1_vQmEEw1fc_OMhcyGzYua81Yu28gvpbIWt0'
     baidu: ''
 
 # Site header
-
 header:
   navbar:
     enable: true
-    align: l
-    show_logo: true
-    show_language: false
-    show_day_night: false
+    blox: "navbar"
+    fixed_to_top: true
     show_search: false
-    highlight_active_link: true
+    show_theme_chooser: false
+    logo:
+      text: "Jan Bauer"
 
 # Site footer
-
-footer:
-  # copyright:
-  #   notice: '© {year} Jan Bauer. This work is licensed under {license}'
-  #   license:
-  #     enable: true
-  #     allow_derivatives: false
-  #     share_alike: true
-  #     allow_commercial: false
+# footer:
+#   copyright:
+#     notice: '© {year} Me. This work is licensed under {license}'
+#     license:
+#       enable: true
+#       allow_derivatives: false
+#       share_alike: true
+#       allow_commercial: false
 
 # Localization
-
 locale:
   date_format: 'Jan 2, 2006'
   time_format: '3:04 PM'
-  address_format: en-us
 
 # Site features
-
 features:
   syntax_highlighter:
     theme_light: github-light
@@ -69,48 +61,3 @@ features:
     enable: true
   privacy_pack:
     enable: false
-  repository:
-    url: 'https://github.com/japhba/janbauer.github.io'
-    content_dir: content
-    branch: main
-  avatar:
-    gravatar: false
-    shape: circle
-  comment:
-    provider: ''
-    disqus:
-      shortname: ''
-      show_count: true
-    commento:
-      url: ''
-    giscus:
-      repo: ''
-      repo_id: ''
-      category: ''
-      category_id: ''
-  search:
-    provider: wowchemy
-    algolia:
-      app_id: ''
-      api_key: ''
-      index_name: ''
-      show_logo: false
-  map:
-    provider: 'mapnik'
-    api_key: ''
-    zoom: 15
-
-# Extensions
-
-extensions:
-  cms:
-    branch: main
-    local_backend: false
-  academicons:
-    enable: true
-
-# Security
-
-security:
-  # Allow frame for embedding speaker notes in slides
-  allow_frame: true
