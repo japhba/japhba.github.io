@@ -1,0 +1,1997 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\newsavebox{\firstbox}
+\newsavebox{\secondbox}
+\newcommand{\OverlapSymbols}[3]{%
+  \sbox{\firstbox}{$#1$}%
+  \sbox{\secondbox}{$#2$}%
+  \mathord{%
+    \vcenter{%
+      \hbox{%
+        \rlap{\usebox{\firstbox}}%
+        \rlap{\kern#3\wd\firstbox\usebox{\secondbox}}%
+        \hbox to 1.5\wd\firstbox{}%
+      }%
+    }%
+  }%
+}
+
+\DeclareRobustCommand{\doublephi}{\OverlapSymbols{\Phi}{\Phi}{0.3}}
+\DeclareRobustCommand{\doubleH}{\OverlapSymbols{\mathrm{H}}{\mathrm{H}}{0.5}}
+\DeclareRobustCommand{\doubleG}{\OverlapSymbols{\mathrm{G}}{\mathrm{G}}{0.2}}
+\DeclareRobustCommand{\myphixi}{\OverlapSymbols{\Phi}{\Xi}{0.5}}
+
+\usepackage{xcolor}
+
+\usepackage{xcolor}
+\definecolor{tabred}{RGB}{214,39,40}
+\newcommand{\tabred}[1]{\textcolor{tabred}{#1}}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize a3paper
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation landscape
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section*
+Poor man's kernel theory
+\end_layout
+
+\begin_layout Subsection*
+\begin_inset FormulaMacro
+\newcommand{\Pfi}{\doublephi}
+{\Phi}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tPfi}{\tilde{\Pfi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\HH}{\doubleH}
+{H}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\GG}{\doubleG}
+{G}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tHH}{\tilde{\HH}}
+{\tilde{H}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tGG}{\tilde{\GG}}
+{\tilde{G}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\L}{\mathcal{L}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\renewcommand{\O}{\mathcal{O}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\th}{\tilde{h}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tf}{\tilde{f}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\inv}[1]{\frac{1}{{#1}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\N}{\mathcal{N}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\l}{\mathcal{\ell}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\gry}[1]{{\color{gray}#1}}
+{\cancel{#1}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\red}[1]{{\color{red}#1}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\grn}[1]{{\color{red}#1}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\ev}[1]{\langle#1\rangle}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\Ev}[1]{\left\langle #1\right\rangle }
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bh}{\boldsymbol{h}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bg}{\boldsymbol{g}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bphi}{\boldsymbol{\phi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bx}{\boldsymbol{x}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bchi}{\bm{\chi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bxi}{\boldsymbol{\xi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tbxi}{\tilde{\boldsymbol{\xi}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\txi}{\tilde{\xi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tbchi}{\tilde{\boldsymbol{\chi}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tchi}{\tilde{\chi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\lndet}{\ln\det}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dt}{\frac{d}{dt}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tbx}{\tilde{\boldsymbol{x}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tbh}{\tilde{\boldsymbol{h}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dd}[2]{\frac{d#1}{d#2}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tphi}{\tilde{\phi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tbphi}{\tilde{\boldsymbol{\phi}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\NTK}{K^{\text{NTK}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\NTKl}{K^{\text{NTK},\l}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\T}{\intercal}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tr}{\text{tr}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dphi}{\dot{\phi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\phixi}{\myphixi}
+{\phi\!\xi}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tphixi}{\tilde{\phixi}}
+{\tilde{\phi\!\xi}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\sN}{\sqrt{N}}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Symbols test
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\phixi$
+\end_inset
+
+
+\begin_inset Formula $\Pfi$
+\end_inset
+
+
+\begin_inset Formula $\HH$
+\end_inset
+
+
+\begin_inset Formula $\GG$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Interpolator view
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+f(x)=\sum_{\mu}K(x,x^{\mu})\Delta^{\mu}
+\]
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Plain Layout
+How to reconcile this with the GP predictive mean eqn?
+\end_layout
+
+\begin_layout Plain Layout
+It comes from the action in Lauditi25 where
+\begin_inset Formula 
+\[
+-s_{\mu}\hat{s}_{\mu}+\hat{s}_{\mu}\Pfi_{\mu\nu}\hat{s}_{\nu}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+so that a derivative wrt to 
+\begin_inset Formula $\hat{s}_{\mu}$
+\end_inset
+
+ gives, with 
+\begin_inset Formula $\hat{s}_{\mu}=y_{\mu}-s_{\mu}=\Delta_{\mu}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+s_{\mu}=\Pfi_{\mu\nu}\hat{s}_{\nu}=\Pfi_{\mu\nu}\Delta_{\nu}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Note that this is the jointly most likely 
+\begin_inset Formula $\{s_{\mu}\}$
+\end_inset
+
+ given 
+\begin_inset Formula $\{y_{\mu}\}$
+\end_inset
+
+.
+ It is different from asking what is the most likely 
+\begin_inset Formula $s^{*}$
+\end_inset
+
+ given all 
+\begin_inset Formula $\{y_{\mu}\}$
+\end_inset
+
+.
+ 
+\series bold
+Consequently, the formula does not hold for a test point??
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Gradient scales
+\end_layout
+
+\begin_layout Plain Layout
+Consider the standard nets
+\begin_inset Formula 
+\[
+f=vWx\quad,\L=\left(1-f\right)^{2}/2
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Then, 
+\begin_inset Formula 
+\begin{align*}
+\nabla_{v_{i}}\L & =\sum_{j}W_{ij}x_{j}=\O(1)\\
+NTK & =h_{i}h_{i}=\O(N)\\
+|\nabla\L| & =\O(\sN)
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\nabla_{W_{ij}}\L & =v_{i}x_{j}=\O(\frac{1}{\sqrt{N}}\,1)\\
+NTK & =v_{i}v_{i}x_{j}x_{j}=v^{T}v\,x^{T}x=\underbrace{v^{T}v}_{1}\,N\Pfi\\
+\text{BUT!:} & |\nabla\L|=|vx^{T}|=\O(\sqrt{N})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+The BUT is because although entry-wise 
+\begin_inset Formula $\O(1/\sqrt{N})$
+\end_inset
+
+ which would suggest 
+\begin_inset Formula $d|W|=\O(1)$
+\end_inset
+
+, the low-rank nature conjures up and induces 
+\begin_inset Formula $\sN$
+\end_inset
+
+ change.
+ This totals up to 
+\begin_inset Formula $\Delta f\simeq\Delta\L\simeq|\Delta W||\nabla\L|\simeq\underbrace{1}_{dt}|\nabla\L||\nabla\L|=\O(N)$
+\end_inset
+
+.This is consistent with 
+\begin_inset Formula $\NTK=\sum_{ij}\left(\nabla_{W_{ij}}\L\right)^{2}=\sum_{ij}(1/\sN)^{2}=N$
+\end_inset
+
+.To mitigate, we have to 
+\end_layout
+
+\begin_layout Plain Layout
+a) dial-down learning rate s.th.
+\begin_inset Formula 
+\[
+\partial_{t}f=\eta\NTK\Rightarrow\eta=\inv N
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+b)scale down output
+\begin_inset Formula 
+\[
+f=\inv{\sN}\bm{v}\cdot\bphi\rightarrow\inv N\bm{v}\cdot\bphi
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+We can compare the 
+\begin_inset Formula $a$
+\end_inset
+
+ and 
+\begin_inset Formula $b$
+\end_inset
+
+ parametrizations, which give equal updates.
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\begin{array}{cccccc}
+W^{\l}=N^{-a_{l}}\N(N^{-b^{\l}}) & f &  & \nabla_{v_{i}}\L &  & \nabla_{W_{ij}}\L\\
+a=0 & y=v\,Wx &  & Wx\rightarrow N\,1=N\rightarrow|\Delta v|_{*}=N &  & vx^{T}\rightarrow N^{2}\frac{1}{N}=N\rightarrow|\Delta W|_{*}=\sqrt{N}\\
+b=0 & y=\frac{1}{\sN}v\,\frac{1}{\sN}Wx &  & \frac{1}{\sN}Wx\rightarrow N\frac{1}{N}=1 &  & \frac{1}{\sN}v\frac{1}{\sN}x^{T}=N^{2}\frac{1}{N^{2}}=1
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\series bold
+Alignment network
+\series default
+
+\begin_inset Formula 
+\[
+\bm{f}=VW\bm{x},\text{\L}=\bm{f}\bm{f}^{\star}=\O(N),\bm{\Delta}=\bm{f}^{\star}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\nabla_{V_{ki}}\L=\sum_{j}\Delta_{k}W_{ij}x_{j}=\O(1\cdot1)
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\nabla_{W_{ij}}\L=\sum_{k}\Delta_{k}V_{ki}x_{j}=\O(1\cdot1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+So what does it mean, intutively? The standard nets are too sensitive to
+ changes in the readout, as can be seen from the 
+\begin_inset Formula $\nabla_{v_{i}}$
+\end_inset
+
+ gradient.
+ There, changes in 
+\begin_inset Formula $W_{ij}$
+\end_inset
+
+ can only travel through synapse-pathway 
+\begin_inset Formula $v_{i}$
+\end_inset
+
+, which is 
+\begin_inset Formula $\O(1/\sqrt{N})$
+\end_inset
+
+, so the gradient is smaller, as changes in 
+\begin_inset Formula $v_{i}$
+\end_inset
+
+ have direct pathway 
+\begin_inset Formula $1$
+\end_inset
+
+ that does not dilute and are directly 
+\begin_inset Formula $N$
+\end_inset
+
+-proportional to the spectral norm.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Spectral norm
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+W_{ij}\sim\mathcal{N}(0,1/\sqrt{N})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+fulfills 
+\begin_inset Formula 
+\[
+\left\Vert W\right\Vert =1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+as for 
+\begin_inset Formula $||u||=1$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\ev{u^{T}W^{T}Wu}=\ev{u_{j}W_{ji}W_{ij'}u_{j'}}=\ev{u_{j}W_{ji}W_{ij}u_{j}}=N\frac{1}{N}\underbrace{u_{j}u_{j}}_{1}=1.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Formula $\l$
+\end_inset
+
+-backprop
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $h^{\l+1}=W^{\l}h^{\l}$
+\end_inset
+
+ convention
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+h^{L}=W_{i_{L}i_{L-1}}^{L-1}W_{i_{\l}i_{\l-1}}^{\l-1}x_{\l-1}=W^{\l}h_{i_{\l}}^{\l}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\frac{dh^{L}}{d\bh^{\ell}}=W^{1}x=\O(1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+(N_{h},N_{h})\ni\frac{dh^{L}}{dW_{i_{\l+1}i_{\l}}^{\ell}}=g_{i_{\l+1}}h_{i_{\l}}^{T}=W_{i_{\l+1}i_{\l+2}}^{L-1T}\,x_{i_{\l}}^{T}=\O(\inv{\sqrt{N}}\,1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+
+\series bold
+Scaling non-invariance
+\end_layout
+
+\begin_layout Plain Layout
+Two nets
+\begin_inset Formula 
+\[
+f_{1}=\gamma wx=\gamma h_{1}
+\]
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+f_{2}=wx
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+have different grads
+\begin_inset Formula 
+\[
+\frac{df_{1}}{dw}=\gamma x
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\frac{df_{2}}{dw}=x
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+as can be seen from the chain rule
+\begin_inset Formula 
+\[
+\frac{df_{1}}{dw}=\frac{df_{1}}{dh}\frac{dh}{dw}=\gamma\,x
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+so that for 
+\begin_inset Formula $\gamma\neq1$
+\end_inset
+
+ even with matched scale 
+\begin_inset Formula $w_{10}=\frac{w_{20}}{\gamma}$
+\end_inset
+
+ we get different gradients 
+\begin_inset Formula $\gamma x\neq\gamma$
+\end_inset
+
+ and different NTK and different learning speeds
+\begin_inset Formula 
+\[
+\frac{df_{1}}{dt}=\frac{df_{1}}{dw}\frac{df_{1}}{dw}\neq\frac{df_{2}}{dw}\frac{df_{2}}{dw}=\frac{df_{2}}{dt}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+
+\series bold
+Sub-gaussianity
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula $\sum_{i}^{N}w_{i}x=\red{\sqrt{N}}\inv{\sqrt{N}}1=1,$
+\end_inset
+
+bc 
+\begin_inset Formula $\left(Jh\right)^{2}=\sum_{i}\frac{1}{N}11=1$
+\end_inset
+
+, so in the former sum we need to acknowledge that the sum is subgaussian
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+We consider a scalar, one-layer, linear network and two
+\begin_inset Formula $\HH$
+\end_inset
+
+
+\begin_inset Formula $\Pfi$
+\end_inset
+
+inputs 
+\begin_inset Formula $x^{\alpha}$
+\end_inset
+
+, 
+\begin_inset Formula $x^{\beta}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+f_{\alpha}\coloneqq a\phi(wx^{\alpha}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+with MSE loss
+\begin_inset Formula 
+\[
+\mathcal{L}=\frac{1}{2}(y-f)^{2}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+or
+\begin_inset Formula 
+\[
+\mathcal{L}=-yf
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+-yf=ya\phi(wx)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Action
+\begin_inset Formula 
+\[
+p(y,w)\propto\exp\left\{ -\frac{1}{2}(y-f)^{2}+\lambda w^{2}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+where 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ is a L2 penalty on weight magnitude.
+\end_layout
+
+\begin_layout Plain Layout
+Langevin dynamics
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\partial_{t}\Theta(t)=−\gamma\Theta(t)−\nabla_{\Theta}\mathcal{L}(\Theta(t);Y)+\sqrt{2}T\zeta(t)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+At equilibrium (Naveh21)
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\exp\left\{ -\frac{\gamma}{2T}||\Theta||^{2}-\frac{1}{T}\mathcal{L}(\Theta(t);Y)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Output distribution
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+p(y)=\int dw\,p(y,w)=\int dw\,p(y|w)\,p(w).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+Posterior
+\begin_inset Formula 
+\begin{align*}
+p(y|Y) & \propto\int d\Theta\,p(y,Y,\Theta)\\
+ & =\int d\Theta\,\exp\left\{ -\frac{1}{2}(y-a\phi(wx))^{2}-\frac{1}{2}(Y-a\phi(Wx))^{2}+\lambda\Theta^{2}\right\} \\
+ & =\int d\Theta\,\exp\left\{ -\frac{1}{2}y\Pfi^{-1}y\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Misc DMFT intuitions
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\tilde{C} & \rightarrow\text{whatever \ensuremath{\phi\phi} couples to before the constraint}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Stein's Lemma
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\ev{uF(u)} & =\ev{\frac{dF}{du}}\\
+\Rightarrow\ev{\phi r} & =\ev{\frac{d\phi}{dr}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\ev{\bm{u}F(\bm{u})} & =\Sigma\ev{\frac{dF}{d\bm{u}}}\\
+\Rightarrow\ev{\bm{u}\bm{v}}_{\bm{u}\sim\Sigma} & =\Sigma\ev{\frac{d\bm{v}}{d\bm{u}}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Definitions
+\end_layout
+
+\begin_layout Subsection
+Network
+\end_layout
+
+\begin_layout Subsubsection
+DLN
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f=h^{L+1}=W^{L}W^{L-1}\ldots W^{1}\underbrace{W^{0}x}_{\bh^{1}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+DNN
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f=h^{L+1}=W^{L}\phi\circ W^{L-1}\ldots\,\phi\circ W^{1}\,\underbrace{\phi\circ\underbrace{W^{0}x}_{\bh^{1}}}_{\bphi^{1}},
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\bphi^{\l}\coloneqq\bphi(\bh^{\l})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Loss and error
+\begin_inset Formula 
+\[
+\L=\frac{1}{2}\left(y-f\right)^{2}\eqqcolon\frac{1}{2}\bm{\Delta}^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Backprop, gradient fields 
+\begin_inset Formula $\bg$
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\frac{dW^{\l}}{dt} & =-\dd{\L}{W^{\l'}}\\
+ & =\dd f{W^{\l'}}\underbrace{\dd{\L}f}_{\Delta}\\
+ & =\dd{h^{L+1}}{W^{\l}}\dd f{h^{L+1}}\Delta\\
+ & =\dd{\phi^{L}}{W^{\l}}\dd{h^{L+1}}{\phi^{L}}\dd f{h^{L+1}}\Delta\\
+ & =\dd{h^{L}}{W^{\l}}\dd{\phi^{L}}{h^{L}}\dd{h^{L+1}}{\phi^{L}}\dd f{h^{L+1}}\Delta\\
+ & =\dd{h^{L}}{W^{\l}}\underbrace{\dphi(h^{L})W^{L}}_{\dd{h^{L+1}}{h^{L}}\eqqcolon g^{L\T}}\Delta\\
+ & \ldots\\
+ & =\frac{dh^{\l+1}}{dW^{\l}}g^{\l+1\T}\Delta\\
+ & =\bm{\phi}^{\l}\bm{g}^{\l+1\T}\Delta.
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Double-gradient field
+\begin_inset Formula 
+\[
+\bg^{\l L+1}=\dd{h^{L+1}}{h^{\l}}\,\Theta\left[\l\leq L+1\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where the Heaviside-
+\begin_inset Formula $\Theta$
+\end_inset
+
+ function indicates causality and ofc 
+\begin_inset Formula $\bg^{\l\l}=\bm{1}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+Kernels
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\HH^{\l\l'}\coloneqq\frac{1}{N}\bh^{\l}\bh^{\l'},\quad\HH^{\l}\coloneqq\HH^{\l\l},\quad\HH^{\l\l'}\propto\delta_{\l\l'}\text{ at init}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\Pfi^{\l\l'}\coloneqq\frac{1}{N}\bphi(\bh^{\l})\bphi(\bh^{\l'})\quad\Phi^{\l}\coloneqq\Pfi^{\l\l},\quad\Pfi^{\l\l'}\propto\delta_{\l\l'}\text{ at init (for symm. activation)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\GG^{\l\l'}\coloneqq\frac{1}{N}\bg^{\l}\bg^{\l'}\quad\GG^{\l}\coloneqq\GG^{\l\l},\quad\GG^{\l\l'}\propto\delta_{\l\l'}\text{ at init (indepent weight)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\NTK\coloneqq\sum_{\theta}\dd{h^{L+1}}{\theta}\dd{h^{L+1}}{\theta},\quad\NTK^{L,L'}\coloneqq\sum_{\theta}\dd{\bh^{L+1}}{\theta}\dd{\bh^{L'+1}}{\theta}^{T}\in(N_{h},N_{h}).
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In particular we can write
+\begin_inset Formula 
+\[
+\NTK=\NTK^{L+1L+1}=\sum_{\ell<L}\phi_{i_{\l}}^{\l}g_{i_{\l+1}}^{\l+1}\phi_{i_{\l}}^{\l}g_{i_{\l+1}}^{\l+1}=N^{2}\sum_{\l<L}\Pfi^{\l}\GG^{\l+1}
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+\NTK^{L'+1,L+1} & =\sum_{\l'<L}\,\phi_{i_{\l'}}^{\l'}g_{i_{\l'+1}}^{\l'+1,L+1}\,\phi_{i_{\l'}}^{\l'}g_{i_{\l'+1}}^{\l'+1,L'+1}\\
+ & =N^{2}\sum_{\l'=0\ldots L'}\Pfi^{\l'}\GG^{(\l'+1,\l'+1),\,(\l',L+1)}\\
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+s.th.
+\begin_inset Formula 
+\[
+\dd{\bh^{L'+1}}t=\NTK^{L'+1,L+1}\bm{\Delta}^{L+1},
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+i.e.
+ it says how a gradient signal at point 
+\begin_inset Formula $L$
+\end_inset
+
+ induces a change at some other point 
+\begin_inset Formula $L'$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Proof
+\begin_inset Formula 
+\[
+\dd{\bh^{L'}}t=\sum_{\l'}\dd{h^{L'}}{W^{\l'}}\dd{W^{\l'}}t=-\sum_{\l'}\dd{h^{L'}}{W^{\l'}}\dd{\L}{W^{\l'}}=+\sum_{\l'}\dd{h^{L'}}{W^{\l'}}\dd{h^{L}}{W^{\l'}}\underbrace{\dd{\L}f}_{\Delta}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+RNTK
+\end_layout
+
+\begin_layout Standard
+Alemohammad20 is interested in 
+\begin_inset Formula $\dd{h^{L'}}t(\Delta^{L+1})$
+\end_inset
+
+ and thus 
+\begin_inset Formula $\NTK^{(L',L)}\coloneqq\dd{h^{L'}}W\dd{h^{L}}W$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+We can also write FFW nets in that way, because we can always freeze all
+ other params
+\begin_inset Formula 
+\[
+\dd{h^{L}}W=\sum_{\l}\frac{\partial h^{L}}{\partial W^{\l}}=\sum_{\l}\frac{\partial h^{L}}{\partial h^{\l}}\frac{\partial h^{\l}}{\partial W^{\l}}.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+We can also write FFW nets in that way:
+\begin_inset Formula 
+\[
+h^{\l}=W^{\l-1}h^{\l-1}\Rightarrow dh^{\l}=-h^{\l-1}+W^{\l-1}h^{\l-1}\Rightarrow h^{L}=\sum_{\l}-h^{\l}+W^{\l}\phi(h^{\l})\cancel{\Rightarrow}\dd{h^{L}}{W^{\l}}=\phi(h^{\l})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+ODE
+\begin_inset Formula 
+\[
+h^{L'}=\sum_{\l'}\partial_{\l'}h_{\l'}\overset{\text{RHS}}{=}\sum_{\l'}-h_{\l'}+W\phi(h_{\l'})+x_{\l'}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+so that we see that the final state 
+\begin_inset Formula $h^{L'}$
+\end_inset
+
+ is a sum of locals at every point 
+\begin_inset Formula $\l'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dd{h^{\l}}W=\sum_{\l'}\frac{\partial h^{L}}{\partial W^{\l'}}=\sum_{\l'}\frac{\partial h^{L}}{\partial h^{\l'}}\frac{\partial h^{\l'}}{\partial W^{\l'}}=\sum_{\l'}\bh^{\l'}\bg^{\l'+1}
+\]
+
+\end_inset
+
+giving
+\begin_inset Formula 
+\[
+\NTK^{(L',L)}\coloneqq\dd{h^{L'}}W\dd{h^{L}}W=\sum_{\l'}\sum_{\l''}\bh^{\l'}\bg^{\l'+1,L'}\left(\bh^{\l''}\bg^{\l''+1,L}\right)^{T}=\sum_{\l'}\sum_{\l''}\tr\bh^{\l'}\bh^{\l''}\bg^{\l'+1,L'}\bg^{\l''+1,L}=
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where we used
+\begin_inset Formula 
+\[
+\bg^{\l'+1,L'}\bg^{\l''+1,L}\propto\delta_{\l-\l',L-L'}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Thus
+\begin_inset Formula 
+\[
+\NTK^{(L',L)}=\sum_{\l'}^{L'}\sum_{\l}^{L}\Pfi^{\l'\l}\GG^{\l'\l}\equiv\sum_{\l-\l'=L-L'}\Pfi^{\l-\l'}\GG^{\l-\l'}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Deep linear networks
+\end_layout
+
+\begin_layout Paragraph*
+Result
+\begin_inset Formula 
+\begin{align*}
+\Pfi^{\l} & \simeq\langle\phi^{\l}\phi^{\l}\rangle\\
+\tPfi^{\l} & \simeq\langle h^{\l+1}h^{\l+1}\rangle=\inv{\Pfi^{\l}}-\text{corrections}=\inv{\Pfi^{\l}}\quad-\quad\inv{\Pfi^{\l}}\Pfi^{\l+1}\inv{\Pfi^{\l}}\\
+e^{\tPfi^{\l}\Pfi^{\l}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+Super poor man's version
+\end_layout
+
+\begin_layout Standard
+Take the net
+\begin_inset Formula 
+\[
+f=wWx
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now just compute averages
+\begin_inset Formula 
+\begin{align*}
+h & =W^{0}x\\
+h^{1}h^{1} & =\ev{W^{0}\underbrace{xx}_{\HH^{\text{0}}}W^{0}}=\HH^{1}\\
+h^{2}h^{2} & =\ev{W^{2}H^{1}W^{2}}\\
+ & \ldots\\
+ff & =\ev{wh^{L}h^{L}w}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+renewcommand{
+\backslash
+Pfi}{
+\backslash
+HH}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+does it matter whether the SP fields are positive or negative
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Two-replica, single hidden layer
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+f & =w\,Wx=wh
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\text{\L}=\frac{1}{2}(y-f)^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Z(y,x) & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tilde{f}(f-w\bh)+\tilde{\bh}(\bh-W\bx)\right\} \\
+\text{ensemble average} & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tf f+\tbh\bh\right\} \underbrace{\langle\exp-\tf w\bh\rangle_{w}}_{\exp\left(-\frac{g_{w}}{2}\tf hh\tf\right)}\underbrace{\langle\exp-\tilde{\bh}W\bx\rangle_{W}}_{\exp\left(-\frac{g_{W}}{2}\th xx\th\right)}\\
+\text{marginalize aux. neuron fields \ensuremath{\int_{\th}}} & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tf f+\th h-\frac{g_{w}}{2}\tf\bh\bh\tf-\frac{g_{W}}{2}\tbh\bx\bx\tbh\right\} \\
+\text{introduce order kernels, (maybe avoiding some inversion issues of \ensuremath{hh^{T})} } & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tf f+\gry{\th h}-\frac{g_{w}}{2}N\tf\HH^{2}\tf-\gry{\frac{g_{W}}{2}N\th\HH^{1}\th}+\tHH^{2}\left(\HH^{2}-\frac{1}{N}hh\right)+\tHH^{1}\left(\HH^{1}-\frac{1}{N}\bx\mathbf{x}\right)\right\} \\
+\text{marginalize latent neuron fields \int_{h^{\l}} by recognizing \ensuremath{h^{\l}\inv{\Pfi^{1}}h^{\l}\propto\mathcal{N}_{h}[\Pfi^{\l}]} \ensuremath{}} & =\int\exp\left\{ -\frac{1}{2\sigma^{2}}(y-f)^{2}\right\} \\
+ & \phantom{=\int}\times\langle\exp\left\{ +\tHH^{2}\HH^{2}+\tHH^{1}\HH^{1}-\frac{1}{N}\bh\tHH^{2}\bh-\frac{1}{N}\bx\tHH^{1}\bx\right\} \rangle_{\gry{\N_{h}\left[\Pfi^{1}\right]}}\\
+\text{marginalizing out \ensuremath{f} using \ensuremath{y=f+\xi_{\sigma}}\ensuremath{\sim}\N}= & \int\exp\left\{ -y\inv{\Pfi^{L}+\sigma^{2}}y\right\} \\
+ & \phantom{=\int}\times\Ev{\exp\left\{ +\tHH^{2}\HH^{2}+\tHH^{1}\HH^{1}-\frac{1}{N}\bh\tHH^{2}\bh-\frac{1}{N}x\tHH^{1}x\right\} }{}_{\N_{\bh}\left[\Pfi^{1}\right]}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Paragraph
+Gaussian-coupled two-layer network, 
+\begin_inset Formula $\xi\rightarrow0$
+\end_inset
+
+, (scalar fields 
+\begin_inset Formula $y,h,x$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+Z(y,x) & =\int\exp\left\{ -(y-f)^{2}+(f-wh)^{2}+(h-Wx)^{2}\right\} \\
+\ev{yy}_{h}=g_{w}^{2}\ev{hh} & =\int\exp\left\{ -y\inv{g_{w}h^{1}h^{1}}y-h\inv{g_{W}xx}h\right\} \\
+ & =\int\exp\left\{ -y\inv{\HH^{2}}y-h^{1}\inv{\HH^{1}}h^{1}-\left(\HH^{2}-g_{w}h^{1}h^{1}\right)^{2}-\left(\HH^{1}-g_{W}xx\right)^{2}\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+An issue here is that we cannot integrate out the microscopic fields 
+\begin_inset Formula $h^{1}$
+\end_inset
+
+, as they appear quartically (cf.
+ the complex formulation 
+\begin_inset Formula $\tHH(\HH-g_{w}hh)$
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph
+\begin_inset Note Note
+status open
+
+\begin_layout Paragraph
+All 
+\begin_inset Formula $\delta$
+\end_inset
+
+-coupled two-layer network, 
+\begin_inset Formula $\xi\rightarrow0$
+\end_inset
+
+, (scalar fields 
+\begin_inset Formula $y,h,x$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+Z(y,x) & =\int\exp\left\{ -\tilde{y}(y-f)+\tilde{f}(f-wh)+\tilde{h}(h-Wx)\right\} \\
+ & =\int\exp\left\{ \ldots\right\} \exp\left\{ -\cancel{\tilde{y}ff\tilde{y}}bs-\frac{g_{w}}{2}\tf hh\tf-\frac{g_{W}}{2}\tilde{h}xx\tilde{h}\right\} \\
+\text{Gaussian integrals, but mind \ensuremath{\ln\det}!!} & =\int\exp\left\{ y\inv{ff}y-f\inv{hh}f-h\inv{xx}h-\lndet ff-\lndet hh\right\} \\
+\text{decouple, use \ensuremath{\tHH(\HH-hh)} instead of \ensuremath{(\HH-hh)^{2}} for tractability of \ensuremath{\int_{h}}} & =\int\exp\left\{ \ldots\right\} \exp\left\{ y\inv{\HH^{2}}y-f\inv{\HH^{1}}f-h\inv{xx}h-h\tHH h\right\} \\
+\text{get rid of microscopic fields} & =\int\exp\left\{ y\inv{\HH^{2}}y-f\inv{\HH^{1}}f-h\inv{xx}h-\tHH\left(\HH-hh\right)\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Two replica version
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+f & =w\,Wx=wh
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\text{\L}=\frac{1}{2}(y-f)^{2}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Z(y,x) & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tilde{f}(f-w\bh)+\tilde{\bh}(\bh-W\bx)\right\} \\
+\text{ensemble average} & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tf f+\tbh\bh\right\} \underbrace{\langle\exp-\tf w\bh\rangle_{w}}_{\exp\left(-\frac{g_{w}}{2}\tf hh\tf\right)}\underbrace{\langle\exp-\tilde{\bh}W\bx\rangle_{W}}_{\exp\left(-\frac{g_{W}}{2}\th xx\th\right)}\\
+\text{marginalize aux. neuron fields \ensuremath{\int_{\th}}} & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tf f+\th h-\frac{g_{w}}{2}\tf\bh\bh\tf-\frac{g_{W}}{2}\tbh\bx\bx\tbh\right\} \\
+\text{introduce order kernels, (maybe avoiding some inversion issues of \ensuremath{hh^{T})} } & =\int\exp\left\{ -\frac{1}{2}(y-f)^{2}+\tf f+\gry{\th h}-\frac{g_{w}}{2}N\tf\Pfi^{2}\tf-\gry{\frac{g_{W}}{2}N\th\Pfi^{1}\th}+\tPfi^{2}\left(\Pfi^{2}-\frac{1}{N}hh\right)+\tPfi^{1}\left(\Pfi^{1}-\frac{1}{N}\bx\mathbf{x}\right)\right\} \\
+\text{marginalize latent neuron fields \int_{h^{\l}} by recognizing \ensuremath{h^{\l}\inv{\Pfi^{1}}h^{\l}\propto\mathcal{N}_{h}[\Pfi^{\l}]} \ensuremath{}} & =\int\exp\left\{ -\frac{1}{2\sigma^{2}}(y-f)^{2}\right\} \\
+ & \phantom{=\int}\times\langle\exp\left\{ +\tPfi^{2}\Pfi^{2}+\tPfi^{1}\Pfi^{1}-\frac{1}{N}\bh\tPfi^{2}\bh-\frac{1}{N}\bx\tPfi^{1}\bx\right\} \rangle_{\gry{\N_{h}\left[\Pfi^{1}\right]}}\\
+\text{marginalizing out \ensuremath{f} using \ensuremath{y=f+\xi_{\sigma}}\ensuremath{\sim}\N}= & \int\exp\left\{ -y\inv{\Pfi^{L}+\sigma^{2}}y\right\} \\
+ & \phantom{=\int}\times\Ev{\exp\left\{ +\tPfi^{2}\Pfi^{2}+\tPfi^{1}\Pfi^{1}-\frac{1}{N}\bh\tPfi^{2}\bh-\frac{1}{N}x\tPfi^{1}x\right\} }{}_{\N_{\bh}\left[\Pfi^{1}\right]}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Backprop
+\end_layout
+
+\begin_layout Subsection
+Feature learning
+\end_layout
+
+\begin_layout Standard
+Feature learning happens because the loss appears as the 
+\begin_inset Formula $\O(1)$
+\end_inset
+
+ -term 
+\begin_inset Formula $\L$
+\end_inset
+
+, but the other terms see an attenuation of the gradient signal from the
+ output, or equivalently, smaller weight in the joint likelihood.
+\begin_inset Formula 
+\[
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph*
+Result and intuition pump
+\begin_inset Formula 
+\begin{align*}
+\HH^{\l} & \simeq\langle h^{\l}h^{\l}\rangle\\
+\Pfi^{\l} & \simeq\langle\phi^{\l}\phi^{\l}\rangle=\langle\phi^{\l}(h^{\l})\phi^{\l}(h^{\l})\rangle_{h^{\l},h^{\l}\sim\N\left[\HH^{\l}\right]=\N\left[g\Pfi^{\l-1}\right]}\\
+\tPfi^{\l} & \simeq\langle h^{\l+1}h^{\l+1}\rangle=\inv{\Pfi^{\l}}-\text{corrections}=\inv{\Pfi^{\l}}\quad-\quad\inv{\Pfi^{\l}}\Pfi^{\l+1}\inv{\Pfi^{\l}}\\
+e^{\tPfi^{\l}\Pfi^{\l}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Two-layer linear nets, NTK
+\end_layout
+
+\begin_layout Standard
+Domine et al 2024 write down the NTK, which tells which component is responsible
+ for a change in model output.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+y=W^{2}W^{1}x.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\mathsf{NTK}_{oo'}=\underbrace{W^{2}W^{2T}\,x^{T}x}_{\nabla_{W^{1}}=\frac{1}{\sqrt{N}}\frac{1}{\sqrt{N}}\,N1}\quad+\quad\underbrace{W^{1}\underbrace{xx^{T}}_{I}W^{1T}}_{\nabla_{W^{2}}=\frac{1}{\sqrt{N}}N\frac{1}{\sqrt{N}}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Helias&Dahmen19 RNN theory
+\end_layout
+
+\begin_layout Standard
+Helias&Dahmen19, Section X
+\begin_inset Formula 
+\begin{align*}
+Z & =\int\ev{\exp\left\{ \tbh\left(\partial_{t}+1\right)\bh-\tbh J\bh\right\} }_{J}\\
+\text{\ensuremath{i\neq j}decoupled} & =\int\exp\left\{ \tbh\left(\partial_{t}+1\right)\bh-\sum_{ij}\left(\th_{i}h_{j}\right)^{2}g^{2}/N\right\} \\
+ & =\int\exp\left\{ \th_{i}\left(\partial_{t}+1\right)h_{i}-\left(\th_{i}\th_{i}\right)\left(g^{2}/N\underbrace{h_{i'}h_{i'}}_{N\HH}\right)\right\} \\
+ & =\int\exp\left\{ N\tHH H\right\} \exp\left\{ N\underbrace{\left(\th\left(\partial_{t}+1\right)h+\th H\th-h\underbrace{\tHH}_{\rightarrow0}h\right)}_{\eqqcolon S(\th,h)\,\Leftrightarrow\,\left(\partial_{t}+1\right)h=\xi\sim\N(0,H^{*}=\halfnote\halfnote hh)}\right\} .
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Spin on Blake theory but in MH style
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\dt\bm{h}^{\l}=\NTKl\bm{\Delta}=\NTKl(y-f)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Blake DMFT
+\end_layout
+
+\begin_layout Subsubsection
+Warmup L=1
+\begin_inset Formula 
+\begin{align*}
+Z & =\int\exp\left\{ \tbchi W(0)\bphi+\tbxi w^{T}(0)\bg\right\} \\
+\text{no coupling!!} & =\int\exp\left\{ \tbchi\bphi\bphi\tbchi+\tbxi\bg\bg\tbxi\right\} ...\\
+ & =\int\exp\left\{ \tbchi\Pfi\tbchi+\tbxi\underbrace{\GG}_{1}\tbxi\right\} ...\\
+ & =\int\exp\left\{ \tchi\Pfi\tchi+\txi\underbrace{\GG}_{1}\txi\right\} ^{N}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Read off saddle points 
+\begin_inset Formula $\tPfi=0$
+\end_inset
+
+, 
+\begin_inset Formula $\tGG=0$
+\end_inset
+
+ for the vars not of interest, observe scalar MGF 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\xi\xi\sim\Pfi=XX,\quad\chi\chi\sim\GG=1.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+2022/23 derivation (simplified)
+\begin_inset Formula 
+\begin{align*}
+Z= & \int\exp\left\{ \tbchi W(0)\bphi+\tbxi W^{T}(0)\bg\right\} \\
+= & \times\exp\left\{ \tbphi W^{\l}\bphi^{\l}\right\} \\
+ & \times\exp\left\{ gW^{T}\bphi^{\l}\right\} \\
+\ev{}_{W}\rightarrow & \int\exp\left\{ \tbchi\tbchi\bphi\bphi+\tbxi\tbxi\bg\bg+\tbchi\bg\bphi\tbxi\right\} \\
+\text{kernelize}= & \int\exp\left\{ \tbchi\tbchi\Pfi+\tbxi\tbxi\GG+\tbchi\bg\phixi\right\} \\
+\text{observe MGF/recover virtual process}= & \int\ev{\exp\left\{ \tbchi u\right\} }_{u\sim\N(\Pfi)}\ev{\exp\left\{ \tbxi r\right\} }_{r\sim\N(\GG)}\ldots\\
+\text{gather and eliminate init aux \ensuremath{\tbchi,\tbxi}}= & \int\delta(u=\bg\phixi+\chi)\delta(r=\xi+\tphixi\bg)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Blake theory scaling
+\end_layout
+
+\begin_layout Standard
+Blake22,23,25 considers the actual backpropagation, in contrast to Helias24.
+\end_layout
+
+\begin_layout Standard
+Key is the output scaling
+\begin_inset Formula 
+\[
+f=\inv{\gamma\sqrt{N}}\bm{w}\cdot\underbrace{\bphi}_{\O(1)}=\inv{\gamma_{0}N\sqrt{N}}\bm{w}\cdot\bphi=\O(\inv{N\sqrt{N}}\sqrt{N}1)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+which means that the readout is very small at init, 
+\begin_inset Formula $\mathcal{O}(\inv{\sqrt{N}})$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+They let
+\begin_inset Formula 
+\[
+\bg\coloneqq N\gamma\underbrace{\frac{df}{d\bh}}_{\mathcal{O}(\frac{1}{\gamma\sqrt{N}}=\frac{1}{\gamma\sqrt{N}}\text{ due to output scaling})}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We see the learning though with the 
+\begin_inset Formula $\NTK\coloneqq\frac{df}{d\theta}\frac{df}{d\theta}=\sum_{i}\left(\inv{\gamma\sqrt{N}}\phi_{i}\right)^{2}+\ldots$
+\end_inset
+
+ with 
+\begin_inset Formula $\eta=\gamma^{2}=\gamma_{0}^{2}N^{2}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\dt f=\underbrace{\frac{\eta}{\gamma^{2}}}_{1}\underbrace{\NTK}_{\O(1)}\underbrace{\Delta}_{1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula 
+\begin{align*}
+\eta\NTK & =\left(\begin{array}{c}
+\eta\sum_{i}^{N}\left(\inv{\gamma\sqrt{N}}\underbrace{\phi_{i}}_{\O(1)}\right)^{2}=\underbrace{\eta}_{\gamma_{0}^{2}N^{2}}\blue N\O(\inv{\gamma_{0}^{2}N^{3}})=\O(1)\\
+\ldots\text{TODO }\eta\sum_{i}\left(\inv{\gamma\sqrt{N}}\right)^{2}=\eta\O(N\inv{\gamma^{2}N}\inv N)=\O(1)
+\end{array}\right)\\
+\\
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+We note that the 
+\begin_inset Formula $df=1$
+\end_inset
+
+ output scaling could have been maintained with
+\begin_inset Formula 
+\[
+f=\inv{\gamma_{0}\sqrt{N}}\bm{w}\cdot\bphi=1,\quad\eta=1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
