@@ -2372,15 +2372,10 @@ Z= & \int\exp\left\{ -(\by-\bf)^{2}\right\} \delta\left((\partial_{t}+1)\bh-W\bh
 = & \int\exp\Bigl\{-(\by-V\bh)^{2}-i\tbh\left((\partial_{t}+1)\bh-W\bh-U\bx-\bm{\xi}\right)\Bigr\}\\
 \ev{\bf\bf}=\ev{(V\bh+\xi'_{\sigma})(V\bh+\xi''_{\sigma})}_{V,\xi'{}_{\sigma}\xi''_{\sigma}}\propto\ev{ff},\:\ev{}_{\xi}\rightarrow= & \int\exp\Bigl\{-\by\inv{\ggv\bh\bh}\by-i\tbh D_{t}\bh-\tbh W\bh-\tbh U\bx-\tbh\Xi\tbh\Bigr\}\\
 \ev{}_{W},\ev{}_{U}\text{via}\ev{e^{\bm{b}^{T}\bm{z}}}_{z\sim\N(0,\Sigma)}=e^{\nicefrac{1}{2}\bm{b}^{T}\Sigma\bm{b}}\rightarrow= & \int\exp\Bigl\{-\by\inv{\ggv\bh\bh}\by-i\tbh D_{t}\bh-\ggw\underbrace{\tbh\tbh\,\bh\bh}_{\th_{i}\th_{i}h_{j}h_{j}}+\ggu\tbh\tbh\,\bx\bx-\tbh\Xi\tbh\Bigr\}\\
-\tXX\left(\XX-\frac{1}{N}\bx\bx\right),\:\tHH\left(\HH-\frac{1}{N}\bh\bh\right),\:\Xi\propto I= & \int\exp\Bigl\{-\by\inv{\ggv\HH}\by-i\tbh D_{t}\bh-N\ggw\tbh\tbh\,\HH+N\ggu\tbh\tbh\,\XX-\tHH\bh\bh-\tXX\bx\bx-\tbh\tbh\Xi\Bigr\}\\
+\tXX(N\XX-\bx\bx),\:\tHH(N\HH-\bh\bh),\:\Xi\propto I= & \int\exp\Bigl\{-\by\inv{\ggv\HH}\by-i\tbh D_{t}\bh-\ggw\tbh\tbh\,N\HH+\ggu\tbh\tbh\,N\XX-\tHH\bh\bh-\tXX\bx\bx-\tbh\tbh\Xi\Bigr\}\\
 = & \int\exp\Bigl\{-y_{i}\inv{\ggv\HH}y_{i}-\th_{i}D_{t}h_{i}+\th_{i}\th_{i}\left(\ldots\right)+h_{i}h_{i}\left(\ldots\right)+x_{i}x_{i}\Bigr\}\\
-= & \int\exp\Bigl\{-\tHH\HH-\tXX\XX\Bigr\}\\
- & \times\overbrace{\int_{h\th}\exp\Bigl\{ N\bigl[\underbrace{-y\inv{\ggv\HH}y-\th\left(\delt+1\right)h-\ggw\th(\HH+\XX)\th-h\tHH h}_{S_{\eta}}\bigr]\bigr\}}^{N\ln Z_{\eta}[\HH,\tHH,\XX,\tXX]}\\
-= & \int\exp\Bigl\{-Ny\inv{\ggv\HH}y-\th_{i}D_{t}h_{i}+\th_{i}\th_{i}\left(\ldots\right)\Bigr\}\\
-= & \exp\Bigl\{-\tHH\HH-y\inv{\ggv\HH}y-\th\left(\left(\partial_{t}+1\right)h-W\phi(h)+Ux\right)+\tHH hh\Bigr\}\\
-= & \exp\Bigl\{-\tHH\HH-y\inv{\ggv\HH}y-\th\left(\left(\partial_{t}+1\right)h\right)+h\tHH h+\ggw\left(\th_{i}h_{j}\right)^{2}+\ggu\left(\th_{i}x_{j}\right)^{2}\Bigr\}\\
-= & \exp\Bigl\{-\tHH\HH+h\tHH h\\
- & \times\overbrace{\int\exp\Bigl\{ N\bigl[\underbrace{-y\inv{\ggv\HH}y-\th\left(\delt+1\right)h-\ggw\HH\tHH-\ggu\XX\tHH}_{S_{\eta}}\bigr]\bigr\}}^{N\ln Z_{\eta}[\HH,\tHH]}
+= & \int\exp\Bigl\{-\tHH\HH-\tXX\XX-\tXX\bx\bx\Bigr\}\\
+ & \times\overbrace{\int_{h\th}\exp\Bigl\{ N\bigl[\underbrace{-y\inv{\ggv\HH}y-\th\left(\delt+1\right)h-\ggw\th(\HH+\XX+\Xi)\th-h\tHH h}_{S_{\eta}}\bigr]\bigr\}}^{N\ln Z_{\eta}[\HH,\tHH,\XX,\tXX]}
 \end{align*}
 
 \end_inset
@@ -2403,7 +2398,7 @@ Now find a SP of this action wrt
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\overset{\partial_{\tHH}}{\longrightarrow}\:\HH & =\ev{hh\exp\left\{ \ldots+h\tHH h+\ldots\right\} }_{h}\\
+\frac{d}{d\tHH}\overset{}{\longrightarrow}\:\HH & =\ev{hh\,\exp\left\{ \ldots+h\tHH h+\ldots\right\} }_{h}\\
 \text{where }\left(\delt+1\right)h & =\eta,\quad\eta\sim\GP\left(0,\,\ggw\HH+\ggu\XX\right)\eqqcolon\GP_{0}
 \end{align*}
 
