@@ -25,7 +25,11 @@
 \DeclareRobustCommand{\doublephi}{\OverlapSymbols{\Phi}{\Phi}{0.3}}
 \DeclareRobustCommand{\doubleH}{\OverlapSymbols{\mathrm{H}}{\mathrm{H}}{0.5}}
 \DeclareRobustCommand{\doubleG}{\OverlapSymbols{\mathrm{G}}{\mathrm{G}}{0.2}}
+\DeclareRobustCommand{\doubleX}{\OverlapSymbols{\mathrm{X}}{\mathrm{X}}{0.5}}
+
 \DeclareRobustCommand{\myphixi}{\OverlapSymbols{\Phi}{\Xi}{0.5}}
+\DeclareRobustCommand{\doubleY}{\OverlapSymbols{\mathrm{Y}}{\mathrm{Y}}{0.5}}
+
 
 \usepackage{xcolor}
 
@@ -146,12 +150,41 @@ Poor man's kernel theory
 
 
 \begin_inset FormulaMacro
-\newcommand{\L}{\mathcal{L}}
+\newcommand{\XX}{\doubleX}
+{X}
 \end_inset
 
 
 \begin_inset FormulaMacro
-\renewcommand{\O}{\mathcal{O}}
+\newcommand{\tXX}{\tilde{\XX}}
+{\tilde{X}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\YY}{\doubleY}
+{Y}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tYY}{\tilde{\YY}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\pfixi}{\myphixi}
+{\phi\!\xi}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\tpfixi}{\tilde{\phixi}}
+{\tilde{\phi\!\xi}}
+\end_inset
+
+
+\begin_inset Newline newline
 \end_inset
 
 
@@ -171,12 +204,11 @@ Poor man's kernel theory
 
 
 \begin_inset FormulaMacro
-\newcommand{\N}{\mathcal{N}}
+\newcommand{\l}{\mathcal{\ell}}
 \end_inset
 
 
-\begin_inset FormulaMacro
-\newcommand{\l}{\mathcal{\ell}}
+\begin_inset Newline newline
 \end_inset
 
 
@@ -192,7 +224,7 @@ Poor man's kernel theory
 
 
 \begin_inset FormulaMacro
-\newcommand{\grn}[1]{{\color{red}#1}}
+\newcommand{\grn}[1]{{\color{green }#1}}
 \end_inset
 
 
@@ -202,17 +234,17 @@ Poor man's kernel theory
 
 
 \begin_inset FormulaMacro
-\newcommand{\ev}[1]{\langle#1\rangle}
-\end_inset
-
-
-\begin_inset FormulaMacro
-\newcommand{\Ev}[1]{\left\langle #1\right\rangle }
-\end_inset
-
-
-\begin_inset FormulaMacro
 \newcommand{\bh}{\boldsymbol{h}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\bf}{\boldsymbol{f}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\by}{\boldsymbol{y}}
 \end_inset
 
 
@@ -262,27 +294,12 @@ Poor man's kernel theory
 
 
 \begin_inset FormulaMacro
-\newcommand{\lndet}{\ln\det}
-\end_inset
-
-
-\begin_inset FormulaMacro
-\newcommand{\dt}{\frac{d}{dt}}
-\end_inset
-
-
-\begin_inset FormulaMacro
 \newcommand{\tbx}{\tilde{\boldsymbol{x}}}
 \end_inset
 
 
 \begin_inset FormulaMacro
 \newcommand{\tbh}{\tilde{\boldsymbol{h}}}
-\end_inset
-
-
-\begin_inset FormulaMacro
-\newcommand{\dd}[2]{\frac{d#1}{d#2}}
 \end_inset
 
 
@@ -321,20 +338,109 @@ Poor man's kernel theory
 \end_inset
 
 
-\begin_inset FormulaMacro
-\newcommand{\phixi}{\myphixi}
-{\phi\!\xi}
+\begin_inset Newline newline
 \end_inset
 
 
 \begin_inset FormulaMacro
-\newcommand{\tphixi}{\tilde{\phixi}}
-{\tilde{\phi\!\xi}}
+\newcommand{\del}{\partial}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\delt}{\partial_{t}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dt}{\frac{d}{dt}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\dd}[2]{\frac{d#1}{d#2}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\ev}[1]{\langle#1\rangle}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\Ev}[1]{\left\langle #1\right\rangle }
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\lndet}{\ln\det}
 \end_inset
 
 
 \begin_inset FormulaMacro
 \newcommand{\sN}{\sqrt{N}}
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\GP}{\mathcal{GP}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\N}{\mathcal{N}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\L}{\mathcal{L}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\renewcommand{\O}{\mathcal{O}}
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\ggw}{{\scriptstyle g_{w}^{2}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\ggu}{{\scriptstyle g_{u}^{2}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\ggv}{{\scriptstyle g_{v}^{2}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\gw}{{\scriptstyle g_{w}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\gu}{{\scriptstyle g_{u}}}
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\gv}{{\scriptstyle g_{v}}}
+\end_inset
+
+
+\begin_inset Newline newline
 \end_inset
 
 
@@ -358,6 +464,10 @@ Symbols test
 
 
 \begin_inset Formula $\GG$
+\end_inset
+
+
+\begin_inset Formula $\XX$
 \end_inset
 
 
@@ -441,7 +551,23 @@ Note that this is the jointly most likely
 .
  
 \series bold
-Consequently, the formula does not hold for a test point??
+
+\begin_inset Formula 
+\[
+k_{x^{*}x}K_{XX}^{-1}y_{x}=\text{argmax}_{y_{x^{*}}}p(y_{x^{*}}|y_{x})\neq\left[\text{argmax}_{(y_{x^{*}},y_{x})}p(y_{x^{*}},y_{x})\right]|_{y_{x}}=K_{x^{*}x}\Delta_{x}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+So it seems that 
+\begin_inset Formula $x^{*}$
+\end_inset
+
+ needs to be observed!
 \end_layout
 
 \end_inset
@@ -450,6 +576,117 @@ Consequently, the formula does not hold for a test point??
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Different forward laws
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+h^{\l+1}=Wh^{\l}\Rightarrow\exp\left\{ \tilde{h}^{\l+1}\left(h^{\l+1}-Wh^{\l}\right)\right\} \simeq
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\series bold
+Residual net
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+h^{\l+1}=h^{\l}+Wh^{\l} & \Rightarrow\exp\left\{ \tilde{h}\left(h^{\l+1}+h^{\l}-Wh^{\l}\right)\right\} \\
+ & \simeq\exp\left\{ \tilde{h}\left(h^{\l+d\l}+h^{\l}-Wh^{\l}\right)\right\} \\
+\text{proper limit} & \rightarrow\exp\left\{ \tilde{h}\left(\del_{\l}h-Wh^{\l}\right)\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\series bold
+Leak net
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+h^{\l}-h^{\l-d\l}=d\l\left(-h^{\l-d\l}+Wh^{\l-d\l}\right) & \Rightarrow\exp\left\{ \tilde{h}\left(\delt h+h-Wh\right)\right\} \\
+ & =
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Tilting a Gaussian
+\end_layout
+
+\begin_layout Plain Layout
+Consider latent 
+\begin_inset Formula $\th$
+\end_inset
+
+ that has a prior
+\begin_inset Formula 
+\[
+p(\th|y)\propto p(y|\th)p(\th)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\ev{\th\th}_{\text{tilt/post-y}} & \text{\ensuremath{\simeq}}\int\exp\left\{ -\th y+\underbrace{\th\Pfi\text{\th}}_{\N}\right\} \propto_{\th}\int\exp\left\{ (y-\th)^{2}+\underbrace{\th\Pfi\text{\th}}_{\N}\right\} \\
+\text{a)\text{completion of the square, read off post-var}} & =\ldots\\
+\text{b)\text{ Feynman-integrate out \ensuremath{\th}after executing \ensuremath{\int}}} & =-\del_{y}^{2}\int\\
+ & =-\del_{y}^{2}\exp\left\{ y\inv{\Pfi}y\right\} =\del_{y}^{2}Z=\del_{y}^{2}\,\exp W[y]\\
+ & =-\del_{y}\left(y\inv{\Pfi}\exp\left\{ y\inv{\Pfi}y\right\} \right)\\
+ & =\inv{\Pfi}-\inv{\Pfi}yy\inv{\Pfi}\,(|_{y=u=0}\,\text{for no data})
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+So in conclusion the data acts as an external source!
+\end_layout
+
+\end_inset
+
+
 \begin_inset Note Note
 status open
 
@@ -565,8 +802,9 @@ We can compare the
 \[
 \begin{array}{cccccc}
 W^{\l}=N^{-a_{l}}\N(N^{-b^{\l}}) & f &  & \nabla_{v_{i}}\L &  & \nabla_{W_{ij}}\L\\
-a=0 & y=v\,Wx &  & Wx\rightarrow N\,1=N\rightarrow|\Delta v|_{*}=N &  & vx^{T}\rightarrow N^{2}\frac{1}{N}=N\rightarrow|\Delta W|_{*}=\sqrt{N}\\
-b=0 & y=\frac{1}{\sN}v\,\frac{1}{\sN}Wx &  & \frac{1}{\sN}Wx\rightarrow N\frac{1}{N}=1 &  & \frac{1}{\sN}v\frac{1}{\sN}x^{T}=N^{2}\frac{1}{N^{2}}=1
+a=0 & y=v\,Wx &  & Wx\rightarrow N\,1=\grn N\rightarrow|\Delta v|_{*}=\grn{\sqrt{N}} &  & vx^{T}\rightarrow N^{2}\frac{1}{N}=\grn N\rightarrow|\Delta W|_{*}=\grn{\sqrt{N}}\\
+ &  &  & |\Delta f|=|\Delta v|_{*}|h|=\sN\sN=\red N &  & |\Delta h|=|\Delta W|_{*}x=\sqrt{N}|x|=\sN\sN\rightarrow|\Delta h_{i}|=\red{1\ll|\Delta f|}\\
+b=0 & y=\frac{1}{\sN}v\,\frac{1}{\sN}Wx &  & \frac{1}{\sN}Wx\rightarrow N\frac{1}{N}=\grn 1 &  & \frac{1}{\sN}v\frac{1}{\sN}x^{T}=N^{2}\frac{1}{N^{2}}=\grn 1
 \end{array}
 \]
 
@@ -1108,6 +1346,10 @@ Stein's Lemma
 
 \end_layout
 
+\begin_layout Plain Layout
+TODO: How to connect to response functions?
+\end_layout
+
 \end_inset
 
 
@@ -1187,10 +1429,10 @@ Backprop, gradient fields
  & =\dd{h^{L+1}}{W^{\l}}\dd f{h^{L+1}}\Delta\\
  & =\dd{\phi^{L}}{W^{\l}}\dd{h^{L+1}}{\phi^{L}}\dd f{h^{L+1}}\Delta\\
  & =\dd{h^{L}}{W^{\l}}\dd{\phi^{L}}{h^{L}}\dd{h^{L+1}}{\phi^{L}}\dd f{h^{L+1}}\Delta\\
- & =\dd{h^{L}}{W^{\l}}\underbrace{\dphi(h^{L})W^{L}}_{\dd{h^{L+1}}{h^{L}}\eqqcolon g^{L\T}}\Delta\\
+ & =\dd{h^{L}}{W^{\l}}\underbrace{\dphi(h^{L})W^{L}}_{\dd{h^{L+1}}{h^{L}}\eqqcolon g^{L}/\sN}\Delta\\
  & \ldots\\
- & =\frac{dh^{\l+1}}{dW^{\l}}g^{\l+1\T}\Delta\\
- & =\bm{\phi}^{\l}\bm{g}^{\l+1\T}\Delta.
+ & =g^{\l+1}\frac{dh^{\l+1}}{dW^{\l}}^{T}\Delta\\
+ & =\bm{g}^{\l+1}\bm{\phi}^{\l T}\Delta.
 \end{align*}
 
 \end_inset
@@ -1892,6 +2134,35 @@ Z= & \int\exp\left\{ \tbchi W(0)\bphi+\tbxi W^{T}(0)\bg\right\} \\
 
 \end_layout
 
+\begin_layout Subsubsection
+Bayes = dynamics
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+f & =vWx=vh\\
+\partial_{t}h & =dW\,x=vx^{T}x
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+Z & =\exp\left\{ \tilde{h}\left(\partial_{t}h-g\phi^{T}\phi\right)\right\} \\
+ & =\exp\left\{ \tilde{h}\left(\partial_{t}h-vx^{T}x\right)\right\} \\
+ & =\exp\left\{ \tilde{h}\left(\partial_{t}h-v\Pfi+\tPfi\Pfi-\tPfi x^{T}x\right)\right\} \\
+\ev{} & \rightarrow\exp\left\{ \tilde{h}\left(\partial_{t}h-vx^{T}x\right)\right\} \\
+\\
+ & =\exp\left\{ \tilde{h}\left(\partial_{t}h-vx^{T}x\right)\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Blake theory scaling
 \end_layout
@@ -1981,6 +2252,445 @@ We note that the
 \begin_inset Formula 
 \[
 f=\inv{\gamma_{0}\sqrt{N}}\bm{w}\cdot\bphi=1,\quad\eta=1
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Zohar's and MH take on Avidan 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f=a\phi(Wx)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+S= & \tilde{a}\sigma_{a}^{2}\tilde{a}+\tilde{a}\left(\del_{t}a-\nabla_{a}\L\right) & =\tilde{a}\del_{t}a-\tilde{a}\Delta\dd fa\\
++ & \tilde{w}\sigma_{w}^{2}\tilde{w}+\tilde{w}\left(\del_{t}w-\nabla_{w}\L\right) & =\tilde{w}\del_{t}w-\tilde{w}\Delta\dd fw\\
++ & \tilde{f}\left(f-a\phi(Wx)\right)\\
+= & \left[-\tilde{f}\phi+\tilde{w}\Delta\nabla_{W}\L\right]\inv{\Sigma}\left[-\tilde{f}\phi+\tilde{w}\Delta\nabla_{W}\L\right]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $a$
+\end_inset
+
+ is straightforward to integrate
+\end_layout
+
+\begin_layout Standard
+Then gather 
+\begin_inset Formula $\tilde{w}\partial_{t}w+\tilde{w}w$
+\end_inset
+
+, neglect the feature learning signal
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+S_{f}=\tilde{f}f+\tilde{f}\left(L_{a}^{-1}\Pfi+\Sigma L_{w}^{-1}\Pfi'K^{x}\right)\Delta-\tilde{f}\Sigma\Pfi\tilde{f}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Take saddle in 
+\begin_inset Formula $f$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+f=\int\underbrace{\left(\Pfi+\Pfi'K\right)}_{\text{NTK}}\Delta
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Blake RNN theory reconstruction
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\bf(t) & =V\bphi(\bh(t))\\
+\underbrace{(\delt+1)}_{D_{t}}\bh(t) & =W\bphi(h(t))+\bm{I}(t)+\bm{\xi}\\
+\bm{I}(t) & =U\bx(t),\quad\bm{\xi}\sim\N(0,\Xi)\\
+\mathcal{L} & =\frac{1}{2\sigma^{2}}\int_{t}(\by(t)-\bf(t))^{2}\eqqcolon\frac{1}{2}(\by-\bf)^{2}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Linear case
+\end_layout
+
+\begin_layout Standard
+We omit factors 
+\begin_inset Formula $\nicefrac{1}{2}$
+\end_inset
+
+ and contractions for simplicity.
+\begin_inset Formula 
+\begin{align*}
+Z= & \int\exp\left\{ -(\by-\bf)^{2}\right\} \delta\left((\partial_{t}+1)\bh-W\bh-U\bx-\bm{\xi}\right)\\
+= & \int\exp\Bigl\{-(\by-V\bh)^{2}-i\tbh\left((\partial_{t}+1)\bh-W\bh-U\bx-\bm{\xi}\right)\Bigr\}\\
+\ev{\bf\bf}=\ev{(V\bh+\xi'_{\sigma})(V\bh+\xi''_{\sigma})}_{V,\xi'{}_{\sigma}\xi''_{\sigma}}\propto\ev{ff},\:\ev{}_{\xi}\rightarrow= & \int\exp\Bigl\{-\by\inv{\ggv\bh\bh}\by-i\tbh D_{t}\bh-\tbh W\bh-\tbh U\bx-\tbh\Xi\tbh\Bigr\}\\
+\ev{}_{W},\ev{}_{U}\text{via}\ev{e^{\bm{b}^{T}\bm{z}}}_{z\sim\N(0,\Sigma)}=e^{\nicefrac{1}{2}\bm{b}^{T}\Sigma\bm{b}}\rightarrow= & \int\exp\Bigl\{-\by\inv{\ggv\bh\bh}\by-i\tbh D_{t}\bh-\ggw\underbrace{\tbh\tbh\,\bh\bh}_{\th_{i}\th_{i}h_{j}h_{j}}+\ggu\tbh\tbh\,\bx\bx-\tbh\Xi\tbh\Bigr\}\\
+\tXX\left(\XX-\frac{1}{N}\bx\bx\right),\:\tHH\left(\HH-\frac{1}{N}\bh\bh\right),\:\Xi\propto I= & \int\exp\Bigl\{-\by\inv{\ggv\HH}\by-i\tbh D_{t}\bh-N\ggw\tbh\tbh\,\HH+N\ggu\tbh\tbh\,\XX-\tHH\bh\bh-\tXX\bx\bx-\tbh\tbh\Xi\Bigr\}\\
+= & \int\exp\Bigl\{-y_{i}\inv{\ggv\HH}y_{i}-\th_{i}D_{t}h_{i}+\th_{i}\th_{i}\left(\ldots\right)+h_{i}h_{i}\left(\ldots\right)+x_{i}x_{i}\Bigr\}\\
+= & \int\exp\Bigl\{-\tHH\HH-\tXX\XX\Bigr\}\\
+ & \times\overbrace{\int_{h\th}\exp\Bigl\{ N\bigl[\underbrace{-y\inv{\ggv\HH}y-\th\left(\delt+1\right)h-\ggw\th(\HH+\XX)\th-h\tHH h}_{S_{\eta}}\bigr]\bigr\}}^{N\ln Z_{\eta}[\HH,\tHH,\XX,\tXX]}\\
+= & \int\exp\Bigl\{-Ny\inv{\ggv\HH}y-\th_{i}D_{t}h_{i}+\th_{i}\th_{i}\left(\ldots\right)\Bigr\}\\
+= & \exp\Bigl\{-\tHH\HH-y\inv{\ggv\HH}y-\th\left(\left(\partial_{t}+1\right)h-W\phi(h)+Ux\right)+\tHH hh\Bigr\}\\
+= & \exp\Bigl\{-\tHH\HH-y\inv{\ggv\HH}y-\th\left(\left(\partial_{t}+1\right)h\right)+h\tHH h+\ggw\left(\th_{i}h_{j}\right)^{2}+\ggu\left(\th_{i}x_{j}\right)^{2}\Bigr\}\\
+= & \exp\Bigl\{-\tHH\HH+h\tHH h\\
+ & \times\overbrace{\int\exp\Bigl\{ N\bigl[\underbrace{-y\inv{\ggv\HH}y-\th\left(\delt+1\right)h-\ggw\HH\tHH-\ggu\XX\tHH}_{S_{\eta}}\bigr]\bigr\}}^{N\ln Z_{\eta}[\HH,\tHH]}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now find a SP of this action wrt 
+\begin_inset Formula $\HH$
+\end_inset
+
+,
+\begin_inset Formula $\tHH$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\overset{\partial_{\tHH}}{\longrightarrow}\:\HH & =\ev{hh\exp\left\{ \ldots+h\tHH h+\ldots\right\} }_{h}\\
+\text{where }\left(\delt+1\right)h & =\eta,\quad\eta\sim\GP\left(0,\,\ggw\HH+\ggu\XX\right)\eqqcolon\GP_{0}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+But how to get the 
+\begin_inset Formula $\GP$
+\end_inset
+
+ statistics 
+\begin_inset Formula $\ev{\eta\eta}$
+\end_inset
+
+?
+\begin_inset Newline newline
+\end_inset
+
+With MH and 
+\begin_inset Formula $A$
+\end_inset
+
+ being the free theory, we get the action
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+\vec{h}A\vec{h}+\vec{h}\tHH\vec{h}=\vec{h}\left(A+\tHH\right)\vec{h}=\vec{h}\left(\HH+\tHH\right)\vec{h}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+so that we can write because of the inverse-Hessians
+\begin_inset Formula 
+\begin{align*}
+\Gamma^{(2)}=\inv{S^{(2)}}\eqqcolon & \inv{S_{0}^{(2)}}-\Sigma=\inv{\HH+\tHH}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\Gamma^{(2)}=\inv{S^{(2)}}\eqqcolon
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+where 
+\begin_inset Formula $\Sigma=R\tHH R=\frac{\delta h}{\delta\eta}\tHH\frac{\delta h}{\delta\eta}$
+\end_inset
+
+
+\begin_inset Formula 
+\[
+Z=\int\exp\left\{ -y\inv{\HH}y+\th\left((\delt+1)h-\eta\right)-\eta\inv{\HH}\eta+\tHH\left(\HH-hh\right)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+Z=\int\exp\left\{ -y\inv{\HH}y+\th Ah-\th\eta+\eta\inv{\HH}\eta+\tHH\left(\HH-hh\right)\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\overset{\partial_{\HH}}{\longrightarrow}\:\tHH & =\HH^{-1}\YY\HH^{-1}\quad+\quad\ev{\tHH}\\
+ & =\HH^{-1}\YY\HH^{-1}\quad+\quad\inv{\ggw\HH}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection
+Non-linear case
+\begin_inset Formula 
+\begin{align*}
+ & \exp\left\{ -\tPfi\Pfi+\phi(h)\tPfi\phi(h)\right\} \\
+ & \times\overbrace{\int_{h\th}\exp\Bigl\{ N\Bigl[\underbrace{-y\inv{\ggv\Pfi}y+\th\left(\left(\partial_{t}+1\right)h\right)-\tilde{h}\left(\ggw\Pfi+\ggu\XX\right)\tilde{h}}_{S_{\eta}}\Bigr]\Bigr\}}^{\exp\left\{ \ln Z_{\eta}[\Pfi,\tPfi]\right\} }
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+with partition functions (after making explicit the noise 
+\begin_inset Formula $\eta$
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Z_{\eta} & =\int_{h\th\eta}\exp\left\{ \left[\th\left(\left(\partial_{t}+1\right)h-\eta\right)+\phi(h)\tPfi\phi(h)-\eta\inv{\ggw\Pfi+\ggu\XX}\eta\right]\right\} \\
+ & =\int_{\eta}\exp\left\{ \phi(h[\eta])\tPfi\phi(h[\eta])-\eta\inv{\ggw\Pfi+\ggu\XX}\eta\right\} ,\\
+\\
+Z_{\eta0} & =\int_{\eta}\exp\left\{ -\frac{1}{2}\eta\inv{\Pfi+\XX}\eta\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+
+\series bold
+Single site SP
+\begin_inset Formula 
+\[
+\left(\delt+1\right)h=\eta,\quad\eta\sim\N(0,\Pfi)
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\begin{align*}
+Z & =\int_{\th h\eta}\exp\left\{ \th\left(\left(\delt+1\right)h-\eta\right)-\frac{1}{2}\eta\Pfi^{-1}\eta-\frac{1}{2}\lndet2\pi\Pfi\right\} \\
+\text{MGF} & =\int_{\th h}\exp\left\{ \th\left(\delt+1\right)h+\frac{1}{2}\th\Pfi\th\right\} 
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+or
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\[
+Z=\exp W[\tilde{h}]=\exp\left\{ +\frac{1}{2}\tilde{h}\Pfi\tilde{h}\right\} 
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\overset{\partial_{\tPfi}}{\longrightarrow}\:\Pfi & =\ev{\phi(h)\phi(h)\,\exp\left\{ \phi(h)\tPfi\phi(h)\right\} }_{h}\\
+\text{where }\left(\delt+1\right)h & =\eta,\quad\eta\sim\GP\left(0,\,\ggw\Pfi+\ggu\XX\right)\eqqcolon\GP_{0}\\
+\\
+\overset{\partial_{\Pfi}}{\longrightarrow}\:\tPfi & =\del_{\Pfi}\left(y\inv{\Pfi}y\right)-\ev{\th\th}\\
+ & =\Pfi^{-1}yy\Pfi^{-1}-\ev{\th\th}\\
+ & =\Pfi^{-1}yy\Pfi^{-1}-\frac{1}{Z_{\eta}}\frac{\del^{2}}{\del\eta\del\eta^{T}}Z_{\eta}\\
+ & =\Pfi^{-1}yy\Pfi^{-1}-\frac{1}{Z_{\eta}}\ev{\frac{\del^{2}}{\del\eta\del\eta^{T}}\,\exp\left\{ \phi(h[\eta])\tPfi\phi(h[\eta])\right\} }_{\eta\sim\GP_{0}}\\
+\text{linear case }\phi(\circ)=\text{id} & \rightarrow\Pfi^{-1}yy\Pfi^{-1}-\frac{1}{Z_{\eta}}\ev{\frac{\del^{2}}{\del\eta\del\eta^{T}}\,\exp\left\{ h[\eta]\tHH h[\eta]\right\} }_{\eta\sim\GP_{0}}\\
+ & =\HH^{-1}yy\HH^{-1}-\HH^{-1}\HH\HH^{-1}\\
+ & =\HH^{-1}yy\HH^{-1}-\HH^{-1}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\exp\left\{ h[\eta]\tHH h[\eta]\right\}  & =\int_{\th}\exp\left\{ h\th\th h+\th\left((\delt+1)h-\eta\right)-\frac{1}{2}\eta\inv{g_{W}^{2}\HH}\eta\right\} \\
+\\
+\frac{\del^{2}}{\del\eta\del\eta^{T}}\rightarrow & =\int_{\th}\th\th p[S_{0}]
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+I mean this somehow means that 
+\begin_inset Formula $\th\leftrightarrow\eta-\eta_{0}$
+\end_inset
+
+, where 
+\begin_inset Formula $\ev{\eta_{0}\eta_{0}}=\HH$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+so to get the 
+\begin_inset Formula $\eta$
+\end_inset
+
+ stats we can just get 
+\begin_inset Formula $\th$
+\end_inset
+
+ maybe?
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Formula 
+\begin{align*}
+\exp\left\{ h[\eta]\tHH h[\eta]\right\}  & =\int_{\th}\exp\left\{ -y\inv{\HH}y+\tHH\HH+i\,\th Ah-\th\HH\th\right\} \\
+ & =\int_{\th}\exp\left\{ -y\inv{\HH}y+hh\th\th+i\,\th Ah-\th\HH\th\right\} \\
+\frac{\del^{2}}{\del\eta\del\eta^{T}}\rightarrow & =\int_{\th}\th\th p[S_{0}]\\
+ & \th\ev{h\th}\halfnote\ev{\th\th}\ev{\th h}\th
+\end{align*}
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+We know that marginally, the noise is just distirbuted as 
+\begin_inset Formula 
+\[
 \]
 
 \end_inset
