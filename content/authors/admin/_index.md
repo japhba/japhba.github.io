@@ -164,6 +164,4 @@ education:
 
 How do the numerous components of neural circuits reliably implement complex function? 
 
-I am approaching this questions by developing models that capture simple aspects of cognition, but are still easy to understand. I believe that bridging perspectives from both artificial and biological intelligence brings great synergies, as both of these fields fundamentally have the shared goal of understanding neural systems. 
-
-I am approaching this questions by developing models that capture simple aspects of cognition, but are still easy to understand. I believe that bridging perspectives from both artificial and biological intelligence brings great synergies, as both of these fields fundamentally have the shared goal of understanding neural systems. 
+I am approaching this questions by developing models that capture simple aspects of cognition, but are still easy to understand. I believe that bridging perspectives from both artificial and biological intelligence brings great synergies, as both of these fields fundamentally have the shared goal of understanding neural systems.
