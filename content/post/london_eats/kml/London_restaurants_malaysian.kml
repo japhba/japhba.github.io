@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="463">
+        <name>London Restaurants - Malaysian</name>
+        <Placemark id="465">
+            <name>Sambal Shiok</name>
+            <description>171 Holloway Rd, London N7 8LX, UK</description>
+            <Point id="464">
+                <coordinates>-0.1089933,51.5498748,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

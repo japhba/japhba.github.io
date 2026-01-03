@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="5">
+        <name>London Restaurants - Bar</name>
+        <Placemark id="7">
+            <name>Never For Ever</name>
+            <description>79 Highgate Rd, London NW5 1TL, UK</description>
+            <Point id="6">
+                <coordinates>-0.1445231,51.55423529999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="9">
+            <name>Mr Frog</name>
+            <description>58 St Martin's Ln, London WC2N 4EA, UK</description>
+            <Point id="8">
+                <coordinates>-0.126887,51.511,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="11">
+            <name>happiness Forgets</name>
+            <description>8-9 Hoxton Square, London N1 6NU, UK</description>
+            <Point id="10">
+                <coordinates>-0.08177759999999999,51.5278544,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="13">
+            <name>Discount Suit Company</name>
+            <description>29A Wentworth St, London E1 7TB, UK</description>
+            <Point id="12">
+                <coordinates>-0.0754558,51.516763,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="15">
+            <name>Blues Kitchen</name>
+            <description>111-113 Camden High St, London NW1 7JN, UK</description>
+            <Point id="14">
+                <coordinates>-0.1412355,51.5370803,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="17">
+            <name>Trisha's</name>
+            <description>57 Greek St, London W1D 3DX, UK</description>
+            <Point id="16">
+                <coordinates>-0.1313169,51.5144758,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="19">
+            <name>Mercato Mayfair</name>
+            <description>St. Mark's Church, N Audley St, London W1K 6ZA, UK</description>
+            <Point id="18">
+                <coordinates>-0.1528891,51.5131568,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="21">
+            <name>Mercato</name>
+            <description>St. Mark's Church, N Audley St, London W1K 6ZA, UK</description>
+            <Point id="20">
+                <coordinates>-0.1528891,51.5131568,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="23">
+            <name>The Lexington</name>
+            <description>96-98 Pentonville Rd, London N1 9JB, UK</description>
+            <Point id="22">
+                <coordinates>-0.1114164,51.5317299,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="25">
+            <name>The Roebuck</name>
+            <description>50 Great Dover St, London SE1 4YG, UK</description>
+            <Point id="24">
+                <coordinates>-0.09064860000000001,51.4981242,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="27">
+            <name>Bermondsey Art club</name>
+            <description>102a Tower Bridge Rd, London SE1 4TP, UK</description>
+            <Point id="26">
+                <coordinates>-0.0814023,51.4967355,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="29">
+            <name>Opium</name>
+            <description>15-16 Gerrard St, London W1D 6JE, UK</description>
+            <Point id="28">
+                <coordinates>-0.13145,51.5117862,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="31">
+            <name>The shacklewell Arms</name>
+            <description>71 Shacklewell Ln, London E8 2EB, UK</description>
+            <Point id="30">
+                <coordinates>-0.07137099999999999,51.5524017,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="33">
+            <name>Moto</name>
+            <description>7 Maiden Ln, London WC2E 7NA, UK</description>
+            <Point id="32">
+                <coordinates>-0.1227537,51.5107688,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="35">
+            <name>WC Wine &amp; Charcuterie Bloomsbury</name>
+            <description>Former Public Convenience, Guilford Pl, London WC1N 1EA, UK</description>
+            <Point id="34">
+                <coordinates>-0.1194209,51.5234402,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="37">
+            <name>Bar Crispin</name>
+            <description>19 Kingly St, Carnaby, London W1B 5PY, UK</description>
+            <Point id="36">
+                <coordinates>-0.13954,51.5129094,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="39">
+            <name>Bar Termini</name>
+            <description>7 Old Compton St, London W1D 5JE, UK</description>
+            <Point id="38">
+                <coordinates>-0.1298017,51.51367949999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="41">
+            <name>Coupette</name>
+            <description>423 Bethnal Grn Rd, London E2 0AN, UK</description>
+            <Point id="40">
+                <coordinates>-0.05912949999999999,51.5271964,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="43">
+            <name>Cafe Boheme</name>
+            <description>13 Old Compton St, London W1D 5JQ, UK</description>
+            <Point id="42">
+                <coordinates>-0.1306026,51.51333469999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="45">
+            <name>Cafe Oto</name>
+            <description>18-22 Ashwin St, London E8 3DL, UK</description>
+            <Point id="44">
+                <coordinates>-0.0747723,51.54694199999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="47">
+            <name>Mikkeller - Exmouth Market</name>
+            <description>37-39 Exmouth Market, London EC1R 4QL, UK</description>
+            <Point id="46">
+                <coordinates>-0.1091213,51.5259897,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="49">
+            <name>Night Tales Loft</name>
+            <description>207, 1 Westgate St, London E8 3RL, UK</description>
+            <Point id="48">
+                <coordinates>-0.0579347,51.5374407,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="51">
+            <name>Night Tales</name>
+            <description>14 Bohemia Pl, London E8 1DU, UK</description>
+            <Point id="50">
+                <coordinates>-0.0528327,51.5473594,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="53">
+            <name>Hovarda</name>
+            <description>36-40 Rupert St, London W1D 6DW, UK</description>
+            <Point id="52">
+                <coordinates>-0.1327492,51.5113123,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="55">
+            <name>SpiritLand</name>
+            <description>London, UK</description>
+            <Point id="54">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="57">
+            <name>Soma</name>
+            <description>14 Denman St, London W1D 7HJ, UK</description>
+            <Point id="56">
+                <coordinates>-0.1352646,51.5108433,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="59">
+            <name>A bar with shapes for name</name>
+            <description>232 Kingsland Rd, Whitmore Estate, London E2 8AX, UK</description>
+            <Point id="58">
+                <coordinates>-0.0767291,51.5356735,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="61">
+            <name>Dalston Jazz bar</name>
+            <description>4 Bradbury St, London N16 8JN, UK</description>
+            <Point id="60">
+                <coordinates>-0.0760634,51.5486742,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

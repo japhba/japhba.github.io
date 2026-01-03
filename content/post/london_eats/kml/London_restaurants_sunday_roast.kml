@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="161">
+        <name>London Restaurants - Sunday Roast</name>
+        <Placemark id="163">
+            <name>Prince Bonaparte</name>
+            <description>Prince Bonaparte, London W2, UK</description>
+            <Point id="162">
+                <coordinates>-0.1956028,51.5174071,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="165">
+            <name>The Alpaca</name>
+            <description>84-86 Essex Rd, London N1 8LU, UK</description>
+            <Point id="164">
+                <coordinates>-0.0989861,51.5384361,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

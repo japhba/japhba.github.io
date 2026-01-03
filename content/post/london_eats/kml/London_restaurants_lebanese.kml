@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="199">
+        <name>London Restaurants - Lebanese</name>
+        <Placemark id="201">
+            <name>Cafe Helene</name>
+            <description>105A Edgware Rd, Tyburnia, London W2 2HX, UK</description>
+            <Point id="200">
+                <coordinates>-0.1653016,51.5163585,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="203">
+            <name>Al Arez</name>
+            <description>101 Edgware Rd, Tyburnia, London W2 2HX, UK</description>
+            <Point id="202">
+                <coordinates>-0.1649733,51.5162856,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

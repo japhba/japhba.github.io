@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="187">
+        <name>London Restaurants - Shop</name>
+        <Placemark id="189">
+            <name>Fishmonger Bath</name>
+            <description>Bath, UK</description>
+            <Point id="188">
+                <coordinates>-2.3596827,51.3781018,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="191">
+            <name>OAK</name>
+            <description>137 Westbourne Park Rd, London W2 5QL, UK</description>
+            <Point id="190">
+                <coordinates>-0.197652,51.518677,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

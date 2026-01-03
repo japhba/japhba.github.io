@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="513">
+        <name>London Restaurants - Israeli Middle East</name>
+        <Placemark id="515">
+            <name>Barbary</name>
+            <description>16 Neal's Yard, London WC2H 9DP, UK</description>
+            <Point id="514">
+                <coordinates>-0.126181,51.51444009999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="517">
+            <name>Oren</name>
+            <description>89 Shacklewell Ln, London E8 2EB, UK</description>
+            <Point id="516">
+                <coordinates>-0.0706506,51.55263060000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="519">
+            <name>Akub</name>
+            <description>27 Uxbridge St, London W8 7TQ, UK</description>
+            <Point id="518">
+                <coordinates>-0.1983637,51.5084652,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="521">
+            <name>Palomar</name>
+            <description>34 Rupert St, London W1D 6DN, UK</description>
+            <Point id="520">
+                <coordinates>-0.1326885,51.5112365,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="523">
+            <name>Delamina</name>
+            <description>56-58 Marylebone Ln, London W1U 2NX, UK</description>
+            <Point id="522">
+                <coordinates>-0.1500887,51.5163812,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="525">
+            <name>Coal Office</name>
+            <description>2 Bagley Walk, London N1C 4PQ, UK</description>
+            <Point id="524">
+                <coordinates>-0.1262121,51.5348719,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="527">
+            <name>Bubala</name>
+            <description>65 Commercial St, London E1 6BD, UK</description>
+            <Point id="526">
+                <coordinates>-0.0741481,51.517834,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="529">
+            <name>Firebird</name>
+            <description>29 Poland St, London W1F 8QR, UK</description>
+            <Point id="528">
+                <coordinates>-0.1374429,51.51542,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="531">
+            <name>Shawarma Bar</name>
+            <description>46 Exmouth Market, London EC1R 4QE, UK</description>
+            <Point id="530">
+                <coordinates>-0.1087287,51.5260148,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

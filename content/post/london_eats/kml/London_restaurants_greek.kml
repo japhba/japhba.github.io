@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="139">
+        <name>London Restaurants - Greek</name>
+        <Placemark id="141">
+            <name>Zephyr</name>
+            <description>100 Portobello Rd, London W11 2QD, UK</description>
+            <Point id="140">
+                <coordinates>-0.2026129,51.5133132,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="143">
+            <name>Mazi</name>
+            <description>12-14 Hillgate St, London W8 7SR, UK</description>
+            <Point id="142">
+                <coordinates>-0.197692,51.5081577,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="145">
+            <name>Suzi Tros</name>
+            <description>18 Hillgate St, London W8 7SR, UK</description>
+            <Point id="144">
+                <coordinates>-0.1977168,51.5080557,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="147">
+            <name>The life Goddess</name>
+            <description>Carnaby St, Carnaby, London W1B 5PW, UK</description>
+            <Point id="146">
+                <coordinates>-0.139005,51.512666,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="149">
+            <name>Tavernaki Portobello</name>
+            <description>222 Portobello Rd, London W11 1LJ, UK</description>
+            <Point id="148">
+                <coordinates>-0.205762,51.5170273,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="151">
+            <name>Meraki</name>
+            <description>80-82 Great Titchfield St., London W1W 7QT, UK</description>
+            <Point id="150">
+                <coordinates>-0.140573,51.51888100000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

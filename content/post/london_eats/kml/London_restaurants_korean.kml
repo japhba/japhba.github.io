@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="175">
+        <name>London Restaurants - Korean</name>
+        <Placemark id="177">
+            <name>Koba</name>
+            <description>11 Rathbone St, London W1T 1NA, UK</description>
+            <Point id="176">
+                <coordinates>-0.1348223,51.5178685,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="179">
+            <name>Seoul Bakery</name>
+            <description>14 Great Russell St, London WC1B 3NH, UK</description>
+            <Point id="178">
+                <coordinates>-0.1295537,51.5172659,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="181">
+            <name>Kangnam Pocha</name>
+            <description>176 Drury Ln, London WC2B 5QF, UK</description>
+            <Point id="180">
+                <coordinates>-0.1233489,51.5155806,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="183">
+            <name>Yori</name>
+            <description>6 Panton St, London SW1Y 4DL, UK</description>
+            <Point id="182">
+                <coordinates>-0.1318487,51.5093628,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="185">
+            <name>Imone</name>
+            <description>169 High St, New Malden KT3 4BH, UK</description>
+            <Point id="184">
+                <coordinates>-0.2557367,51.3995586,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>
