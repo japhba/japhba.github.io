@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="581">
+        <name>London Restaurants - Jewish Deli</name>
+        <Placemark id="583">
+            <name>Roni's</name>
+            <description>154 Regent's Park Rd, London NW1 8XN, UK</description>
+            <Point id="582">
+                <coordinates>-0.1568431,51.541382,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="585">
+            <name>Reuben's</name>
+            <description>79 Baker St, London W1U 6RG, UK</description>
+            <Point id="584">
+                <coordinates>-0.1566756,51.5198652,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

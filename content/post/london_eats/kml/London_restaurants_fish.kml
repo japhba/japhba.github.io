@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="467">
+        <name>London Restaurants - Fish</name>
+        <Placemark id="469">
+            <name>Parsons</name>
+            <description>London, UK</description>
+            <Point id="468">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="471">
+            <name>Fish!</name>
+            <description>Borough Market, Cathedral St, London SE1 9AL, UK</description>
+            <Point id="470">
+                <coordinates>-0.0901353,51.5058591,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="473">
+            <name>The Mayfair Chippy</name>
+            <description>14 N Audley St, London W1K 6WE, UK</description>
+            <Point id="472">
+                <coordinates>-0.1532625,51.5131708,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="475">
+            <name>Chicama</name>
+            <description>383 King's Rd, London SW10 0LP, UK</description>
+            <Point id="474">
+                <coordinates>-0.1765436,51.4833936,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="153">
+        <name>London Restaurants - Meat</name>
+        <Placemark id="155">
+            <name>Macellaio</name>
+            <description>London, UK</description>
+            <Point id="154">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="157">
+            <name>L'entrecôte</name>
+            <description>London, UK</description>
+            <Point id="156">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="159">
+            <name>hill and szrok</name>
+            <description>60 Broadway Market, London E8 4QJ, UK</description>
+            <Point id="158">
+                <coordinates>-0.06121070000000001,51.5371433,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

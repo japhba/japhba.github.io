@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="507">
+        <name>London Restaurants - Vegetarian</name>
+        <Placemark id="509">
+            <name>Bubala</name>
+            <description>65 Commercial St, London E1 6BD, UK</description>
+            <Point id="508">
+                <coordinates>-0.0741481,51.517834,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="511">
+            <name>Rovi</name>
+            <description>59 Wells Street, Fitzrovia, 59-65 Wells St, London W1A 3AE, UK</description>
+            <Point id="510">
+                <coordinates>-0.1386031,51.5176218,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

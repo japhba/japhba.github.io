@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="109">
+        <name>London Restaurants - Turkish</name>
+        <Placemark id="111">
+            <name>Yeni</name>
+            <description>55 Beak St, Carnaby, London W1F 9SH, UK</description>
+            <Point id="110">
+                <coordinates>-0.1371098,51.5126712,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="113">
+            <name>mangal 2</name>
+            <description>4 Stoke Newington Rd, London N16 7XN, UK</description>
+            <Point id="112">
+                <coordinates>-0.07494529999999999,51.5508057,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="115">
+        <name>London Restaurants - Wine Bar</name>
+        <Placemark id="117">
+            <name>Drop</name>
+            <description>London, UK</description>
+            <Point id="116">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="119">
+            <name>Quality Wine</name>
+            <description>88 Farringdon Rd, London EC1R 3EA, UK</description>
+            <Point id="118">
+                <coordinates>-0.109924,51.5246799,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="121">
+            <name>Cafe Kick</name>
+            <description>43 Exmouth Market, London EC1R 4QL, UK</description>
+            <Point id="120">
+                <coordinates>-0.1090556,51.5260556,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="123">
+            <name>Cafe Boheme</name>
+            <description>13 Old Compton St, London W1D 5JQ, UK</description>
+            <Point id="122">
+                <coordinates>-0.1306026,51.51333469999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="125">
+            <name>St John</name>
+            <description>26 St John St, Barbican, London EC1M 4AY, UK</description>
+            <Point id="124">
+                <coordinates>-0.1014304,51.5204534,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="127">
+            <name>Passione Vino</name>
+            <description>85 Leonard St, London EC2A 4QS, UK</description>
+            <Point id="126">
+                <coordinates>-0.08241409999999999,51.5247492,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="129">
+            <name>The 10 Cases</name>
+            <description>16 Endell St, London WC2H 9BB, UK</description>
+            <Point id="128">
+                <coordinates>-0.1242343,51.5144797,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="131">
+            <name>Gordon's Wine Bar</name>
+            <description>47 Villiers St, London WC2N 6NE, UK</description>
+            <Point id="130">
+                <coordinates>-0.123314,51.50794399999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="133">
+            <name>Dan's</name>
+            <description>2-4 Tottenham Rd, London N1 4BZ, UK</description>
+            <Point id="132">
+                <coordinates>-0.0763589,51.5451914,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="135">
+            <name>Ken's</name>
+            <description>131 Half Moon Ln, London SE24 9JY, UK</description>
+            <Point id="134">
+                <coordinates>-0.0938851,51.4533384,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="137">
+            <name>Oranj</name>
+            <description>Oranj, 14 Bacon St, London E1 6LF, UK</description>
+            <Point id="136">
+                <coordinates>-0.07203609999999999,51.52395569999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

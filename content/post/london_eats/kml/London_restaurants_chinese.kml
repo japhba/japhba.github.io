@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="283">
+        <name>London Restaurants - Chinese</name>
+        <Placemark id="285">
+            <name>Bao</name>
+            <description>London, UK</description>
+            <Point id="284">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="287">
+            <name>Leongs Legend</name>
+            <description>39 Gerrard St, London W1D 5QD, UK</description>
+            <Point id="286">
+                <coordinates>-0.1306659,51.5117992,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="289">
+            <name>Golden Dragon</name>
+            <description>28-29 Gerrard St, London W1D 6JW, UK</description>
+            <Point id="288">
+                <coordinates>-0.131632,51.5114322,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="291">
+            <name>Biang Biang</name>
+            <description>62 Wentworth St, London E1 7AL, UK</description>
+            <Point id="290">
+                <coordinates>-0.0733195,51.5167847,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="293">
+            <name>Fatt Pundit</name>
+            <description>77 Berwick St, London W1F 8TH, UK</description>
+            <Point id="292">
+                <coordinates>-0.1357301,51.5143645,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="295">
+            <name>Hoko</name>
+            <description>224 Brick Ln, London E1 6SA, UK</description>
+            <Point id="294">
+                <coordinates>-0.0714316,51.5246475,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="297">
+            <name>Mr Chow</name>
+            <description>151 Knightsbridge, London SW1X 7PA, UK</description>
+            <Point id="296">
+                <coordinates>-0.1621765,51.5015764,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="299">
+            <name>Dim Sum Duck</name>
+            <description>124 King's Cross Rd, London WC1X 9DS, UK</description>
+            <Point id="298">
+                <coordinates>-0.1163888,51.5302393,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="301">
+            <name>Barshu Restaurant</name>
+            <description>28 Frith St, London W1D 5LF, UK</description>
+            <Point id="300">
+                <coordinates>-0.1308,51.51283890000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="303">
+            <name>Yeye Noodles &amp; Dumpling</name>
+            <description>14 Artillery Psge, London E1 7LJ, UK</description>
+            <Point id="302">
+                <coordinates>-0.07754699999999999,51.5181674,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="339">
+        <name>London Restaurants - Brunch</name>
+        <Placemark id="341">
+            <name>La Fromagerie</name>
+            <description>2-6 Moxon St, London W1U 4EW, UK</description>
+            <Point id="340">
+                <coordinates>-0.1523168,51.51988249999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="343">
+            <name>Golborne Deli &amp; Wine Store</name>
+            <description>100-102 Golborne Rd, London W10 5PS, UK</description>
+            <Point id="342">
+                <coordinates>-0.2093394,51.5215122,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="345">
+            <name>Crispin</name>
+            <description>Pavilion on The Corner, White's Row, London E1 7NF, UK</description>
+            <Point id="344">
+                <coordinates>-0.0760406,51.5183098,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="347">
+            <name>Natoora Counter</name>
+            <description>35 Turnham Green Terrace, Chiswick, London W4 1RG, UK</description>
+            <Point id="346">
+                <coordinates>-0.2554192,51.4936689,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="349">
+            <name>Gold</name>
+            <description>95-97 Portobello Rd, London W11 2QB, UK</description>
+            <Point id="348">
+                <coordinates>-0.2026369,51.5129763,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="351">
+            <name>Coal Office</name>
+            <description>2 Bagley Walk, London N1C 4PQ, UK</description>
+            <Point id="350">
+                <coordinates>-0.1262121,51.5348719,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="353">
+            <name>Beam</name>
+            <description>103 Westbourne Grove, London W2 4UW, UK</description>
+            <Point id="352">
+                <coordinates>-0.1933383,51.5151426,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="355">
+            <name>Caravane</name>
+            <description>London, UK</description>
+            <Point id="354">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="357">
+            <name>mallow</name>
+            <description>1 Cathedral St, London SE1 9DE, UK</description>
+            <Point id="356">
+                <coordinates>-0.0904033,51.5062513,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="359">
+            <name>Terry's Cafe</name>
+            <description>158 Great Suffolk St, London SE1 1PE, UK</description>
+            <Point id="358">
+                <coordinates>-0.09842709999999999,51.5006659,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="361">
+            <name>Cafe Boheme</name>
+            <description>13 Old Compton St, London W1D 5JQ, UK</description>
+            <Point id="360">
+                <coordinates>-0.1306026,51.51333469999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="363">
+            <name>Ergon</name>
+            <description>15 Maddox St, London W1S 2QG, UK</description>
+            <Point id="362">
+                <coordinates>-0.1417145,51.5132274,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

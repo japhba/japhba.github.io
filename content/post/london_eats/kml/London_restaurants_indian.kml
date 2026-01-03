@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="89">
+        <name>London Restaurants - Indian</name>
+        <Placemark id="91">
+            <name>Dishoom</name>
+            <description>London, UK</description>
+            <Point id="90">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="93">
+            <name>Cinnamon Bazaar</name>
+            <description>28 Maiden Ln, London WC2E 7JS, UK</description>
+            <Point id="92">
+                <coordinates>-0.123701,51.5106194,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="95">
+            <name>The Tiffin Tin</name>
+            <description>London, UK</description>
+            <Point id="94">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="97">
+            <name>The Tamil Prince</name>
+            <description>115 Hemingford Rd, London N1 1BZ, UK</description>
+            <Point id="96">
+                <coordinates>-0.1137141,51.5409321,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="99">
+            <name>Shankeys</name>
+            <description>221 Well St, London E9 6RG, UK</description>
+            <Point id="98">
+                <coordinates>-0.0473017,51.5439458,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="101">
+            <name>Trishna</name>
+            <description>15-17 Blandford St, London W1U 3DG, UK</description>
+            <Point id="100">
+                <coordinates>-0.1530744,51.5182976,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="103">
+            <name>Tandoor Chop House</name>
+            <description>8 Adelaide St, London WC2N 4HZ, UK</description>
+            <Point id="102">
+                <coordinates>-0.1257249,51.5091812,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="105">
+            <name>Fatt Pundit</name>
+            <description>77 Berwick St, London W1F 8TH, UK</description>
+            <Point id="104">
+                <coordinates>-0.1357301,51.5143645,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="107">
+            <name>Gunpowder</name>
+            <description>11 White's Row, London E1 7NF, UK</description>
+            <Point id="106">
+                <coordinates>-0.07478,51.51828039999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

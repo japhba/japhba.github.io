@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="415">
+        <name>London Restaurants - Italian</name>
+        <Placemark id="417">
+            <name>Trullo</name>
+            <description>300-302 St Paul's Rd, London N1 2LH, UK</description>
+            <Point id="416">
+                <coordinates>-0.1015699,51.54626500000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="419">
+            <name>Brutto</name>
+            <description>35-37 Greenhill Rents, London EC1M 6BN, UK</description>
+            <Point id="418">
+                <coordinates>-0.102394,51.5198142,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="421">
+            <name>Noci</name>
+            <description>4-6, 4-6 Islington Grn, London N1 2XA, UK</description>
+            <Point id="420">
+                <coordinates>-0.1029758,51.5366721,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="423">
+            <name>Padella</name>
+            <description>Padella, Borough Market, 6 Southwark St, London SE1 1TQ, UK</description>
+            <Point id="422">
+                <coordinates>-0.08992019999999999,51.5051655,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="425">
+            <name>Cecconi's Pizza Bar</name>
+            <description>19-21 Old Compton St, London W1D 5JJ, UK</description>
+            <Point id="424">
+                <coordinates>-0.1307629,51.5133202,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="427">
+            <name>Cecconi's</name>
+            <description>27 Poultry, London EC2R 8AJ, UK</description>
+            <Point id="426">
+                <coordinates>-0.0901371,51.51369709999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="429">
+            <name>Manteca</name>
+            <description>49-51 Curtain Rd, London EC2A 3PT, UK</description>
+            <Point id="428">
+                <coordinates>-0.0805608,51.5240111,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="431">
+            <name>Café Murano</name>
+            <description>London, UK</description>
+            <Point id="430">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="433">
+            <name>Osteria Romana</name>
+            <description>3-4 Park Cl, London SW1X 7PQ, UK</description>
+            <Point id="432">
+                <coordinates>-0.1629449,51.502023,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="435">
+            <name>Locanda Del Melo</name>
+            <description>218 Long Ln, London SE1 4QB, UK</description>
+            <Point id="434">
+                <coordinates>-0.08405549999999999,51.4983248,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="437">
+            <name>Baccala</name>
+            <description>Unit B3, 194 Bermondsey St, London SE1 3TQ, UK</description>
+            <Point id="436">
+                <coordinates>-0.08119499999999999,51.4985394,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="439">
+            <name>Bocca Di Lupo</name>
+            <description>12 Archer St, London W1D 7BB, UK</description>
+            <Point id="438">
+                <coordinates>-0.13395,51.5116537,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="441">
+            <name>La Famiglia</name>
+            <description>7 Langton St, London SW10 0JL, UK</description>
+            <Point id="440">
+                <coordinates>-0.1806902,51.48224339999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="443">
+            <name>Emilia's Crafted Pasta</name>
+            <description>12 George St, London E14 9QG, UK</description>
+            <Point id="442">
+                <coordinates>-0.0130552,51.50219939999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="445">
+            <name>Bancone</name>
+            <description>39 William IV St, London WC2N 4DD, UK</description>
+            <Point id="444">
+                <coordinates>-0.1264051,51.5095795,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="447">
+            <name>Campania</name>
+            <description>23 Ezra St, London E2 7RH, UK</description>
+            <Point id="446">
+                <coordinates>-0.0696149,51.5297263,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="449">
+            <name>Bocca Di Lupo</name>
+            <description>12 Archer St, London W1D 7BB, UK</description>
+            <Point id="448">
+                <coordinates>-0.13395,51.5116537,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="451">
+            <name>Sorella</name>
+            <description>148 Clapham Manor St, London SW4 6BX, UK</description>
+            <Point id="450">
+                <coordinates>-0.134998,51.4638023,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="453">
+            <name>Flour and Grape</name>
+            <description>214 Bermondsey St, London SE1 3TQ, UK</description>
+            <Point id="452">
+                <coordinates>-0.08146489999999999,51.4980809,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="455">
+            <name>Pizzeria Mamma Mia</name>
+            <description>12 Hornsey Rd, London N7 7BP, UK</description>
+            <Point id="454">
+                <coordinates>-0.1112895,51.5531575,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="457">
+            <name>Ombra</name>
+            <description>1 Vyner St, Bethnal Green, London E2 9DG, UK</description>
+            <Point id="456">
+                <coordinates>-0.0570893,51.534334,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="459">
+            <name>Story Deli</name>
+            <description>515 Cambridge Heath Rd, London E2 9BU, UK</description>
+            <Point id="458">
+                <coordinates>-0.0575433,51.5337326,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="461">
+            <name>Leo's restaurant and bar</name>
+            <description>59 Chatsworth Rd, Lower Clapton, London E5 0LH, UK</description>
+            <Point id="460">
+                <coordinates>-0.0449619,51.5534449,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

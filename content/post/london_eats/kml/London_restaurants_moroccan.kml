@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="575">
+        <name>London Restaurants - Moroccan</name>
+        <Placemark id="577">
+            <name>Dar Mama</name>
+            <description>Alpha, Unit K40, Park Royal Business Centre, 7-11 Minerva Rd, London NW10 6HJ, UK</description>
+            <Point id="576">
+                <coordinates>-0.2616739,51.5292234,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="579">
+            <name>Moro</name>
+            <description>34-36 Exmouth Market, London EC1R 4QE, UK</description>
+            <Point id="578">
+                <coordinates>-0.1090022,51.5258822,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

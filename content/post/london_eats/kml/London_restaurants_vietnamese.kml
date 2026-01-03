@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="167">
+        <name>London Restaurants - Vietnamese</name>
+        <Placemark id="169">
+            <name>Phat Phuc</name>
+            <description>The Courtyard, 151 Sydney St, London SW3 6NT, UK</description>
+            <Point id="168">
+                <coordinates>-0.1692042,51.4875437,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="171">
+            <name>Nem Nem</name>
+            <description>279 Upper St, London N1 2TZ, UK</description>
+            <Point id="170">
+                <coordinates>-0.1023674,51.5401117,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="173">
+            <name>Kin</name>
+            <description>88 Leather Ln, London EC1N 7TT, UK</description>
+            <Point id="172">
+                <coordinates>-0.1099092,51.52143760000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

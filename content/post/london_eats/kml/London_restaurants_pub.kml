@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="371">
+        <name>London Restaurants - Pub</name>
+        <Placemark id="373">
+            <name>Paxtons Head</name>
+            <description>153 Knightsbridge, London SW1X 7PA, UK</description>
+            <Point id="372">
+                <coordinates>-0.162327,51.5016012,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="375">
+            <name>The Duke of Wellington</name>
+            <description>179 Portobello Rd, London W11 2ED, UK</description>
+            <Point id="374">
+                <coordinates>-0.2047727,51.5151785,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="377">
+            <name>The Lexington</name>
+            <description>96-98 Pentonville Rd, London N1 9JB, UK</description>
+            <Point id="376">
+                <coordinates>-0.1114164,51.5317299,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="379">
+            <name>Prince Bonaparte</name>
+            <description>Prince Bonaparte, London W2, UK</description>
+            <Point id="378">
+                <coordinates>-0.1956028,51.5174071,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="381">
+            <name>The Roebuck</name>
+            <description>50 Great Dover St, London SE1 4YG, UK</description>
+            <Point id="380">
+                <coordinates>-0.09064860000000001,51.4981242,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="383">
+            <name>The Shacklewell Arms</name>
+            <description>71 Shacklewell Ln, London E8 2EB, UK</description>
+            <Point id="382">
+                <coordinates>-0.07137099999999999,51.5524017,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="385">
+            <name>Spit and Sawdust</name>
+            <description>21 Bartholomew St, London SE1 4AL, UK</description>
+            <Point id="384">
+                <coordinates>-0.08865579999999999,51.4948623,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="387">
+            <name>The Prince Regent</name>
+            <description>69 Dulwich Rd, London SE24 0NJ, UK</description>
+            <Point id="386">
+                <coordinates>-0.1065024,51.45382559999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="389">
+            <name>The pelican</name>
+            <description>The Pelican, 45 All Saints Rd, London W11 1HE, UK</description>
+            <Point id="388">
+                <coordinates>-0.2046721,51.518799,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="391">
+            <name>Market coffee house</name>
+            <description>50-52 Brushfield St, London E1 6AG, UK</description>
+            <Point id="390">
+                <coordinates>-0.076572,51.5190031,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

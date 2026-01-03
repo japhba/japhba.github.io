@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="365">
+        <name>London Restaurants - Austrian</name>
+        <Placemark id="367">
+            <name>Fischer's</name>
+            <description>50 Marylebone High St, London W1U 5HN, UK</description>
+            <Point id="366">
+                <coordinates>-0.1516157,51.5216222,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="369">
+            <name>Kipferl</name>
+            <description>20 Camden Passage, London N1 8ED, UK</description>
+            <Point id="368">
+                <coordinates>-0.103442,51.535157,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

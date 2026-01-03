@@ -1,0 +1,684 @@
+{{ $id := printf "london-eats-map-%d" (now.UnixNano) }}
+{{ $wrapId := printf "%s-wrap" $id }}
+{{ $legendId := printf "%s-legend" $id }}
+{{ $statusId := printf "%s-status" $id }}
+{{ $fullscreen := lower (.Get "fullscreen" | default "false") }}
+{{ $isFullscreen := eq $fullscreen "true" }}
+
+{{ $pageMap := .Page.Params.map | default dict }}
+{{ $siteMaps := .Site.Params.maps | default dict }}
+{{ $providerParam := .Get "provider" | default (index $pageMap "provider" | default "") }}
+{{ $googleKey := or (.Get "google_key") (index $pageMap "google_api_key") (index $siteMaps "google_api_key") }}
+{{ $googleMapId := or (.Get "google_map_id") (index $pageMap "google_map_id") (index $siteMaps "google_map_id") }}
+{{ $mapboxToken := or (.Get "mapbox_token") (index $pageMap "mapbox_token") (index $siteMaps "mapbox_token") }}
+{{ $mapboxStyle := or (.Get "mapbox_style") (index $pageMap "mapbox_style") (index $siteMaps "mapbox_style") "mapbox://styles/mapbox/streets-v12" }}
+
+{{ $kmlResources := .Page.Resources.Match "kml/*.kml" | default (slice) }}
+{{ $kmlList := slice }}
+{{ range $kmlResources }}
+  {{ $fileName := path.Base .Name | lower }}
+  {{ $base := strings.TrimSuffix ".kml" $fileName }}
+  {{ $category := replace $base "london_restaurants_" "" }}
+  {{ $label := $category | replace "_" " " | title }}
+  {{ $kmlList = $kmlList | append (dict "url" .RelPermalink "category" $category "label" $label) }}
+{{ end }}
+
+{{ if not (len $kmlList) }}
+<div>
+  <strong>Map unavailable:</strong> No KML files found for this page.
+</div>
+{{ else }}
+{{ $config := dict "provider" $providerParam "googleKey" $googleKey "googleMapId" $googleMapId "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle }}
+<div id="{{ $wrapId }}" class="london-eats-map-wrap{{ if $isFullscreen }} london-eats-fullscreen{{ end }}">
+  <div id="{{ $id }}" class="london-eats-map" data-map-id="{{ $id }}">Loading map...</div>
+  <div id="{{ $legendId }}" class="london-eats-legend" aria-live="polite"></div>
+  <div id="{{ $statusId }}" class="london-eats-status" role="status" aria-live="polite"></div>
+</div>
+
+<style>
+  {{ if $isFullscreen }}
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    overflow: hidden;
+  }
+  {{ end }}
+
+  #{{ $wrapId }} {
+    position: relative;
+  }
+
+  #{{ $wrapId }}.london-eats-fullscreen {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  #{{ $id }} {
+    height: 70vh;
+    min-height: 420px;
+    width: 100%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5f1ea 0%, #efe7da 100%);
+    box-shadow: 0 16px 40px rgba(26, 26, 26, 0.18);
+  }
+
+  #{{ $wrapId }}.london-eats-fullscreen #{{ $id }} {
+    height: 100%;
+    min-height: 100%;
+    border-radius: 0;
+  }
+
+  #{{ $wrapId }} .london-eats-legend {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 15, 15, 0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+    line-height: 1.2;
+    box-shadow: 0 12px 24px rgba(15, 15, 15, 0.16);
+    backdrop-filter: blur(6px);
+    max-width: 200px;
+    z-index: 2;
+  }
+
+  #{{ $wrapId }} .legend-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  #{{ $wrapId }} .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  #{{ $wrapId }} .legend-item:last-child {
+    margin-bottom: 0;
+  }
+
+  #{{ $wrapId }} .legend-emoji {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  #{{ $wrapId }} .london-eats-marker {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 1.3rem;
+    line-height: 1;
+  }
+
+  #{{ $wrapId }} .london-eats-marker-rating {
+    font-size: 0.65rem;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 15, 15, 0.15);
+    border-radius: 8px;
+    padding: 2px 4px;
+    color: #1a1a1a;
+  }
+
+  #{{ $wrapId }} .london-eats-status {
+    position: absolute;
+    left: 18px;
+    bottom: 18px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(34, 34, 34, 0.88);
+    color: #fff;
+    font-size: 0.85rem;
+    max-width: 320px;
+    display: none;
+    z-index: 2;
+  }
+
+  #{{ $wrapId }} .london-eats-status.is-visible {
+    display: block;
+  }
+
+  @media (max-width: 720px) {
+    #{{ $id }} {
+      height: 62vh;
+      min-height: 320px;
+      border-radius: 14px;
+    }
+
+    #{{ $wrapId }} .london-eats-legend {
+      right: 10px;
+      top: 10px;
+      font-size: 0.8rem;
+      max-width: 160px;
+    }
+
+    #{{ $wrapId }} .london-eats-status {
+      left: 10px;
+      bottom: 10px;
+      font-size: 0.8rem;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const mapId = "{{ $id }}";
+    const legendId = "{{ $legendId }}";
+    const statusId = "{{ $statusId }}";
+    const mapEl = document.getElementById(mapId);
+    const legendEl = document.getElementById(legendId);
+    const statusEl = document.getElementById(statusId);
+
+    if (!mapEl) return;
+
+    const mapConfig = {{ $config | jsonify | safeJS }};
+    const kmlFiles = {{ $kmlList | jsonify | safeJS }};
+
+    const categoryConfig = {
+      austrian: { emoji: "🇦🇹", label: "Austrian" },
+      bar: { emoji: "🍸", label: "Bar" },
+      brunch: { emoji: "🥐", label: "Brunch" },
+      chinese: { emoji: "🇨🇳", label: "Chinese" },
+      expensive: { emoji: "💎", label: "Splurge" },
+      fancy_pub_food: { emoji: "🍻", label: "Fancy Pub Food" },
+      fish: { emoji: "🐟", label: "Fish" },
+      french: { emoji: "🇫🇷", label: "French" },
+      greek: { emoji: "🇬🇷", label: "Greek" },
+      ice_cream: { emoji: "🍦", label: "Ice Cream" },
+      indian: { emoji: "🇮🇳", label: "Indian" },
+      israeli_middle_east: { emoji: "🇮🇱", label: "Israeli / Middle East" },
+      italian: { emoji: "🇮🇹", label: "Italian" },
+      japanese: { emoji: "🇯🇵", label: "Japanese" },
+      jewish_deli: { emoji: "🥯", label: "Jewish Deli" },
+      korean: { emoji: "🇰🇷", label: "Korean" },
+      lebanese: { emoji: "🇱🇧", label: "Lebanese" },
+      london_vibe: { emoji: "🇬🇧", label: "London Vibe" },
+      malaysian: { emoji: "🇲🇾", label: "Malaysian" },
+      meat: { emoji: "🥩", label: "Meat" },
+      mexican: { emoji: "🇲🇽", label: "Mexican" },
+      moroccan: { emoji: "🇲🇦", label: "Moroccan" },
+      nordic: { emoji: "🇸🇪", label: "Nordic" },
+      persian: { emoji: "🇮🇷", label: "Persian" },
+      portuguese: { emoji: "🇵🇹", label: "Portuguese" },
+      pub: { emoji: "🍺", label: "Pub" },
+      raclette: { emoji: "🧀", label: "Raclette" },
+      shop: { emoji: "🛍️", label: "Shop" },
+      south_african: { emoji: "🇿🇦", label: "South African" },
+      spanish: { emoji: "🇪🇸", label: "Spanish" },
+      sunday_roast: { emoji: "🍖", label: "Sunday Roast" },
+      thai: { emoji: "🇹🇭", label: "Thai" },
+      turkish: { emoji: "🇹🇷", label: "Turkish" },
+      vegetarian: { emoji: "🥗", label: "Vegetarian" },
+      vietnamese: { emoji: "🇻🇳", label: "Vietnamese" },
+      wine_bar: { emoji: "🍷", label: "Wine Bar" }
+    };
+
+    const escapeHtml = (value) =>
+      String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    const reportStatus = (message) => {
+      if (!statusEl) return;
+      statusEl.textContent = message;
+      statusEl.classList.add("is-visible");
+    };
+
+    const clearStatus = () => {
+      if (!statusEl) return;
+      statusEl.textContent = "";
+      statusEl.classList.remove("is-visible");
+    };
+
+    const loadStyle = (href, id) =>
+      new Promise((resolve, reject) => {
+        if (id && document.getElementById(id)) {
+          resolve();
+          return;
+        }
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = href;
+        if (id) link.id = id;
+        link.onload = () => resolve();
+        link.onerror = () => reject(new Error("Failed to load stylesheet: " + href));
+        document.head.appendChild(link);
+      });
+
+    const loadScript = (src, id) =>
+      new Promise((resolve, reject) => {
+        if (id && document.getElementById(id)) {
+          resolve();
+          return;
+        }
+        const script = document.createElement("script");
+        script.src = src;
+        script.async = true;
+        if (id) script.id = id;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error("Failed to load script: " + src));
+        document.head.appendChild(script);
+      });
+
+    const ensureToGeoJSON = () => {
+      if (window.toGeoJSON) return Promise.resolve();
+      if (!window.__leToGeoJSONPromise) {
+        window.__leToGeoJSONPromise = loadScript(
+          "https://unpkg.com/@tmcw/togeojson@5.6.0/dist/togeojson.umd.js",
+          "togeojson-js"
+        );
+      }
+      return window.__leToGeoJSONPromise;
+    };
+
+    const ensureMapbox = () => {
+      if (window.mapboxgl) return Promise.resolve();
+      if (!window.__leMapboxPromise) {
+        window.__leMapboxPromise = Promise.all([
+          loadStyle("https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css", "mapbox-css"),
+          loadScript("https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js", "mapbox-js")
+        ]);
+      }
+      return window.__leMapboxPromise;
+    };
+
+    const ensureGoogleMaps = (apiKey) => {
+      if (window.google && window.google.maps) return Promise.resolve();
+      if (!window.__leGooglePromise) {
+        window.__leGooglePromise = new Promise((resolve, reject) => {
+          const callbackName = "__leGoogleInit";
+          window[callbackName] = () => resolve();
+          const script = document.createElement("script");
+          script.src =
+            "https://maps.googleapis.com/maps/api/js?key=" +
+            encodeURIComponent(apiKey) +
+            "&libraries=marker,places&v=beta&callback=" +
+            callbackName;
+          script.async = true;
+          script.onerror = () => reject(new Error("Failed to load Google Maps"));
+          document.head.appendChild(script);
+        });
+      }
+      return window.__leGooglePromise;
+    };
+
+    const formatCategoryLabel = (category, fallback) => {
+      if (categoryConfig[category]) return categoryConfig[category].label;
+      if (fallback) return fallback;
+      return category
+        .split("_")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+    };
+
+    const categoryInfo = (category, fallbackLabel) => {
+      return (
+        categoryConfig[category] || {
+          emoji: "🍽️",
+          label: formatCategoryLabel(category, fallbackLabel)
+        }
+      );
+    };
+
+    const pickProvider = () => {
+      const requested = (mapConfig.provider || "").toLowerCase();
+      if (requested && requested !== "auto") return requested;
+      if (mapConfig.googleKey) return "google";
+      if (mapConfig.mapboxToken) return "mapbox";
+      return "";
+    };
+
+    const parseKmlFiles = async () => {
+      const points = [];
+      const usedCategories = new Set();
+      const seen = new Set();
+
+      for (const file of kmlFiles) {
+        try {
+          const response = await fetch(file.url, { credentials: "same-origin" });
+          if (!response.ok) continue;
+          const kmlText = await response.text();
+          const xml = new DOMParser().parseFromString(kmlText, "application/xml");
+          const geojson = window.toGeoJSON.kml(xml);
+          (geojson.features || []).forEach((feature) => {
+            if (!feature.geometry || feature.geometry.type !== "Point") return;
+            const coords = feature.geometry.coordinates;
+            if (!coords || coords.length < 2) return;
+            const name = feature.properties && feature.properties.name ? feature.properties.name : "Unknown";
+            const desc =
+              feature.properties && feature.properties.description ? feature.properties.description : "";
+            const key = `${file.category}|${name}|${coords[1]}|${coords[0]}`;
+            if (seen.has(key)) return;
+            seen.add(key);
+            usedCategories.add(file.category);
+            points.push({
+              name,
+              description: desc,
+              lat: coords[1],
+              lng: coords[0],
+              category: file.category,
+              label: file.label
+            });
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      return { points, usedCategories };
+    };
+
+    const renderLegend = (usedCategories) => {
+      if (!legendEl) return;
+      const order = kmlFiles.map((file) => file.category);
+      const items = Array.from(usedCategories).sort(
+        (a, b) => order.indexOf(a) - order.indexOf(b)
+      );
+      const html = items
+        .map((category) => {
+          const file = kmlFiles.find((kml) => kml.category === category);
+          const info = categoryInfo(category, file ? file.label : "");
+          return `<div class="legend-item"><span class="legend-emoji">${info.emoji}</span><span>${escapeHtml(
+            info.label
+          )}</span></div>`;
+        })
+        .join("");
+
+      legendEl.innerHTML = `<div class="legend-title">Legend</div>${html}`;
+    };
+
+    const initMapbox = ({ points, usedCategories }) => {
+      window.mapboxgl.accessToken = mapConfig.mapboxToken;
+      const map = new window.mapboxgl.Map({
+        container: mapId,
+        style: mapConfig.mapboxStyle,
+        center: [-0.1278, 51.5074],
+        zoom: 11
+      });
+
+      const bounds = new window.mapboxgl.LngLatBounds();
+
+      points.forEach((point) => {
+        const info = categoryInfo(point.category, point.label);
+        const el = document.createElement("div");
+        el.className = "london-eats-marker";
+        el.textContent = info.emoji;
+
+        const popup = new window.mapboxgl.Popup({ offset: 18 }).setHTML(
+          `<div><strong>${escapeHtml(point.name)}</strong>${
+            point.description ? `<div>${escapeHtml(point.description)}</div>` : ""
+          }</div>`
+        );
+
+        new window.mapboxgl.Marker({ element: el })
+          .setLngLat([point.lng, point.lat])
+          .setPopup(popup)
+          .addTo(map);
+
+        bounds.extend([point.lng, point.lat]);
+      });
+
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, { padding: 80, maxZoom: 14 });
+      }
+
+      renderLegend(usedCategories);
+      clearStatus();
+    };
+
+    const initGoogle = ({ points, usedCategories }) => {
+      const mapOptions = {
+        center: { lat: 51.5074, lng: -0.1278 },
+        zoom: 12
+      };
+
+      if (mapConfig.googleMapId) {
+        mapOptions.mapId = mapConfig.googleMapId;
+      }
+
+      const map = new window.google.maps.Map(mapEl, mapOptions);
+      const placesService = new window.google.maps.places.PlacesService(map);
+      const placeCache = new Map();
+      const bounds = new window.google.maps.LatLngBounds();
+
+      const AdvancedMarker =
+        window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
+
+      const buildPlaceCard = (place) => {
+        if (!place) return "";
+        const rating = place.rating ? place.rating.toFixed(1) : "";
+        const count = place.user_ratings_total ? `(${place.user_ratings_total})` : "";
+        const photos = place.photos && place.photos.length ? place.photos.slice(0, 6) : [];
+        const heroPhoto = photos.length ? photos[0].getUrl({ maxWidth: 360 }) : "";
+        const photoHtml = heroPhoto
+          ? `<img src="${heroPhoto}" alt="${escapeHtml(place.name)}" style="width:100%;border-radius:8px;margin-top:8px;" />`
+          : "";
+        const photoLinks = photos
+          .map((photo, index) => {
+            const url = photo.getUrl({ maxWidth: 1200 });
+            return `<a href="${url}" target="_blank" rel="noopener">Photo ${index + 1}</a>`;
+          })
+          .join(" · ");
+        const website =
+          place.website ? `<a href="${place.website}" target="_blank" rel="noopener">Website</a>` : "";
+        const mapsLink =
+          place.url ? `<a href="${place.url}" target="_blank" rel="noopener">Open in Maps</a>` : "";
+        const links = [website, mapsLink].filter(Boolean).join(" · ");
+
+        return `<div><strong>${escapeHtml(place.name)}</strong>${
+          place.formatted_address ? `<div>${escapeHtml(place.formatted_address)}</div>` : ""
+        }${rating ? `<div>Rating: ${rating} ${count}</div>` : ""}${links ? `<div>${links}</div>` : ""}${photoLinks ? `<div>${photoLinks}</div>` : ""}${photoHtml}</div>`;
+      };
+
+      const fetchPlaceDetails = (query, callback) => {
+        if (placeCache.has(query)) {
+          callback(placeCache.get(query));
+          return;
+        }
+
+        placesService.findPlaceFromQuery(
+          {
+            query,
+            fields: ["place_id", "name", "geometry", "formatted_address"]
+          },
+          (results, status) => {
+            if (status !== window.google.maps.places.PlacesServiceStatus.OK || !results || !results[0]) {
+              placeCache.set(query, null);
+              callback(null);
+              return;
+            }
+
+            const placeId = results[0].place_id;
+            placesService.getDetails(
+              {
+                placeId,
+                fields: [
+                  "name",
+                  "formatted_address",
+                  "rating",
+                  "user_ratings_total",
+                  "photos",
+                  "website",
+                  "url"
+                ]
+              },
+              (detail, detailStatus) => {
+                if (detailStatus === window.google.maps.places.PlacesServiceStatus.OK && detail) {
+                  placeCache.set(query, detail);
+                  callback(detail);
+                } else {
+                  placeCache.set(query, null);
+                  callback(null);
+                }
+              }
+            );
+          }
+        );
+      };
+
+      const lookupQueue = [];
+      let isLookupRunning = false;
+
+      const runLookupQueue = () => {
+        if (isLookupRunning) return;
+        isLookupRunning = true;
+
+        const next = () => {
+          const item = lookupQueue.shift();
+          if (!item) {
+            isLookupRunning = false;
+            return;
+          }
+          fetchPlaceDetails(item.query, (place) => {
+            item.onResult(place);
+            setTimeout(next, 180);
+          });
+        };
+
+        next();
+      };
+
+      const queueLookup = (query, onResult) => {
+        lookupQueue.push({ query, onResult });
+        runLookupQueue();
+      };
+
+      const createMarkerContent = (emoji) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "london-eats-marker";
+        const emojiEl = document.createElement("div");
+        emojiEl.textContent = emoji;
+        const ratingEl = document.createElement("div");
+        ratingEl.className = "london-eats-marker-rating";
+        ratingEl.textContent = "";
+        wrapper.appendChild(emojiEl);
+        wrapper.appendChild(ratingEl);
+        return { wrapper, ratingEl };
+      };
+
+      points.forEach((point) => {
+        const info = categoryInfo(point.category, point.label);
+        let marker = null;
+        let ratingEl = null;
+        const query = `${point.name} ${point.description || ""} London`;
+
+        if (AdvancedMarker) {
+          const contentParts = createMarkerContent(info.emoji);
+          const content = contentParts.wrapper;
+          ratingEl = contentParts.ratingEl;
+          marker = new AdvancedMarker({
+            map,
+            position: { lat: point.lat, lng: point.lng },
+            content
+          });
+        } else {
+          marker = new window.google.maps.Marker({
+            map,
+            position: { lat: point.lat, lng: point.lng },
+            label: info.emoji
+          });
+        }
+
+        const fallbackHtml = `<div><strong>${escapeHtml(point.name)}</strong>${
+          point.description ? `<div>${escapeHtml(point.description)}</div>` : ""
+        }</div>`;
+
+        const infoWindow = new window.google.maps.InfoWindow({ content: fallbackHtml });
+        if (AdvancedMarker) {
+          marker.addListener("gmp-click", () => {
+            fetchPlaceDetails(query, (place) => {
+              infoWindow.setContent(place ? buildPlaceCard(place) : fallbackHtml);
+              infoWindow.open({ anchor: marker, map });
+            });
+          });
+          bounds.extend(marker.position);
+        } else {
+          marker.addListener("click", () => {
+            fetchPlaceDetails(query, (place) => {
+              infoWindow.setContent(place ? buildPlaceCard(place) : fallbackHtml);
+              infoWindow.open({ anchor: marker, map });
+            });
+          });
+          bounds.extend(marker.getPosition());
+        }
+
+        if (ratingEl) {
+          queueLookup(query, (place) => {
+            if (place && place.rating) {
+              ratingEl.textContent = place.rating.toFixed(1);
+            }
+          });
+        }
+      });
+
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, { padding: 80 });
+      }
+
+      renderLegend(usedCategories);
+      clearStatus();
+    };
+
+    const run = async () => {
+      if (!kmlFiles.length) {
+        reportStatus("No KML files found for this page.");
+        return;
+      }
+
+      const provider = pickProvider();
+      if (!provider) {
+        reportStatus(
+          "Map backend requires an API key. Set maps.google_api_key or maps.mapbox_token in config, or add map.google_api_key in this page's front matter."
+        );
+        return;
+      }
+
+      if (provider === "google" && !mapConfig.googleKey) {
+        reportStatus("Missing Google Maps API key.");
+        return;
+      }
+
+      if (provider === "mapbox" && !mapConfig.mapboxToken) {
+        reportStatus("Missing Mapbox access token.");
+        return;
+      }
+
+      try {
+        await ensureToGeoJSON();
+        const data = await parseKmlFiles();
+        if (!data.points.length) {
+          reportStatus("No map points were found in the KML files.");
+          return;
+        }
+
+        if (provider === "google") {
+          await ensureGoogleMaps(mapConfig.googleKey);
+          initGoogle(data);
+        } else {
+          await ensureMapbox();
+          initMapbox(data);
+        }
+      } catch (error) {
+        console.error(error);
+        reportStatus("Map failed to load.");
+      }
+    };
+
+    run();
+  })();
+</script>
+{{ end }}

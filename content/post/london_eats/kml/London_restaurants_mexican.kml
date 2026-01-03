@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="193">
+        <name>London Restaurants - Mexican</name>
+        <Placemark id="195">
+            <name>Kol</name>
+            <description>9 Seymour St, London W1H 7BA, UK</description>
+            <Point id="194">
+                <coordinates>-0.1575224,51.5147644,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="197">
+            <name>Mestizo</name>
+            <description>103 Hampstead Rd, London NW1 3EL, UK</description>
+            <Point id="196">
+                <coordinates>-0.1388566,51.5276335,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

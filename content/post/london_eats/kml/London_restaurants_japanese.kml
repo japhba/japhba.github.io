@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="305">
+        <name>London Restaurants - Japanese</name>
+        <Placemark id="307">
+            <name>Uchi</name>
+            <description>144 Clarence Rd, Lower Clapton, London E5 8DY, UK</description>
+            <Point id="306">
+                <coordinates>-0.05597899999999999,51.5537098,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="309">
+            <name>Koya</name>
+            <description>London, UK</description>
+            <Point id="308">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="311">
+            <name>Super Ya Ramen</name>
+            <description>London, UK</description>
+            <Point id="310">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="313">
+            <name>Sushi Atelier</name>
+            <description>114 Great Portland St, London W1W 6PH, UK</description>
+            <Point id="312">
+                <coordinates>-0.142176,51.5195125,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="315">
+            <name>Mr Ji</name>
+            <description>63-65 Parkway, London NW1 7PP, UK</description>
+            <Point id="314">
+                <coordinates>-0.1450591,51.5375439,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="317">
+            <name>Koya</name>
+            <description>London, UK</description>
+            <Point id="316">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="319">
+            <name>Hanana</name>
+            <description>49 Kew Rd, Richmond TW9 2NQ, UK</description>
+            <Point id="318">
+                <coordinates>-0.3011651,51.464303,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="321">
+            <name>Takumi</name>
+            <description>4-6 Old Compton St, London W1D 4TA, UK</description>
+            <Point id="320">
+                <coordinates>-0.1297458,51.51385149999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="323">
+            <name>Sumi</name>
+            <description>157 Westbourne Grove, London W11 2RS, UK</description>
+            <Point id="322">
+                <coordinates>-0.1963739,51.514804,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="325">
+            <name>Cubé</name>
+            <description>4 Blenheim St, London W1S 1LB, UK</description>
+            <Point id="324">
+                <coordinates>-0.1468651,51.5140447,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="327">
+            <name>Kodawari Ramen</name>
+            <description>London, UK</description>
+            <Point id="326">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="329">
+            <name>Takahashi</name>
+            <description>228 Merton Rd, London SW19 1EQ, UK</description>
+            <Point id="328">
+                <coordinates>-0.1922664,51.4163067,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="331">
+            <name>Monohon Ramen</name>
+            <description>102 Old St, London EC1V 9AY, UK</description>
+            <Point id="330">
+                <coordinates>-0.09341479999999999,51.5246945,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="333">
+            <name>Taro</name>
+            <description>Bank House, 1 Churton St, Lillington and Longmoore Gardens, London SW1V 2JX, UK</description>
+            <Point id="332">
+                <coordinates>-0.1379224,51.4925278,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="335">
+            <name>Japan center</name>
+            <description>London, UK</description>
+            <Point id="334">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="337">
+            <name>Kami</name>
+            <description>260 Kentish Town Rd, London NW5 2AA, UK</description>
+            <Point id="336">
+                <coordinates>-0.1406778,51.54989579999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

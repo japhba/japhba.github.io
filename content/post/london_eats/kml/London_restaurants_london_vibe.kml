@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="209">
+        <name>London Restaurants - London Vibe</name>
+        <Placemark id="211">
+            <name>Café Cecilia</name>
+            <description>32 Andrews Rd, London E8 4FX, UK</description>
+            <Point id="210">
+                <coordinates>-0.060123,51.53455599999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="213">
+            <name>Quo Vadis</name>
+            <description>26-29 Dean St, London W1D 3LL, UK</description>
+            <Point id="212">
+                <coordinates>-0.1326476,51.5141128,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="215">
+            <name>Rochelle Canteen</name>
+            <description>16 Playground Gardens, London E2 7FA, UK</description>
+            <Point id="214">
+                <coordinates>-0.07429179999999999,51.5257669,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="217">
+            <name>Cafe Deco</name>
+            <description>43 Store St, London WC1E 7DB, UK</description>
+            <Point id="216">
+                <coordinates>-0.1305243,51.52018349999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="219">
+            <name>40 Maltby Street</name>
+            <description>40 Maltby St, London SE1 3PA, UK</description>
+            <Point id="218">
+                <coordinates>-0.0764585,51.49968699999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="221">
+            <name>Sessions Art Club</name>
+            <description>24 Clerkenwell Grn, London EC1R 0NA, UK</description>
+            <Point id="220">
+                <coordinates>-0.1060103,51.5226427,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="223">
+            <name>Planque</name>
+            <description>322-324 Acton Mews, London E8 4EA, UK</description>
+            <Point id="222">
+                <coordinates>-0.0758184,51.5383741,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="225">
+            <name>Brunswick House Restaurant</name>
+            <description>30 Wandsworth Rd, London SW8 2LG, UK</description>
+            <Point id="224">
+                <coordinates>-0.1265278,51.4847537,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="227">
+            <name>Garden Museum Cafe</name>
+            <description>Garden Museum, 5 Lambeth Palace Rd, London SE1 7LB, UK</description>
+            <Point id="226">
+                <coordinates>-0.1201916,51.4949621,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="229">
+            <name>DuckSoup</name>
+            <description>41 Dean St, London W1D 4PY, UK</description>
+            <Point id="228">
+                <coordinates>-0.1321091,51.5133218,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="231">
+            <name>10 Greek Street</name>
+            <description>10 Greek St, London W1D 4DH, UK</description>
+            <Point id="230">
+                <coordinates>-0.1309957,51.5144563,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="233">
+            <name>Social Eating House</name>
+            <description>58 Poland St, London W1F 7NR, UK</description>
+            <Point id="232">
+                <coordinates>-0.136716,51.513833,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="235">
+            <name>Brawn</name>
+            <description>49 Columbia Rd, London E2 7RG, UK</description>
+            <Point id="234">
+                <coordinates>-0.070239,51.528968,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="237">
+            <name>Lyle's</name>
+            <description>Tea Building, 56 Shoreditch High St, London E1 6JJ, UK</description>
+            <Point id="236">
+                <coordinates>-0.0764767,51.5237542,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="239">
+            <name>The Little Duck The Picklery</name>
+            <description>68 Dalston Ln, London E8 3AH, UK</description>
+            <Point id="238">
+                <coordinates>-0.07074989999999999,51.54613200000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="241">
+            <name>Bar Crispin</name>
+            <description>19 Kingly St, Carnaby, London W1B 5PY, UK</description>
+            <Point id="240">
+                <coordinates>-0.13954,51.5129094,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="243">
+            <name>Jolene</name>
+            <description>21 Newington Grn, Mayville Estate, London N16 9PU, UK</description>
+            <Point id="242">
+                <coordinates>-0.0844365,51.5513088,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="245">
+            <name>Leroy</name>
+            <description>18 Phipp St, London EC2A 4NU, UK</description>
+            <Point id="244">
+                <coordinates>-0.0815137,51.5240225,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="247">
+            <name>Clipstone</name>
+            <description>5 Clipstone St, London W1W 6BB, UK</description>
+            <Point id="246">
+                <coordinates>-0.1421667,51.52083140000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="249">
+            <name>Perilla</name>
+            <description>1-3 Green Lanes, Newington Green, London N16 9BS, UK</description>
+            <Point id="248">
+                <coordinates>-0.08588259999999999,51.5522041,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="251">
+            <name>Nest</name>
+            <description>14-15 Langham Pl, London W1B 2QS, UK</description>
+            <Point id="250">
+                <coordinates>-0.1424642,51.5178708,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="253">
+            <name>Sucre</name>
+            <description>47b Great Marlborough St, London W1F 7JP, UK</description>
+            <Point id="252">
+                <coordinates>-0.1384772,51.5143745,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="255">
+            <name>Cornerstone by Chef Tom Brown</name>
+            <description>3 Prince Edward Rd, London E9 5NP, UK</description>
+            <Point id="254">
+                <coordinates>-0.0255102,51.544079,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="257">
+            <name>Rochelle Canteen</name>
+            <description>16 Playground Gardens, London E2 7FA, UK</description>
+            <Point id="256">
+                <coordinates>-0.07429179999999999,51.5257669,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="259">
+            <name>Dorian</name>
+            <description>105, 107 Talbot Rd, London W11 2AT, UK</description>
+            <Point id="258">
+                <coordinates>-0.2006305,51.51660159999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="261">
+            <name>Straker's</name>
+            <description>91 Golborne Rd, London W10 5NL, UK</description>
+            <Point id="260">
+                <coordinates>-0.2087091,51.5215206,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="263">
+            <name>Clipstone</name>
+            <description>5 Clipstone St, London W1W 6BB, UK</description>
+            <Point id="262">
+                <coordinates>-0.1421667,51.52083140000001,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="265">
+            <name>Doppo</name>
+            <description>33 Dean St, London W1D 4PW, UK</description>
+            <Point id="264">
+                <coordinates>-0.1323908,51.51368069999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="267">
+            <name>Rogues</name>
+            <description>460 Hackney Rd, London E2 9EG, UK</description>
+            <Point id="266">
+                <coordinates>-0.05893399999999999,51.5321836,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="269">
+            <name>Story Deli</name>
+            <description>515 Cambridge Heath Rd, London E2 9BU, UK</description>
+            <Point id="268">
+                <coordinates>-0.0575433,51.5337326,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="271">
+            <name>12:51 by Chef James Cochran</name>
+            <description>107 Upper St, London N1 1QN, UK</description>
+            <Point id="270">
+                <coordinates>-0.1027993,51.5379085,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="273">
+            <name>Dalston jazz bar</name>
+            <description>4 Bradbury St, London N16 8JN, UK</description>
+            <Point id="272">
+                <coordinates>-0.0760634,51.5486742,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="275">
+            <name>Oranj</name>
+            <description>Oranj, 14 Bacon St, London E1 6LF, UK</description>
+            <Point id="274">
+                <coordinates>-0.07203609999999999,51.52395569999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="277">
+            <name>Slowburn</name>
+            <description>114b Blackhorse Ln, London E17 6AA, UK</description>
+            <Point id="276">
+                <coordinates>-0.0394735,51.59140499999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="279">
+            <name>Naughty Piglets</name>
+            <description>28 Brixton Water Ln, London SW2 1PE, UK</description>
+            <Point id="278">
+                <coordinates>-0.1131099,51.4551136,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="281">
+            <name>Cloth</name>
+            <description>Cloth St, Barbican, London EC1A 4HY, UK</description>
+            <Point id="280">
+                <coordinates>-0.0979849,51.5197017,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

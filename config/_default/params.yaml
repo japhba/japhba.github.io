@@ -61,3 +61,8 @@ features:
     enable: true
   privacy_pack:
     enable: false
+
+# Maps (placeholder keys)
+maps:
+  google_api_key: 'AIzaSyCy8vQSQHxDiQIuypQ0zHDGcIbd243ZT90'
+  google_map_id: 'efcce4801c1c48e219855434'

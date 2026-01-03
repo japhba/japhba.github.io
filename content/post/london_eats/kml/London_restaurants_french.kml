@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="477">
+        <name>London Restaurants - French</name>
+        <Placemark id="479">
+            <name>Top Cuvée</name>
+            <description>177B Blackstock Rd, London N5 2LL, UK</description>
+            <Point id="478">
+                <coordinates>-0.0982643,51.5608088,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="481">
+            <name>Paulette</name>
+            <description>18 Formosa St, London W9 1EE, UK</description>
+            <Point id="480">
+                <coordinates>-0.1851326,51.5245646,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="483">
+            <name>Bouchon Racine</name>
+            <description>Upstairs, 66 Cowcross St, London EC1M 6BP, UK</description>
+            <Point id="482">
+                <coordinates>-0.1038862,51.5200328,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="485">
+            <name>La Petite Maison</name>
+            <description>53-54 Brook's Mews, London W1K 4EG, UK</description>
+            <Point id="484">
+                <coordinates>-0.146231,51.512629,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="487">
+            <name>Casse-Croûte</name>
+            <description>109 Bermondsey St, London SE1 3XB, UK</description>
+            <Point id="486">
+                <coordinates>-0.0816008,51.50053,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="489">
+            <name>St John</name>
+            <description>26 St John St, Barbican, London EC1M 4AY, UK</description>
+            <Point id="488">
+                <coordinates>-0.1014304,51.5204534,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="491">
+            <name>L'Entrecôte</name>
+            <description>London, UK</description>
+            <Point id="490">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="493">
+            <name>Quality Wine</name>
+            <description>88 Farringdon Rd, London EC1R 3EA, UK</description>
+            <Point id="492">
+                <coordinates>-0.109924,51.5246799,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="495">
+            <name>Otto</name>
+            <description>Otto St, London SE17, UK</description>
+            <Point id="494">
+                <coordinates>-0.1047633,51.4833883,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="497">
+            <name>The 10 Cases</name>
+            <description>16 Endell St, London WC2H 9BB, UK</description>
+            <Point id="496">
+                <coordinates>-0.1242343,51.5144797,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="499">
+            <name>Noble Rot Lamb's Conduit</name>
+            <description>51 Lamb's Conduit St, London WC1N 3NB, UK</description>
+            <Point id="498">
+                <coordinates>-0.1186975,51.5218778,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="501">
+            <name>hill and szrok</name>
+            <description>60 Broadway Market, London E8 4QJ, UK</description>
+            <Point id="500">
+                <coordinates>-0.06121070000000001,51.5371433,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

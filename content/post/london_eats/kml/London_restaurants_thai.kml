@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="397">
+        <name>London Restaurants - Thai</name>
+        <Placemark id="399">
+            <name>Som Saa</name>
+            <description>43A Commercial St, London E1 6BD, UK</description>
+            <Point id="398">
+                <coordinates>-0.0737796,51.5172463,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="401">
+            <name>Farang</name>
+            <description>72 Highbury Park, London N5 2XE, UK</description>
+            <Point id="400">
+                <coordinates>-0.09774809999999999,51.55702309999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="403">
+            <name>Kiln</name>
+            <description>58 Brewer St, London W1F 9TL, UK</description>
+            <Point id="402">
+                <coordinates>-0.136059,51.5114007,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="405">
+            <name>Chet's</name>
+            <description>65 Shepherd's Bush Grn, London W12 8QE, UK</description>
+            <Point id="404">
+                <coordinates>-0.2248481,51.5047417,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="407">
+            <name>Singburi</name>
+            <description>Unit 7, Montacute Yards, 185‑186 Shoreditch High St, London E1 6HU, UK</description>
+            <Point id="406">
+                <coordinates>-0.0783523,51.52431929999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="409">
+            <name>SpeedBoat Cafe</name>
+            <description>30 Rupert St, London W1D 6DL, UK</description>
+            <Point id="408">
+                <coordinates>-0.1326545,51.5111755,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>
