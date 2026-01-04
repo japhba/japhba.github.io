@@ -64,5 +64,5 @@ features:
 
 # Maps (placeholder keys)
 maps:
-  google_api_key: 'AIzaSyCy8vQSQHxDiQIuypQ0zHDGcIbd243ZT90'
+  google_api_key: 'YOUR_GOOGLE_MAPS_API_KEY'
   google_map_id: 'efcce4801c1c48e219855434'
