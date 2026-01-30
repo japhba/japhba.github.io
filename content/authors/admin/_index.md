@@ -37,6 +37,14 @@ education:
   - area: BSc in Physics
     institution: RWTH Aachen University, Germany
     year: 2016–2019
+
+# Social/Contact links
+profiles:
+  - icon: academicons/google-scholar
+    url: https://scholar.google.com/citations?user=t3i5WEMAAAAJ&hl=en
+  - icon: academicons/cv
+    url: uploads/CV/CV_Jan_BAUER.pdf
+
 #     summary: |
 #       Thesis on _Why LLMs are awesome_. Supervised by [Prof Joe Smith](https://example.com). Presented papers at 5 IEEE conferences with the contributions being published in 2 Springer journals.
 #     button:
@@ -162,6 +170,6 @@ education:
 #       Object-oriented programming (OOP) lets you specify relationships between functions and the objects that they can act on, helping you manage complexity in your code. This is an intermediate level course, providing an introduction to OOP, using the S3 and R6 systems. S3 is a great day-to-day R programming tool that simplifies some of the functions that you write. R6 is especially useful for industry-specific analyses, working with web APIs, and building GUIs.
 ---
 
-How do the numerous components of neural circuits reliably implement complex function? 
+How do the numerous components of neural circuits reliably implement complex function?
 
 I am approaching this question by developing models that capture [simple aspects of cognition](https://arxiv.org/abs/2411.03840), but are still easy to understand. I believe that [bridging perspectives from both artificial and biological intelligence](https://www.lesswrong.com/posts/cPEoZWEPLCgtQKath/towards-a-unified-interpretability-of-artificial-and) brings great synergies, as both of these fields fundamentally have the shared goal of understanding neural systems.
