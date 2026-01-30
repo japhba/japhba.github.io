@@ -14,8 +14,10 @@ role: PhD student in Theoretical Neuroscience
 
 # Organizations/Affiliations to show in About widget
 organizations:
-  - name: Gatsby Unit, UCL & ELSC, Hebrew University
-    url: http://elsc.huji.ac.il
+  - name: Gatsby Unit, UCL
+    url: https://www.ucl.ac.uk/gatsby
+  - name: ELSC, Hebrew University
+    url: https://elsc.huji.ac.il
 
 # Short bio (displayed in user profile at end of posts)
 #bio: My research interests include distributed robotics, mobile computing and programmable matter.
