@@ -15,7 +15,7 @@
   &nbsp;•&nbsp;
   <a href="https://hugoblox.com/templates/?open=academic-cv&loading=true&utm_source=github&utm_medium=readme">Live Demo</a>
   &nbsp;•&nbsp;
-  <a href="https://marketplace.visualstudio.com/items?itemName=hugoblox.hugoblox-studio"><b>Visual Editor</b></a>
+  <a href="https://marketplace.visualstudio.com/items?itemName=ownable.ownable"><b>Visual Editor</b></a>
 </p>
 
 <p align="center">
@@ -114,7 +114,7 @@ Launch a fully hosted site in your browser. No software to install.
 👉 [**Launch in Browser (Free)**](https://hugoblox.com/templates/academic-cv/start?utm_source=github&utm_medium=readme)
 
 ### Option 2: Studio (Visual Editor)
-1) Install [HugoBlox Studio](https://marketplace.visualstudio.com/items?itemName=hugoblox.hugoblox-studio) for VS Code  
+1) Install [HugoBlox Studio](https://marketplace.visualstudio.com/items?itemName=ownable.ownable) for VS Code  
 2) Open this project and edit visually
 
 ### Option 3: CLI (Developers)
@@ -140,7 +140,7 @@ npx hugoblox create site --template academic-cv
 
 - 💬 [**Discord Community**](https://discord.gg/z8wNYzb)
 - 📚 [**Documentation**](https://docs.hugoblox.com/?utm_source=github&utm_medium=readme)
-- 🐦 [**Follow on X**](https://x.com/LoreLabs_)
+- 🐦 [**Follow on X**](https://x.com/MakeOwnable)
 - ⭐ [**Star on GitHub**](https://github.com/HugoBlox/kit)
 
 ---
@@ -148,5 +148,4 @@ npx hugoblox create site --template academic-cv
 MIT © 2016-Present [George Cushen](https://georgecushen.com)
 
 <!--START_SECTION:news-->
-<!--Updated at 2026-02-15T01:15:10.134Z-->
 <!--END_SECTION:news-->

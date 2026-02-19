@@ -340,7 +340,7 @@ This slide won't appear in the presentation but remains in source for reference.
 ### Questions?
 
 - 🌐 Website: [hugoblox.com](https://hugoblox.com)
-- 🐦 X/Twitter: [@LoreLabs_](https://twitter.com/LoreLabs_)
+- 🐦 X/Twitter: [@MakeOwnable](https://twitter.com/MakeOwnable)
 - 💬 Discord: [Join Community](https://discord.gg/z8wNYzb)
 - ⭐ GitHub: [Star us!](https://github.com/HugoBlox/kit)
 
