@@ -79,11 +79,11 @@ Learn more: docs on [Notebooks](https://docs.hugoblox.com/reference/markdown/#-n
 
 ---
 
-## Why Go Pro (from $8/m)
+## Why Go Plus (from $4/m)
 
 - Enhanced HugoBlox Studio visual editor — save 10–20 hours setting up and polishing
-- Premium CV & Resumé designs — make an unforgettable first impression
-- Pro blocks, remove attribution, and priority support
+- Make an unforgettable first impression
+- Priority support
 
 ---
 
