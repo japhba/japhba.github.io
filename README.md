@@ -148,4 +148,5 @@ npx hugoblox create site --template academic-cv
 MIT © 2016-Present [George Cushen](https://georgecushen.com)
 
 <!--START_SECTION:news-->
+<!--Updated at 2026-02-22T01:11:53.876Z-->
 <!--END_SECTION:news-->
