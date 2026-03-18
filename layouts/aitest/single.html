@@ -98,19 +98,24 @@
         const loader = addBubble(idx, "assistant", "Antwort wird generiert…", true);
         pending[idx] = true;
 
-        const res = await fetch("https://japhba-api.netlify.app/.netlify/functions/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ model: models[idx], messages: histories[idx] }),
-        });
-        const data = await res.json();
-        const reply = data.choices[0].message.content;
-        histories[idx].push({ role: "assistant", content: reply });
+        try {
+          const res = await fetch("https://japhba-api.netlify.app/.netlify/functions/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ model: models[idx], messages: histories[idx] }),
+          });
+          const data = await res.json();
+          const reply = data.choices[0].message.content;
+          histories[idx].push({ role: "assistant", content: reply });
+          loader.remove();
+          addBubble(idx, "assistant", reply, false);
+        } catch (e) {
+          loader.textContent = "Fehler: " + e.message;
+          loader.classList.remove("loading");
+          histories[idx].pop(); // remove the user message that failed
+        }
 
-        loader.remove();
-        addBubble(idx, "assistant", reply, false);
         pending[idx] = false;
-
         if (idx !== activeTab) {
           tabs[idx].querySelector(".dot").classList.add("visible");
         }
@@ -118,19 +123,11 @@
 
       function send() {
         const text = input.value.trim();
-        if (!text) return;
+        if (!text || pending[activeTab]) return;
         input.value = "";
-        const idx = activeTab;
 
-        addBubble(idx, "user", text, false);
-        sendBtn.disabled = true;
-        input.disabled = true;
-
-        sendToModel(idx, text).finally(() => {
-          sendBtn.disabled = false;
-          input.disabled = false;
-          input.focus();
-        });
+        addBubble(activeTab, "user", text, false);
+        sendToModel(activeTab, text);
       }
 
       document.getElementById("reset").addEventListener("click", () => {
