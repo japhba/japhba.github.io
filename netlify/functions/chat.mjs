@@ -1,4 +1,4 @@
-const ALLOWED_MODELS = ["openai/gpt-5.3", "anthropic/claude-opus-4-6", "google/gemini-pro-3.1"];
+const ALLOWED_MODELS = ["openai/gpt-5.3-chat", "anthropic/claude-opus-4-6", "google/gemini-3.1-pro-preview"];
 const CORS = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "Content-Type", "Access-Control-Allow-Methods": "POST, OPTIONS" };
 
 export default async (req) => {
