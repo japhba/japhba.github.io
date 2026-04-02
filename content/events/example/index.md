@@ -115,13 +115,13 @@ That's it! No complex UI, no formatting headaches.
 
 > [!IMPORTANT] **Zero Lock-In**
 > Your slides are just Markdown files. Edit them in:
-> - **HugoBlox Studio** — Visual editing with live preview
+> - **Ownable CMS** — Visual editing with live preview
 > - **VS Code** — With Markdown extensions
 > - **Obsidian** — Note-taking app that speaks Markdown
 > - **Typora** — Minimal distraction writing
 > - **Any text editor** — Even Notepad works!
 
-{{< button url="https://docs.hugoblox.com/guides/studio/" text="Try HugoBlox Studio" icon="paint-brush" style="secondary" size="md" new_tab="true" rounded="lg" />}}
+{{< button url="https://docs.hugoblox.com/guides/studio/" text="Try Ownable CMS" icon="paint-brush" style="secondary" size="md" new_tab="true" rounded="lg" />}}
 
 ### 🎯 Advanced Features
 
@@ -375,7 +375,7 @@ Each lecture gets its own slide deck, all version controlled, all editable by st
 
 <br>
 
-{{< button url="https://docs.hugoblox.com/guides/studio/" text="Try HugoBlox Studio" icon="paint-brush" style="secondary" size="lg" align="center" rounded="lg" />}}
+{{< button url="https://docs.hugoblox.com/guides/studio/" text="Try Ownable CMS" icon="paint-brush" style="secondary" size="lg" align="center" rounded="lg" />}}
 
 ---
 
@@ -395,7 +395,7 @@ Each lecture gets its own slide deck, all version controlled, all editable by st
 - [Creating Your First Slide Deck](https://docs.hugoblox.com/tutorial/slides/)
 - [Advanced Slide Layouts](https://docs.hugoblox.com/reference/slides/)
 - [Customizing Themes](https://docs.hugoblox.com/customization/)
-- [Using HugoBlox Studio](https://docs.hugoblox.com/studio/)
+- [Using Ownable CMS](https://docs.hugoblox.com/studio/)
 -->
 
 ### Tips & Tricks

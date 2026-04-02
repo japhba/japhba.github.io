@@ -32,7 +32,7 @@ Most CVs are static PDFs that get lost in the pile. This is an **intelligent por
 - **🔮 Future-Proof:** Your content lives in simple **Markdown**. No database to break, no lock-in.
 - **🤖 AI-Ready:** Optimized for search engines and LLMs, so your work is found and cited.
 - **⚡ Zero Maintenance:** Auto-import citations from BibTeX and focus on research.
-- **✍️ Edit Visually:** Use **HugoBlox Studio** in VS Code — no coding needed. Full capabilities in Pro.
+- **✍️ Edit Visually:** Use **Ownable CMS** in VS Code — no coding needed. Full capabilities in Pro.
 
 <p align="center">
   <a href="https://hugoblox.com/templates/academic-cv/start?utm_source=github&utm_medium=readme">
@@ -41,8 +41,8 @@ Most CVs are static PDFs that get lost in the pile. This is an **intelligent por
   </a>
 </p>
 
-![HugoBlox Studio in Action](https://raw.githubusercontent.com/HugoBlox/kit/main/.github/media/studio/slide-1.webp)
-*HugoBlox Studio: Drag-and-drop page builder inside VS Code.*
+![Ownable CMS in Action](https://raw.githubusercontent.com/HugoBlox/kit/main/.github/media/studio/slide-1.webp)
+*Ownable CMS: Drag-and-drop page builder inside VS Code.*
 
 > "My citations went up 3x after switching to this template. The citation auto-sync feature is a lifesaver."
 > — **Dr. Zhang**, AI Research Scientist, Meta
@@ -81,7 +81,7 @@ Learn more: docs on [Notebooks](https://docs.hugoblox.com/reference/markdown/#-n
 
 ## Why Go Pro (from $8/m)
 
-- Enhanced HugoBlox Studio visual editor — save 10–20 hours setting up and polishing
+- Enhanced Ownable CMS visual editor — save 10–20 hours setting up and polishing
 - Premium CV & Resumé designs — make an unforgettable first impression
 - Pro blocks, remove attribution, and priority support
 
@@ -114,7 +114,7 @@ Launch a fully hosted site in your browser. No software to install.
 👉 [**Launch in Browser (Free)**](https://hugoblox.com/templates/academic-cv/start?utm_source=github&utm_medium=readme)
 
 ### Option 2: Studio (Visual Editor)
-1) Install [HugoBlox Studio](https://marketplace.visualstudio.com/items?itemName=ownable.ownable) for VS Code  
+1) Install [Ownable CMS](https://marketplace.visualstudio.com/items?itemName=ownable.ownable) for VS Code  
 2) Open this project and edit visually
 
 ### Option 3: CLI (Developers)
