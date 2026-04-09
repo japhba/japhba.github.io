@@ -12,6 +12,7 @@
 {{ $googleMapId := or (.Get "google_map_id") (index $pageMap "google_map_id") (index $siteMaps "google_map_id") }}
 {{ $mapboxToken := or (.Get "mapbox_token") (index $pageMap "mapbox_token") (index $siteMaps "mapbox_token") }}
 {{ $mapboxStyle := or (.Get "mapbox_style") (index $pageMap "mapbox_style") (index $siteMaps "mapbox_style") "mapbox://styles/mapbox/streets-v12" }}
+{{ $placeCacheTtlDays := or (index $pageMap "place_cache_ttl_days") (index $siteMaps "place_cache_ttl_days") 30 }}
 
 {{ $kmlResources := .Page.Resources.Match "kml/*.kml" | default (slice) }}
 {{ $kmlList := slice }}
@@ -28,7 +29,7 @@
   <strong>Map unavailable:</strong> No KML files found for this page.
 </div>
 {{ else }}
-{{ $config := dict "provider" $providerParam "googleKey" $googleKey "googleMapId" $googleMapId "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle }}
+{{ $config := dict "provider" $providerParam "googleKey" $googleKey "googleMapId" $googleMapId "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle "placeCacheTtlDays" $placeCacheTtlDays }}
 <div id="{{ $wrapId }}" class="london-eats-map-wrap{{ if $isFullscreen }} london-eats-fullscreen{{ end }}">
   <div id="{{ $id }}" class="london-eats-map" data-map-id="{{ $id }}">Loading map...</div>
   <div id="{{ $legendId }}" class="london-eats-legend" aria-live="polite"></div>
@@ -184,6 +185,21 @@
 
     const mapConfig = {{ $config | jsonify | safeJS }};
     const kmlFiles = {{ $kmlList | jsonify | safeJS }};
+    const placeCachePrefix = "london-eats:place:";
+    const placeCacheVersion = 1;
+    const placeCacheTtlMs = Math.max(1, Number(mapConfig.placeCacheTtlDays || 30)) * 24 * 60 * 60 * 1000;
+    const memoryPlaceCache = new Map();
+    const inFlightLookups = new Map();
+    const storageSupported = (() => {
+      try {
+        const probeKey = "__london_eats_cache_probe__";
+        window.localStorage.setItem(probeKey, "1");
+        window.localStorage.removeItem(probeKey);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    })();
 
     const categoryConfig = {
       austrian: { emoji: "🇦🇹", label: "Austrian" },
@@ -242,6 +258,83 @@
       if (!statusEl) return;
       statusEl.textContent = "";
       statusEl.classList.remove("is-visible");
+    };
+
+    const normalizeQuery = (query) => String(query || "").trim().toLowerCase();
+
+    const cacheKeyForQuery = (query) =>
+      `${placeCachePrefix}${placeCacheVersion}:${encodeURIComponent(normalizeQuery(query))}`;
+
+    const serializePlaceDetails = (place) => {
+      if (!place) return null;
+
+      return {
+        name: place.name || "",
+        formatted_address: place.formatted_address || "",
+        rating: typeof place.rating === "number" ? place.rating : null,
+        user_ratings_total:
+          typeof place.user_ratings_total === "number" ? place.user_ratings_total : null,
+        website: place.website || "",
+        url: place.url || "",
+        photoUrls: Array.isArray(place.photos)
+          ? place.photos
+              .slice(0, 6)
+              .map((photo) => {
+                try {
+                  return photo.getUrl({ maxWidth: 1200 });
+                } catch (error) {
+                  return "";
+                }
+              })
+              .filter(Boolean)
+          : []
+      };
+    };
+
+    const readCachedPlaceDetails = (query) => {
+      const normalizedQuery = normalizeQuery(query);
+      if (!normalizedQuery) return null;
+
+      if (memoryPlaceCache.has(normalizedQuery)) {
+        return memoryPlaceCache.get(normalizedQuery);
+      }
+
+      if (!storageSupported) return null;
+
+      try {
+        const raw = window.localStorage.getItem(cacheKeyForQuery(normalizedQuery));
+        if (!raw) return null;
+
+        const cached = JSON.parse(raw);
+        if (!cached || typeof cached.savedAt !== "number") return null;
+        if (Date.now() - cached.savedAt > placeCacheTtlMs) return null;
+
+        memoryPlaceCache.set(normalizedQuery, cached.data || null);
+        return cached.data || null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const writeCachedPlaceDetails = (query, data) => {
+      const normalizedQuery = normalizeQuery(query);
+      if (!normalizedQuery || !data) return;
+
+      memoryPlaceCache.set(normalizedQuery, data);
+
+      if (!storageSupported) return;
+
+      try {
+        window.localStorage.setItem(
+          cacheKeyForQuery(normalizedQuery),
+          JSON.stringify({
+            savedAt: Date.now(),
+            data
+          })
+        );
+      } catch (error) {
+        // Ignore storage quota and privacy-mode failures.
+      }
     };
 
     const loadStyle = (href, id) =>
@@ -452,7 +545,6 @@
 
       const map = new window.google.maps.Map(mapEl, mapOptions);
       const placesService = new window.google.maps.places.PlacesService(map);
-      const placeCache = new Map();
       const bounds = new window.google.maps.LatLngBounds();
 
       const AdvancedMarker =
@@ -462,14 +554,13 @@
         if (!place) return "";
         const rating = place.rating ? place.rating.toFixed(1) : "";
         const count = place.user_ratings_total ? `(${place.user_ratings_total})` : "";
-        const photos = place.photos && place.photos.length ? place.photos.slice(0, 6) : [];
-        const heroPhoto = photos.length ? photos[0].getUrl({ maxWidth: 360 }) : "";
+        const photos = Array.isArray(place.photoUrls) ? place.photoUrls.slice(0, 6) : [];
+        const heroPhoto = photos.length ? photos[0] : "";
         const photoHtml = heroPhoto
           ? `<img src="${heroPhoto}" alt="${escapeHtml(place.name)}" style="width:100%;border-radius:8px;margin-top:8px;" />`
           : "";
         const photoLinks = photos
-          .map((photo, index) => {
-            const url = photo.getUrl({ maxWidth: 1200 });
+          .map((url, index) => {
             return `<a href="${url}" target="_blank" rel="noopener">Photo ${index + 1}</a>`;
           })
           .join(" · ");
@@ -485,10 +576,24 @@
       };
 
       const fetchPlaceDetails = (query, callback) => {
-        if (placeCache.has(query)) {
-          callback(placeCache.get(query));
+        const normalizedQuery = normalizeQuery(query);
+        if (!normalizedQuery) {
+          callback(null);
           return;
         }
+
+        const cached = readCachedPlaceDetails(normalizedQuery);
+        if (cached) {
+          callback(cached);
+          return;
+        }
+
+        if (inFlightLookups.has(normalizedQuery)) {
+          inFlightLookups.get(normalizedQuery).push(callback);
+          return;
+        }
+
+        inFlightLookups.set(normalizedQuery, [callback]);
 
         placesService.findPlaceFromQuery(
           {
@@ -497,8 +602,9 @@
           },
           (results, status) => {
             if (status !== window.google.maps.places.PlacesServiceStatus.OK || !results || !results[0]) {
-              placeCache.set(query, null);
-              callback(null);
+              const callbacks = inFlightLookups.get(normalizedQuery) || [];
+              inFlightLookups.delete(normalizedQuery);
+              callbacks.forEach((fn) => fn(null));
               return;
             }
 
@@ -518,11 +624,15 @@
               },
               (detail, detailStatus) => {
                 if (detailStatus === window.google.maps.places.PlacesServiceStatus.OK && detail) {
-                  placeCache.set(query, detail);
-                  callback(detail);
+                  const normalizedPlace = serializePlaceDetails(detail);
+                  writeCachedPlaceDetails(normalizedQuery, normalizedPlace);
+                  const callbacks = inFlightLookups.get(normalizedQuery) || [];
+                  inFlightLookups.delete(normalizedQuery);
+                  callbacks.forEach((fn) => fn(normalizedPlace));
                 } else {
-                  placeCache.set(query, null);
-                  callback(null);
+                  const callbacks = inFlightLookups.get(normalizedQuery) || [];
+                  inFlightLookups.delete(normalizedQuery);
+                  callbacks.forEach((fn) => fn(null));
                 }
               }
             );
@@ -532,6 +642,7 @@
 
       const lookupQueue = [];
       let isLookupRunning = false;
+      let lookupDrainScheduled = false;
 
       const runLookupQueue = () => {
         if (isLookupRunning) return;
@@ -554,7 +665,19 @@
 
       const queueLookup = (query, onResult) => {
         lookupQueue.push({ query, onResult });
-        runLookupQueue();
+        if (lookupDrainScheduled) return;
+        lookupDrainScheduled = true;
+
+        const startDrain = () => {
+          lookupDrainScheduled = false;
+          runLookupQueue();
+        };
+
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(startDrain, { timeout: 1500 });
+        } else {
+          setTimeout(startDrain, 500);
+        }
       };
 
       const createMarkerContent = (emoji) => {
