@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="533">
+        <name>London Restaurants - Spanish</name>
+        <Placemark id="535">
+            <name>Barrafina</name>
+            <description>43 Drury Ln, London WC2B 5AJ, UK</description>
+            <Point id="534">
+                <coordinates>-0.1218929,51.5143296,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="537">
+            <name>Bibi</name>
+            <description>42 N Audley St, London W1K 6ZP, UK</description>
+            <Point id="536">
+                <coordinates>-0.1533455,51.5124392,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="539">
+            <name>Brat</name>
+            <description>4 Redchurch St, London E1 6JL, UK</description>
+            <Point id="538">
+                <coordinates>-0.0767031,51.5242042,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="541">
+            <name>Westerns Laundry</name>
+            <description>34 Drayton Park, London N5 1PB, UK</description>
+            <Point id="540">
+                <coordinates>-0.107265,51.5515495,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="543">
+            <name>Mountain</name>
+            <description>16-18 Beak St, London W1F 9RD, UK</description>
+            <Point id="542">
+                <coordinates>-0.1382302,51.5120181,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="545">
+            <name>Sabor</name>
+            <description>35-37 Heddon St, London W1B 4BR, UK</description>
+            <Point id="544">
+                <coordinates>-0.1396951,51.5113964,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="547">
+            <name>Cafe Kick</name>
+            <description>43 Exmouth Market, London EC1R 4QL, UK</description>
+            <Point id="546">
+                <coordinates>-0.1090556,51.5260556,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="549">
+            <name>Tapas Brindisa Soho</name>
+            <description>46 Broadwick St, London W1F 7AE, UK</description>
+            <Point id="548">
+                <coordinates>-0.1365615,51.5135116,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="551">
+            <name>Arros QD</name>
+            <description>64 Eastcastle St, London W1W 8NQ, UK</description>
+            <Point id="550">
+                <coordinates>-0.1370539,51.51666609999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="553">
+            <name>Moro</name>
+            <description>34-36 Exmouth Market, London EC1R 4QE, UK</description>
+            <Point id="552">
+                <coordinates>-0.1090022,51.5258822,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="555">
+            <name>Escocesa</name>
+            <description>67 Stoke Newington Church St, London N16 0AR, UK</description>
+            <Point id="554">
+                <coordinates>-0.07686069999999999,51.5621136,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="557">
+            <name>Lurra</name>
+            <description>9 Seymour Pl, London W1H 5BA, UK</description>
+            <Point id="556">
+                <coordinates>-0.1612466,51.5147219,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="559">
+            <name>Donostia</name>
+            <description>10 Seymour Pl, London W1H 7ND, UK</description>
+            <Point id="558">
+                <coordinates>-0.1610036,51.5147134,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="561">
+            <name>José</name>
+            <description>104 Bermondsey St, London SE1 3UB, UK</description>
+            <Point id="560">
+                <coordinates>-0.08193950000000001,51.5006031,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="563">
+            <name>Copita</name>
+            <description>27 D'Arblay St, London W1F 8EN, UK</description>
+            <Point id="562">
+                <coordinates>-0.1360552,51.514558,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="83">
+        <name>London Restaurants - Ice Cream</name>
+        <Placemark id="85">
+            <name>Gelatorino</name>
+            <description>2 Russell St, London WC2B 5JD, UK</description>
+            <Point id="84">
+                <coordinates>-0.120877,51.512681,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="87">
+            <name>Mercato Mayfair</name>
+            <description>St. Mark's Church, N Audley St, London W1K 6ZA, UK</description>
+            <Point id="86">
+                <coordinates>-0.1528891,51.5131568,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

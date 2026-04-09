@@ -1,0 +1,666 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Section -> #
+\end_layout
+
+\begin_layout Plain Layout
+Subsection -> ## and so on
+\end_layout
+
+\begin_layout Plain Layout
+use array tables instead of align for multiline equations
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Is random behavior helpful in any situation? By definition, random actions
+ are the most uninformed, and if any better is known should be suboptimal.
+ Yet, the issue is more subtle.
+ Reinforcement learning and game theory can be paradigms to reason about
+ this.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename featured.png
+	lyxscale 30
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Soccer.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Reinforcement learning
+\end_layout
+
+\begin_layout Standard
+Reinforcement learning is a framework to identify the appropriate actions
+ 
+\begin_inset Formula $\left\{ a_{t}\right\} $
+\end_inset
+
+ of an agent 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ in an environment 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+ that will maximize an expected reward 
+\begin_inset Formula $\langle\mathcal{R}\left(\left\{ a_{t}\right\} ,\mathcal{E}\left(\left\{ a_{t}\right\} \right)\right)\rangle_{\mathcal{E},t}$
+\end_inset
+
+ over time 
+\begin_inset Formula $t$
+\end_inset
+
+ and possible environments 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+.
+ Note that in general, the actions affect the environment; 
+\begin_inset Formula $\mathcal{E}=\mathcal{E}\left(\left\{ a_{t}\right\} \right)$
+\end_inset
+
+ and hence the reward.
+ 
+\end_layout
+
+\begin_layout Standard
+Consider an endgame in soccer.
+ The captain 
+\begin_inset Formula $\mathcal{A}$
+\end_inset
+
+ is deciding whether to aim to the left or the right of the goal.
+ What should the captain do?
+\end_layout
+
+\begin_layout Standard
+Let's say the goalkeeper has a weak left side and will never go there.
+ Then, the captain should always score left and will always hit the goal,
+ 
+\begin_inset Formula $a_{t}^{\star}=L$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Let's say the goalkeeper has a not quite so weak left side and will go there
+ 40% of the time.
+ Should the captain then aim right 40% of the time to cover the cases where
+ the goalkeeper might go left? 
+\end_layout
+
+\begin_layout Standard
+This is a fallacy known as probability matching that human behavior has
+ been shown to be susceptible to.
+ If we calculate the expected reward however, we see a difference:
+\end_layout
+
+\begin_layout Paragraph*
+Probability matching
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{ccccccc}
+\langle R\rangle & = & 0 & \cdot & p(\text{aim }L) & \cdot & p(\text{jump }L)\\
+ & + & 1 & \cdot & p(\text{aim }L) & \cdot & p(\text{jump }R)\\
+ & + & 1 & \cdot & p(\text{aim }R) & \cdot & p(\text{aim }L)\\
+ & + & 0 & \cdot & p(\text{aim }R) & \cdot & p(\text{aim }R)\\
+ & = & 0 & \cdot & .6 & \cdot & .4\\
+ & + & 1 & \cdot & .6 & \cdot & .6\\
+ & + & 1 & \cdot & .4 & \cdot & .4\\
+ & + & 0 & \cdot & .4 & \cdot & .6\\
+ & = & 0 & + & .12 & +.12 & +0\\
+ & = & 0.52.
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Paragraph*
+Maximum reward
+\end_layout
+
+\begin_layout Standard
+Instead, let's always aim for the most likely side, 
+\begin_inset Formula $p(\text{aim }\text{L})=1$
+\end_inset
+
+:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\begin{array}{ccccccc}
+\langle R\rangle & = & 0 & \cdot & 1 & \cdot & .4\\
+ & + & 1 & \cdot & 1 & \cdot & .6\\
+ & + & 1 & \cdot & 0 & \cdot & .4\\
+ & + & 0 & \cdot & 0 & \cdot & .6\\
+ & = & 0.6.
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This reveals that probability matching is actually not the right strategy!
+\end_layout
+
+\begin_layout Subsection*
+Incorporating time
+\end_layout
+
+\begin_layout Standard
+This result is surprising! Note that we made a critical assumption: There
+ is only a single trial, and captain and goalkeeper part and never meet
+ again after.
+ Let's say we have a clever goalkeeper who learns that when the captain
+ shoots left, he will have a preference to do so afterwards (ignoring his
+ weak leg).
+ In that setting, the 'goalkeeper'-environment 
+\begin_inset Formula $\mathcal{E}$
+\end_inset
+
+ now changes its response to actions, 
+\begin_inset Formula $\mathcal{E}=\mathcal{E}\left(\left\{ a_{t}\right\} \right)$
+\end_inset
+
+.
+ What is the optimal strategy now?
+\end_layout
+
+\begin_layout Standard
+The captain now is in bad luck: Whenever he develops a preference, the goalkeepe
+r will adapt to it in the very next trial.
+ If he held on to this strategy, he would never score a goal again! So should
+ he just alternate the sides he targets? The goalkeeper could counteract
+ this with likewise just changing sides.
+ In fact, any more complicated schedule will eventually be learned by a
+ sufficiently clever goalkeeper and hence only give a temporary advantage.
+ Even more, throwing a dice every ten shoots will not change this in principle.
+ The best we can do here is to either come up with an insanely complicated
+ schedule that decides when to shoot left or right (a 
+\emph on
+pseudorandom
+\emph default
+ schedule).
+ This, as the name suggests, is then practically indistinguishable from
+ a completely random schedule: The captain throws a dice every time and
+ minimizes the mutual information of his policy and the action 
+\begin_inset Formula $\pi^{\star}=\text{argmin}_{\pi}\mathbb{I}\left[a_{t},a_{t+1}\right],$
+\end_inset
+
+ where we now understand 
+\begin_inset Formula $\pi=\pi\left(\left\{ a_{t}\right\} \right)$
+\end_inset
+
+ as a distribution over sequences of actions 
+\begin_inset Formula $a_{t}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+So a varying strategy can be better than being purely exploitative! Note
+ that we are variable, but not random, as we are actually using our knowledge
+ about the clever gatekeeper – a model of the world 
+\begin_inset Formula $p(s_{t+1}|a_{t},s_{t})$
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Subsection*
+A stubborn goalkeeper
+\end_layout
+
+\begin_layout Standard
+So is soccer then boring in the end? Again, our modelling was too simple:
+ What happens when the goalkeeper takes some time to adapt to a change in
+ strategy of the captain, let's say on a timescale 
+\begin_inset Formula $\tau$
+\end_inset
+
+? A rationale for that could be a stubborn goalkeeper: Even though the captain
+ now aimed 
+\begin_inset Formula $L$
+\end_inset
+
+ four times, this surely was just out of random, and I should continue to
+ respond at random! (a prior belief about the strategy of the captain).
+ The captain might then have an advantage: He on expectation can get 2 more
+ goals in after that point, because the goalkeeper will continue to behave
+ randomly.
+ So, indeed, it can be a game of psychology between the two: When the goalkeeper
+ adheres to his beliefs, the captain might be able to leverage an advantage
+ and exploit for a couple of trials before adapting.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Exploration vs.
+ exploitation
+\end_layout
+
+\begin_layout Standard
+We can try to formalize this towards a general case.
+ First, we are discussing the case of complete knowledge of the world model,
+ and then discuss the case where the world model is insufficiently known.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+Knowledge of the exact world model
+\end_layout
+
+\begin_layout Standard
+If the exact transition structure of the world is known (
+\begin_inset Formula $\hat{p}=p$
+\end_inset
+
+), the optimal action can be calculated as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+a_{t}(s_{t},p^{(t)})=\text{argmax}_{a_{t}}\:\mathbb{E}_{p^{(t)}}\left[R_{t:}\,|\,a_{t},s_{t}\right].
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that evaluating this exactly is typically intractable because of the
+ exponentially growing branches of possible futures.
+ It might now be the case that the argmax is not unique, i.e.
+ two actions yield the same reward.
+ In this case, choosing between at random is equally rewarding.
+ 
+\end_layout
+
+\begin_layout Paragraph*
+Incomplete knowledge
+\end_layout
+
+\begin_layout Standard
+The case of complete (though statistical) knowledge of the world transition
+ structure (
+\begin_inset Formula $\hat{p}\neq p$
+\end_inset
+
+) is what prevents a discussion of exploration, as everything is already
+ known.
+ Here, we now relax this assumption.
+ 
+\end_layout
+
+\begin_layout Standard
+Suppose we only have an incomplete model of the world, 
+\begin_inset Formula $\hat{p}^{(t)}(s_{t+1}|a_{t},s_{t})$
+\end_inset
+
+, and suppose that we can acquire observations 
+\begin_inset Formula $o_{t+1}$
+\end_inset
+
+ through specific actions 
+\begin_inset Formula $a_{t+1}$
+\end_inset
+
+ that help refine it towards the actual 
+\begin_inset Formula $p$
+\end_inset
+
+.
+ So what we should really write then is 
+\begin_inset Formula 
+\[
+a_{t}(s_{t},\hat{p}^{(t)},\hat{\mathcal{P}}^{(t)})=\text{argmax}_{a_{t}}\:\mathbb{E}_{\hat{\mathcal{P}}^{(t)},\hat{p}^{(t)}}\left[R_{t:}|\Delta D^{KL}|_{SS}\bigl[\hat{p}^{(t+1)}||p\bigr](a_{t}),a_{t},s_{t}\right].
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Here, 
+\begin_inset Formula $\Delta D^{KL}|_{SS}\bigl[\hat{p}^{(t+1)}||p\bigr](a_{t})$
+\end_inset
+
+ is a meta-world model that maps actions to information gain 
+\begin_inset Formula $\Delta D^{KL}|_{SS}$
+\end_inset
+
+ restricted to the sufficient statistics 
+\begin_inset Formula $SS$
+\end_inset
+
+ of under the believed informativeness 
+\begin_inset Formula $\hat{\mathcal{P}}\left(\Delta D^{KL}|_{SS}\,|\,a_{t}\right)$
+\end_inset
+
+ of the world through the sampling action 
+\begin_inset Formula $a_{t}$
+\end_inset
+
+.
+ It can well be that a certain observation convinces the agent of the poorness
+ of its world model – for example that no rewards keeps coming in, even
+ though their actions are the same.
+ The meta-world model now predicts higher reward under an action that will
+ explore, as the agent 
+\emph on
+believes it to increase
+\emph default
+ the information about the world, 
+\begin_inset Formula $\Delta D^{KL}|_{SS}(\hat{p}^{(t+1)}||p)\,|\,a_{t}$
+\end_inset
+
+.
+ If several actions now produce the same 
+\begin_inset Formula $R_{t:}$
+\end_inset
+
+-pertinent information gain, they can be chosen randomly.
+ From the outside, this may appear to be random exploration, whereas it
+ actually is exploration that is informed by the agent's belief about pertinent
+ information gain.
+ 
+\end_layout
+
+\begin_layout Standard
+From this, we arrive what might be called a fully Bayesian way of acting:
+ At every point in time, the agent uses its approximate world model 
+\begin_inset Formula $\hat{p}^{(t)}$
+\end_inset
+
+ as well as an (approximate) model 
+\begin_inset Formula $\hat{\mathcal{P}}^{(t)}$
+\end_inset
+
+ about the information gain to choose the most rational action.
+ If an exploratory action is not expected to increase pertinent information,
+ then the agent 
+\emph on
+exploits 
+\emph default
+according to the case of exact knowledge 
+\begin_inset Formula $\hat{p}=p$
+\end_inset
+
+, otherwise it 
+\emph on
+explores.
+ 
+\end_layout
+
+\begin_layout Standard
+Applying this once again to soccer, it means that it might be optimal to
+ aim for the left side from time to time, if our belief 
+\begin_inset Formula $\hat{\mathcal{P}}$
+\end_inset
+
+ about the world suggests that this will help us in determining whether
+ for example the goal keeper has changed their policy.
+ Conversely, if we are confident that the goalkeeper does never change his
+ strategy, there is no point of exploratory action.
+ 
+\end_layout
+
+\begin_layout Subsection
+Nota bene: Game theory
+\end_layout
+
+\begin_layout Standard
+Game theory is a mathematical framework to handle adversarial interactions
+ as in the sketched soccer scenario.
+ It summarizes the outcome of actions into a so called game matrix that
+ is shown below.
+ Here, the values indicate the reward 
+\begin_inset Formula $\mathcal{R}$
+\end_inset
+
+ of the captain 
+\begin_inset Formula $c$
+\end_inset
+
+ over the goalkeeper 
+\begin_inset Formula $g$
+\end_inset
+
+ for jumping left 
+\begin_inset Formula $L$
+\end_inset
+
+ or right 
+\begin_inset Formula $R$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{ccc}
+\mathcal{R} & c_{L} & c_{R}\\
+g_{L} & 0 & 1\\
+g_{R} & 1 & 0
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that if either party where to commit to a strategy (say 
+\begin_inset Formula $L$
+\end_inset
+
+), the other party could adjust to that by choosing 
+\begin_inset Formula $L$
+\end_inset
+
+ likewise.
+ That way, the captain would maximize 
+\begin_inset Formula $\mathcal{R}$
+\end_inset
+
+, while the goalkeeper would minimize it.
+\end_layout
+
+\begin_layout Standard
+The notion of a Nash equilibrium provides a solution to this dilemma: 
+\series bold
+Both agents should adopt a strategy that will have either party be off worse
+ if they depart from it.
+
+\series default
+ This is the case for the following probabilities of acting:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\begin{array}{ccc}
+\mathcal{R} & c_{L}@.5 & c_{R}@.5\\
+g_{L}@.5 & 0 & 1\\
+g_{R}@.5 & 1 & 0
+\end{array}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Where does this fit in the language of reinforcment learning above? The
+ game-theoretic scenario assumes both the gatekeeper and environment to
+ respond optimally, i.e., a stubborn goalkeeper is not considered.
+ Then, we let the parties interact and come up with the most complicated
+ schedules 
+\begin_inset Formula $\left\{ \pi_{t}\right\} $
+\end_inset
+
+ and learning schemes 
+\begin_inset Formula $\mathcal{E}\left(\left\{ a_{t}\right\} \right)$
+\end_inset
+
+ they can imagine.
+ Ultimately, 
+\begin_inset Formula $\langle\mathcal{R}\left(\left\{ a_{t}\right\} ,\,\mathcal{E}\left(\left\{ a_{t}\right\} \right)\right)\rangle_{a_{t}\sim\pi_{t},\mathcal{E},t}$
+\end_inset
+
+ will be bounded from above by 
+\begin_inset Formula $.5$
+\end_inset
+
+, which is the best average score the captain can achieve (or the smallest
+ loss the goalkeeper can try to prevent) in every trial.
+\end_layout
+
+\end_body
+\end_document

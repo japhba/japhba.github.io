@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="63">
+        <name>London Restaurants - Expensive</name>
+        <Placemark id="65">
+            <name>Casa Fofo</name>
+            <description>158 Sandringham Rd, London E8 2HS, UK</description>
+            <Point id="64">
+                <coordinates>-0.0641369,51.5499411,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="67">
+            <name>Sushi Kanesaka</name>
+            <description>45 Park Ln, London W1K 1PN, UK</description>
+            <Point id="66">
+                <coordinates>-0.1517379,51.5065008,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="69">
+            <name>The Araki</name>
+            <description>Unit 4, 12 New Burlington St, London W1S 3BF, UK</description>
+            <Point id="68">
+                <coordinates>-0.1401451,51.5117817,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="71">
+            <name>The Clove Club</name>
+            <description>Shoreditch Town Hall, 380 Old St, London EC1V 9LT, UK</description>
+            <Point id="70">
+                <coordinates>-0.07933849999999999,51.5270972,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="73">
+            <name>Kikuchi</name>
+            <description>14 Hanway St, London W1T 1UD, UK</description>
+            <Point id="72">
+                <coordinates>-0.1317059,51.51696099999999,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="75">
+            <name>Akoko</name>
+            <description>21 Berners St, London W1T 3LP, UK</description>
+            <Point id="74">
+                <coordinates>-0.1368354,51.5177129,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="77">
+            <name>Septime</name>
+            <description>London, UK</description>
+            <Point id="76">
+                <coordinates>-0.1275862,51.5072178,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="79">
+            <name>The Water House Project</name>
+            <description>1 Corbridge Cres, Cambridge Heath, London E2 9DT, UK</description>
+            <Point id="78">
+                <coordinates>-0.058718,51.5337226,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="81">
+            <name>Aulis</name>
+            <description>16 St Anne's Ct, London W1F 0BF, UK</description>
+            <Point id="80">
+                <coordinates>-0.1343204,51.5143774,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

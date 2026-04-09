@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="411">
+        <name>London Restaurants - Nordic</name>
+        <Placemark id="413">
+            <name>Skal Nordic Dining</name>
+            <description>149a Upper St, London N1 1RA, UK</description>
+            <Point id="412">
+                <coordinates>-0.1027882,51.5401226,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

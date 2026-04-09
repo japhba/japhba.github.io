@@ -1,69 +1,28 @@
-# ============================================================================
-# Hugo Site .gitignore
-# ============================================================================
+# IDEs
+.idea/
 
-# ============================================================================
-# Hugo Build Artifacts
-# ============================================================================
-
-# Generated site output
-public/
-
-# Hugo resources (processed assets)
+# Hugo
 resources/
-
-# Hugo build lock
+public/
+jsconfig.json
+node_modules/
+go.sum
 .hugo_build.lock
 
-# Hugo stats
-hugo_stats.json
-
-# Auto-generated JS config
-**/assets/jsconfig.json
-
-# ============================================================================
-# Node.js & Package Managers
-# ============================================================================
-
-# Dependencies
-node_modules/
-
-# ============================================================================
-# Environment & Configuration
-# ============================================================================
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# ============================================================================
-# Generated Content
-# ============================================================================
-
-# Pagefind search index
-pagefind/
-static/pagefind/
-
-# ============================================================================
-# Operating System
-# ============================================================================
-
-# macOS
+# Mac 
 .DS_Store
-.DS_Store?
-._*
+*.lyx#
+*.lyx~
 
-# Windows
-Thumbs.db
-Desktop.ini
+content/post/dmft/_build
+**/.ipynb_checkpoints
 
-# Linux
-*~
-
-# ============================================================================
-# Logs & Temporary Files
-# ============================================================================
-
+# LyX
+*.eps
+*.aux
+*.fls
 *.log
-npm-debug.log*
+*.synctex.gz
+.env
+# Local Netlify folder
+.netlify

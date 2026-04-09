@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="565">
+        <name>London Restaurants - Fancy Pub Food</name>
+        <Placemark id="567">
+            <name>The Parakeet</name>
+            <description>256 Kentish Town Rd, London NW5 2AA, UK</description>
+            <Point id="566">
+                <coordinates>-0.1404891,51.5497816,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="569">
+            <name>Prince Bonaparte</name>
+            <description>Prince Bonaparte, London W2, UK</description>
+            <Point id="568">
+                <coordinates>-0.1956028,51.5174071,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="571">
+            <name>The Pelican</name>
+            <description>The Pelican, 45 All Saints Rd, London W11 1HE, UK</description>
+            <Point id="570">
+                <coordinates>-0.2046721,51.518799,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="573">
+            <name>Market coffee house</name>
+            <description>50-52 Brushfield St, London E1 6AG, UK</description>
+            <Point id="572">
+                <coordinates>-0.076572,51.5190031,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

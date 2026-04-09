@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="393">
+        <name>London Restaurants - South African</name>
+        <Placemark id="395">
+            <name>Kudu</name>
+            <description>7 Moxon St, London W1U 4EP, UK</description>
+            <Point id="394">
+                <coordinates>-0.152286,51.5197206,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>

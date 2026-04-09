@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="1">
+        <name>London Restaurants - Persian</name>
+        <Placemark id="3">
+            <name>Berenjak</name>
+            <description>1 Bedale St, London SE1 9AL, UK</description>
+            <Point id="2">
+                <coordinates>-0.0899024,51.5053084,0.0</coordinates>
+            </Point>
+        </Placemark>
+    </Document>
+</kml>
