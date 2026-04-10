@@ -28,18 +28,6 @@ organizations:
 #  - Computational Linguistics
 #  - Information Retrieval
 
-# Education to show in About widget
-education:
-  - area: PhD student in Theoretical Neuroscience
-    institution: Gatsby Unit, UCL & ELSC, Hebrew University
-    year: 2022–
-  - area: MSc in Statistical Physics
-    institution: Juelich Research Center, Germany
-    year: 2019–2022
-  - area: BSc in Physics
-    institution: RWTH Aachen University, Germany
-    year: 2016–2019
-
 # Social/Contact links
 profiles:
   - icon: academicons/google-scholar

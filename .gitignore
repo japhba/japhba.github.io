@@ -25,5 +25,6 @@ content/post/dmft/_build
 *.log
 *.synctex.gz
 .env
+.env.local
 # Local Netlify folder
 .netlify

@@ -48,6 +48,7 @@ jobs:
     - name: Build with Hugo
       env:
         HUGO_ENVIRONMENT: production
+        HUGO_GOOGLE_MAPS_API_KEY: ${{ secrets.HUGO_GOOGLE_MAPS_API_KEY }}
       run: |
         echo "Hugo Cache Dir: $(hugo config | grep cachedir)"
         hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}/"

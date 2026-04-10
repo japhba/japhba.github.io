@@ -5,10 +5,10 @@
   "packageManager": "pnpm@10.14.0",
   "description": "Academic CV starter template for Hugo Blox with Tailwind CSS v4",
   "scripts": {
-    "dev": "hugo server --disableFastRender",
+    "dev": "sh scripts/with-local-env.sh hugo server --disableFastRender",
     "build": "hugo --minify && pnpm run pagefind",
     "pagefind": "pagefind --site public",
-    "london-eats:update": "node scripts/update-london-eats-cache.mjs"
+    "london-eats:update": "sh scripts/with-local-env.sh node scripts/update-london-eats-cache.mjs"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.12",
