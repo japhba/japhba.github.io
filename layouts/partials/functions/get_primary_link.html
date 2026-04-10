@@ -1,0 +1,32 @@
+{{/*
+Resolve the primary card link for a page.
+Prefer a normalized `links` entry of type `site`, while falling back to the
+page permalink when no site link exists.
+*/}}
+
+{{ $page := . }}
+{{ $scratch := newScratch }}
+{{ $scratch.Set "url" $page.RelPermalink }}
+{{ $scratch.Set "target" "" }}
+{{ $scratch.Set "is_external" false }}
+{{ $scratch.Set "found" false }}
+
+{{ $built := partial "functions/build_links" (dict "page" $page "is_list" 1) }}
+{{ range $built }}
+  {{ if and (not ($scratch.Get "found")) (eq .type "site") .url }}
+    {{ $url := printf "%v" .url }}
+    {{ $scratch.Set "url" $url }}
+    {{ $scratch.Set "found" true }}
+    {{ $scheme := (urls.Parse $url).Scheme }}
+    {{ if or (eq $scheme "http") (eq $scheme "https") }}
+      {{ $scratch.Set "target" "target=\"_blank\" rel=\"noopener\"" }}
+      {{ $scratch.Set "is_external" true }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return (dict
+  "url" ($scratch.Get "url")
+  "target" ($scratch.Get "target")
+  "is_external" ($scratch.Get "is_external")
+) }}

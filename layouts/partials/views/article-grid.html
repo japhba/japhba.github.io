@@ -1,0 +1,62 @@
+{{ $item := .item }}
+{{ $fill_image := .config.fill_image | default true }}
+
+{{ $primary_link := partial "functions/get_primary_link.html" $item }}
+{{ $link := $primary_link.url | default $item.RelPermalink }}
+{{ $target := $primary_link.target | default "" }}
+{{ $is_external := $primary_link.is_external | default false }}
+
+{{ $resource := partial "functions/get_featured_image.html" $item }}
+{{ $anchor := $item.Params.image.focal_point | default "Center" }}
+
+<article class="group">
+  {{ with $resource }}
+    {{ $image := "" }}
+    {{ if $fill_image }}
+      {{ $image = .Fill (printf "960x540 %s" $anchor) }}
+    {{ else }}
+      {{ $image = .Fit (printf "960x540 %s" $anchor) }}
+    {{ end }}
+    {{ if ne $image.MediaType.SubType "gif" }}{{ $image = $image.Process "webp" }}{{ end }}
+    <div class="overflow-hidden rounded-xl bg-zinc-100 shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg dark:bg-zinc-800">
+      <a class="relative block aspect-video" href="{{ $link }}" {{ $target | safeHTMLAttr }}>
+        <img
+          alt="{{ $item.Title | plainify }}"
+          class="{{ if $fill_image }}object-fill{{ else }}object-contain{{ end }} h-full w-full transition-transform duration-500 group-hover:scale-105"
+          decoding="async"
+          fetchpriority="high"
+          height="{{ $image.Height }}"
+          loading="lazy"
+          src="{{ $image.RelPermalink }}"
+          width="{{ $image.Width }}">
+      </a>
+    </div>
+  {{ end }}
+
+  <div class="mt-4">
+    {{ if and $item.Params.tags (gt (len $item.Params.tags) 0) }}
+      <div class="flex gap-3">
+        {{ range first 1 ($item.GetTerms "tags") }}
+          <a href="{{ .RelPermalink }}">
+            <span class="inline-block text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-300">{{ .Page.LinkTitle }}</span>
+          </a>
+        {{ end }}
+      </div>
+    {{ end }}
+
+    <h2 class="mt-2 text-lg font-semibold tracking-tight text-zinc-900 dark:text-white">
+      <a href="{{ $link }}" {{ $target | safeHTMLAttr }} class="hover:text-primary-700 dark:hover:text-primary-300">
+        {{ $item.Title }}
+        {{ if $is_external }}
+          {{ partial "functions/get_icon" (dict "name" "arrow-top-right-on-square" "attributes" "style=\"height: 1em;\" class=\"inline-flex h-4 w-4 pl-1 align-text-top\"") }}
+        {{ end }}
+      </a>
+    </h2>
+
+    <p class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <a href="{{ $link }}" {{ $target | safeHTMLAttr }}>
+        {{ ($item.Params.summary | default $item.Summary) | plainify | htmlUnescape | chomp }}
+      </a>
+    </p>
+  </div>
+</article>
