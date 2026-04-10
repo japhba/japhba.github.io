@@ -8,11 +8,15 @@
 {{ $pageMap := .Page.Params.map | default dict }}
 {{ $siteMaps := .Site.Params.maps | default dict }}
 {{ $providerParam := .Get "provider" | default (index $pageMap "provider" | default "") }}
-{{ $googleKey := or (.Get "google_key") (index $pageMap "google_api_key") (index $siteMaps "google_api_key") }}
+{{ $googleKey := or (.Get "google_key") (index $pageMap "google_api_key") (getenv "HUGO_GOOGLE_MAPS_API_KEY") (index $siteMaps "google_api_key") }}
 {{ $googleMapId := or (.Get "google_map_id") (index $pageMap "google_map_id") (index $siteMaps "google_map_id") }}
 {{ $mapboxToken := or (.Get "mapbox_token") (index $pageMap "mapbox_token") (index $siteMaps "mapbox_token") }}
 {{ $mapboxStyle := or (.Get "mapbox_style") (index $pageMap "mapbox_style") (index $siteMaps "mapbox_style") "mapbox://styles/mapbox/streets-v12" }}
-{{ $placeCacheTtlDays := or (index $pageMap "place_cache_ttl_days") (index $siteMaps "place_cache_ttl_days") 30 }}
+{{ $datasetResource := .Page.Resources.GetMatch "restaurants.json" }}
+{{ $datasetUrl := "" }}
+{{ with $datasetResource }}
+  {{ $datasetUrl = .RelPermalink }}
+{{ end }}
 
 {{ $kmlResources := .Page.Resources.Match "kml/*.kml" | default (slice) }}
 {{ $kmlList := slice }}
@@ -20,16 +24,11 @@
   {{ $fileName := path.Base .Name | lower }}
   {{ $base := strings.TrimSuffix ".kml" $fileName }}
   {{ $category := replace $base "london_restaurants_" "" }}
-  {{ $label := $category | replace "_" " " | title }}
+  {{ $label := humanize $category }}
   {{ $kmlList = $kmlList | append (dict "url" .RelPermalink "category" $category "label" $label) }}
 {{ end }}
 
-{{ if not (len $kmlList) }}
-<div>
-  <strong>Map unavailable:</strong> No KML files found for this page.
-</div>
-{{ else }}
-{{ $config := dict "provider" $providerParam "googleKey" $googleKey "googleMapId" $googleMapId "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle "placeCacheTtlDays" $placeCacheTtlDays }}
+{{ $config := dict "provider" $providerParam "googleKey" $googleKey "googleMapId" $googleMapId "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle "datasetUrl" $datasetUrl }}
 <div id="{{ $wrapId }}" class="london-eats-map-wrap{{ if $isFullscreen }} london-eats-fullscreen{{ end }}">
   <div id="{{ $id }}" class="london-eats-map" data-map-id="{{ $id }}">Loading map...</div>
   <div id="{{ $legendId }}" class="london-eats-legend" aria-live="polite"></div>
@@ -185,21 +184,6 @@
 
     const mapConfig = {{ $config | jsonify | safeJS }};
     const kmlFiles = {{ $kmlList | jsonify | safeJS }};
-    const placeCachePrefix = "london-eats:place:";
-    const placeCacheVersion = 1;
-    const placeCacheTtlMs = Math.max(1, Number(mapConfig.placeCacheTtlDays || 30)) * 24 * 60 * 60 * 1000;
-    const memoryPlaceCache = new Map();
-    const inFlightLookups = new Map();
-    const storageSupported = (() => {
-      try {
-        const probeKey = "__london_eats_cache_probe__";
-        window.localStorage.setItem(probeKey, "1");
-        window.localStorage.removeItem(probeKey);
-        return true;
-      } catch (error) {
-        return false;
-      }
-    })();
 
     const categoryConfig = {
       austrian: { emoji: "🇦🇹", label: "Austrian" },
@@ -258,83 +242,6 @@
       if (!statusEl) return;
       statusEl.textContent = "";
       statusEl.classList.remove("is-visible");
-    };
-
-    const normalizeQuery = (query) => String(query || "").trim().toLowerCase();
-
-    const cacheKeyForQuery = (query) =>
-      `${placeCachePrefix}${placeCacheVersion}:${encodeURIComponent(normalizeQuery(query))}`;
-
-    const serializePlaceDetails = (place) => {
-      if (!place) return null;
-
-      return {
-        name: place.name || "",
-        formatted_address: place.formatted_address || "",
-        rating: typeof place.rating === "number" ? place.rating : null,
-        user_ratings_total:
-          typeof place.user_ratings_total === "number" ? place.user_ratings_total : null,
-        website: place.website || "",
-        url: place.url || "",
-        photoUrls: Array.isArray(place.photos)
-          ? place.photos
-              .slice(0, 6)
-              .map((photo) => {
-                try {
-                  return photo.getUrl({ maxWidth: 1200 });
-                } catch (error) {
-                  return "";
-                }
-              })
-              .filter(Boolean)
-          : []
-      };
-    };
-
-    const readCachedPlaceDetails = (query) => {
-      const normalizedQuery = normalizeQuery(query);
-      if (!normalizedQuery) return null;
-
-      if (memoryPlaceCache.has(normalizedQuery)) {
-        return memoryPlaceCache.get(normalizedQuery);
-      }
-
-      if (!storageSupported) return null;
-
-      try {
-        const raw = window.localStorage.getItem(cacheKeyForQuery(normalizedQuery));
-        if (!raw) return null;
-
-        const cached = JSON.parse(raw);
-        if (!cached || typeof cached.savedAt !== "number") return null;
-        if (Date.now() - cached.savedAt > placeCacheTtlMs) return null;
-
-        memoryPlaceCache.set(normalizedQuery, cached.data || null);
-        return cached.data || null;
-      } catch (error) {
-        return null;
-      }
-    };
-
-    const writeCachedPlaceDetails = (query, data) => {
-      const normalizedQuery = normalizeQuery(query);
-      if (!normalizedQuery || !data) return;
-
-      memoryPlaceCache.set(normalizedQuery, data);
-
-      if (!storageSupported) return;
-
-      try {
-        window.localStorage.setItem(
-          cacheKeyForQuery(normalizedQuery),
-          JSON.stringify({
-            savedAt: Date.now(),
-            data
-          })
-        );
-      } catch (error) {
-        // Ignore storage quota and privacy-mode failures.
-      }
     };
 
     const loadStyle = (href, id) =>
@@ -399,7 +306,7 @@
           script.src =
             "https://maps.googleapis.com/maps/api/js?key=" +
             encodeURIComponent(apiKey) +
-            "&libraries=marker,places&v=beta&callback=" +
+            "&libraries=marker&v=beta&callback=" +
             callbackName;
           script.async = true;
           script.onerror = () => reject(new Error("Failed to load Google Maps"));
@@ -444,27 +351,33 @@
         try {
           const response = await fetch(file.url, { credentials: "same-origin" });
           if (!response.ok) continue;
+
           const kmlText = await response.text();
           const xml = new DOMParser().parseFromString(kmlText, "application/xml");
           const geojson = window.toGeoJSON.kml(xml);
+
           (geojson.features || []).forEach((feature) => {
             if (!feature.geometry || feature.geometry.type !== "Point") return;
             const coords = feature.geometry.coordinates;
             if (!coords || coords.length < 2) return;
-            const name = feature.properties && feature.properties.name ? feature.properties.name : "Unknown";
-            const desc =
-              feature.properties && feature.properties.description ? feature.properties.description : "";
+
+            const name =
+              feature.properties && feature.properties.name ? feature.properties.name : "Unknown";
+            const description =
+              feature.properties && feature.properties.description
+                ? feature.properties.description
+                : "";
             const key = `${file.category}|${name}|${coords[1]}|${coords[0]}`;
             if (seen.has(key)) return;
+
             seen.add(key);
             usedCategories.add(file.category);
             points.push({
               name,
-              description: desc,
+              description,
               lat: coords[1],
               lng: coords[0],
-              category: file.category,
-              label: file.label
+              category: file.category
             });
           });
         } catch (error) {
@@ -472,18 +385,63 @@
         }
       }
 
-      return { points, usedCategories };
+      return {
+        points,
+        placeIndex: new Map(),
+        usedCategories
+      };
+    };
+
+    const loadDataset = async () => {
+      if (!mapConfig.datasetUrl) {
+        throw new Error("Static restaurant dataset is missing.");
+      }
+
+      const response = await fetch(mapConfig.datasetUrl, { credentials: "same-origin" });
+      if (!response.ok) {
+        throw new Error("Failed to load the static restaurant dataset.");
+      }
+
+      const payload = await response.json();
+      const points = Array.isArray(payload.points)
+        ? payload.points.filter(
+            (point) =>
+              point &&
+              typeof point.name === "string" &&
+              typeof point.category === "string" &&
+              typeof point.lat === "number" &&
+              typeof point.lng === "number"
+          )
+        : [];
+      const places =
+        payload && payload.places && typeof payload.places === "object" ? payload.places : {};
+
+      return {
+        points,
+        placeIndex: new Map(Object.entries(places)),
+        usedCategories: new Set(points.map((point) => point.category))
+      };
     };
 
     const renderLegend = (usedCategories) => {
       if (!legendEl) return;
-      const order = kmlFiles.map((file) => file.category);
-      const items = Array.from(usedCategories).sort(
-        (a, b) => order.indexOf(a) - order.indexOf(b)
-      );
+
+      const order = new Map(kmlFiles.map((file, index) => [file.category, index]));
+      const items = Array.from(usedCategories).sort((left, right) => {
+        const leftOrder = order.has(left) ? order.get(left) : Number.MAX_SAFE_INTEGER;
+        const rightOrder = order.has(right) ? order.get(right) : Number.MAX_SAFE_INTEGER;
+        if (leftOrder !== rightOrder) return leftOrder - rightOrder;
+        return left.localeCompare(right);
+      });
+
+      if (!items.length) {
+        legendEl.innerHTML = "";
+        return;
+      }
+
       const html = items
         .map((category) => {
-          const file = kmlFiles.find((kml) => kml.category === category);
+          const file = kmlFiles.find((entry) => entry.category === category);
           const info = categoryInfo(category, file ? file.label : "");
           return `<div class="legend-item"><span class="legend-emoji">${info.emoji}</span><span>${escapeHtml(
             info.label
@@ -494,7 +452,59 @@
       legendEl.innerHTML = `<div class="legend-title">Legend</div>${html}`;
     };
 
-    const initMapbox = ({ points, usedCategories }) => {
+    const placeForPoint = (point, placeIndex) => {
+      if (!point || !point.placeKey) return null;
+      return placeIndex.get(point.placeKey) || null;
+    };
+
+    const formatRating = (place) =>
+      place && typeof place.rating === "number" ? place.rating.toFixed(1) : "";
+
+    const createMarkerContent = (emoji, ratingText) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "london-eats-marker";
+
+      const emojiEl = document.createElement("div");
+      emojiEl.textContent = emoji;
+      wrapper.appendChild(emojiEl);
+
+      const ratingEl = document.createElement("div");
+      ratingEl.className = "london-eats-marker-rating";
+      if (ratingText) {
+        ratingEl.textContent = ratingText;
+      } else {
+        ratingEl.style.display = "none";
+      }
+      wrapper.appendChild(ratingEl);
+
+      return wrapper;
+    };
+
+    const buildPlaceCard = (point, place) => {
+      const displayName = place && place.name ? place.name : point.name;
+      const displayAddress =
+        place && place.formatted_address ? place.formatted_address : point.description || "";
+      const rating = formatRating(place);
+      const count =
+        place && typeof place.user_ratings_total === "number"
+          ? ` (${place.user_ratings_total})`
+          : "";
+      const website =
+        place && place.website
+          ? `<a href="${place.website}" target="_blank" rel="noopener">Website</a>`
+          : "";
+      const mapsLink =
+        place && place.url
+          ? `<a href="${place.url}" target="_blank" rel="noopener">Open in Maps</a>`
+          : "";
+      const links = [website, mapsLink].filter(Boolean).join(" · ");
+
+      return `<div><strong>${escapeHtml(displayName)}</strong>${
+        displayAddress ? `<div>${escapeHtml(displayAddress)}</div>` : ""
+      }${rating ? `<div>Rating: ${rating}${count}</div>` : ""}${links ? `<div>${links}</div>` : ""}</div>`;
+    };
+
+    const initMapbox = ({ points, placeIndex, usedCategories }) => {
       window.mapboxgl.accessToken = mapConfig.mapboxToken;
       const map = new window.mapboxgl.Map({
         container: mapId,
@@ -506,18 +516,14 @@
       const bounds = new window.mapboxgl.LngLatBounds();
 
       points.forEach((point) => {
-        const info = categoryInfo(point.category, point.label);
-        const el = document.createElement("div");
-        el.className = "london-eats-marker";
-        el.textContent = info.emoji;
-
+        const place = placeForPoint(point, placeIndex);
+        const info = categoryInfo(point.category);
+        const content = createMarkerContent(info.emoji, formatRating(place));
         const popup = new window.mapboxgl.Popup({ offset: 18 }).setHTML(
-          `<div><strong>${escapeHtml(point.name)}</strong>${
-            point.description ? `<div>${escapeHtml(point.description)}</div>` : ""
-          }</div>`
+          buildPlaceCard(point, place)
         );
 
-        new window.mapboxgl.Marker({ element: el })
+        new window.mapboxgl.Marker({ element: content })
           .setLngLat([point.lng, point.lat])
           .setPopup(popup)
           .addTo(map);
@@ -533,7 +539,7 @@
       clearStatus();
     };
 
-    const initGoogle = ({ points, usedCategories }) => {
+    const initGoogle = ({ points, placeIndex, usedCategories }) => {
       const mapOptions = {
         center: { lat: 51.5074, lng: -0.1278 },
         zoom: 12
@@ -544,208 +550,41 @@
       }
 
       const map = new window.google.maps.Map(mapEl, mapOptions);
-      const placesService = new window.google.maps.places.PlacesService(map);
       const bounds = new window.google.maps.LatLngBounds();
-
       const AdvancedMarker =
         window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
 
-      const buildPlaceCard = (place) => {
-        if (!place) return "";
-        const rating = place.rating ? place.rating.toFixed(1) : "";
-        const count = place.user_ratings_total ? `(${place.user_ratings_total})` : "";
-        const photos = Array.isArray(place.photoUrls) ? place.photoUrls.slice(0, 6) : [];
-        const heroPhoto = photos.length ? photos[0] : "";
-        const photoHtml = heroPhoto
-          ? `<img src="${heroPhoto}" alt="${escapeHtml(place.name)}" style="width:100%;border-radius:8px;margin-top:8px;" />`
-          : "";
-        const photoLinks = photos
-          .map((url, index) => {
-            return `<a href="${url}" target="_blank" rel="noopener">Photo ${index + 1}</a>`;
-          })
-          .join(" · ");
-        const website =
-          place.website ? `<a href="${place.website}" target="_blank" rel="noopener">Website</a>` : "";
-        const mapsLink =
-          place.url ? `<a href="${place.url}" target="_blank" rel="noopener">Open in Maps</a>` : "";
-        const links = [website, mapsLink].filter(Boolean).join(" · ");
-
-        return `<div><strong>${escapeHtml(place.name)}</strong>${
-          place.formatted_address ? `<div>${escapeHtml(place.formatted_address)}</div>` : ""
-        }${rating ? `<div>Rating: ${rating} ${count}</div>` : ""}${links ? `<div>${links}</div>` : ""}${photoLinks ? `<div>${photoLinks}</div>` : ""}${photoHtml}</div>`;
-      };
-
-      const fetchPlaceDetails = (query, callback) => {
-        const normalizedQuery = normalizeQuery(query);
-        if (!normalizedQuery) {
-          callback(null);
-          return;
-        }
-
-        const cached = readCachedPlaceDetails(normalizedQuery);
-        if (cached) {
-          callback(cached);
-          return;
-        }
-
-        if (inFlightLookups.has(normalizedQuery)) {
-          inFlightLookups.get(normalizedQuery).push(callback);
-          return;
-        }
-
-        inFlightLookups.set(normalizedQuery, [callback]);
-
-        placesService.findPlaceFromQuery(
-          {
-            query,
-            fields: ["place_id", "name", "geometry", "formatted_address"]
-          },
-          (results, status) => {
-            if (status !== window.google.maps.places.PlacesServiceStatus.OK || !results || !results[0]) {
-              const callbacks = inFlightLookups.get(normalizedQuery) || [];
-              inFlightLookups.delete(normalizedQuery);
-              callbacks.forEach((fn) => fn(null));
-              return;
-            }
-
-            const placeId = results[0].place_id;
-            placesService.getDetails(
-              {
-                placeId,
-                fields: [
-                  "name",
-                  "formatted_address",
-                  "rating",
-                  "user_ratings_total",
-                  "photos",
-                  "website",
-                  "url"
-                ]
-              },
-              (detail, detailStatus) => {
-                if (detailStatus === window.google.maps.places.PlacesServiceStatus.OK && detail) {
-                  const normalizedPlace = serializePlaceDetails(detail);
-                  writeCachedPlaceDetails(normalizedQuery, normalizedPlace);
-                  const callbacks = inFlightLookups.get(normalizedQuery) || [];
-                  inFlightLookups.delete(normalizedQuery);
-                  callbacks.forEach((fn) => fn(normalizedPlace));
-                } else {
-                  const callbacks = inFlightLookups.get(normalizedQuery) || [];
-                  inFlightLookups.delete(normalizedQuery);
-                  callbacks.forEach((fn) => fn(null));
-                }
-              }
-            );
-          }
-        );
-      };
-
-      const lookupQueue = [];
-      let isLookupRunning = false;
-      let lookupDrainScheduled = false;
-
-      const runLookupQueue = () => {
-        if (isLookupRunning) return;
-        isLookupRunning = true;
-
-        const next = () => {
-          const item = lookupQueue.shift();
-          if (!item) {
-            isLookupRunning = false;
-            return;
-          }
-          fetchPlaceDetails(item.query, (place) => {
-            item.onResult(place);
-            setTimeout(next, 180);
-          });
-        };
-
-        next();
-      };
-
-      const queueLookup = (query, onResult) => {
-        lookupQueue.push({ query, onResult });
-        if (lookupDrainScheduled) return;
-        lookupDrainScheduled = true;
-
-        const startDrain = () => {
-          lookupDrainScheduled = false;
-          runLookupQueue();
-        };
-
-        if ("requestIdleCallback" in window) {
-          window.requestIdleCallback(startDrain, { timeout: 1500 });
-        } else {
-          setTimeout(startDrain, 500);
-        }
-      };
-
-      const createMarkerContent = (emoji) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "london-eats-marker";
-        const emojiEl = document.createElement("div");
-        emojiEl.textContent = emoji;
-        const ratingEl = document.createElement("div");
-        ratingEl.className = "london-eats-marker-rating";
-        ratingEl.textContent = "";
-        wrapper.appendChild(emojiEl);
-        wrapper.appendChild(ratingEl);
-        return { wrapper, ratingEl };
-      };
-
       points.forEach((point) => {
-        const info = categoryInfo(point.category, point.label);
-        let marker = null;
-        let ratingEl = null;
-        const query = `${point.name} ${point.description || ""} London`;
+        const place = placeForPoint(point, placeIndex);
+        const info = categoryInfo(point.category);
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: buildPlaceCard(point, place)
+        });
 
         if (AdvancedMarker) {
-          const contentParts = createMarkerContent(info.emoji);
-          const content = contentParts.wrapper;
-          ratingEl = contentParts.ratingEl;
-          marker = new AdvancedMarker({
+          const marker = new AdvancedMarker({
             map,
             position: { lat: point.lat, lng: point.lng },
-            content
+            content: createMarkerContent(info.emoji, formatRating(place))
           });
-        } else {
-          marker = new window.google.maps.Marker({
-            map,
-            position: { lat: point.lat, lng: point.lng },
-            label: info.emoji
-          });
-        }
 
-        const fallbackHtml = `<div><strong>${escapeHtml(point.name)}</strong>${
-          point.description ? `<div>${escapeHtml(point.description)}</div>` : ""
-        }</div>`;
-
-        const infoWindow = new window.google.maps.InfoWindow({ content: fallbackHtml });
-        if (AdvancedMarker) {
           marker.addListener("gmp-click", () => {
-            fetchPlaceDetails(query, (place) => {
-              infoWindow.setContent(place ? buildPlaceCard(place) : fallbackHtml);
-              infoWindow.open({ anchor: marker, map });
-            });
+            infoWindow.open({ anchor: marker, map });
           });
-          bounds.extend(marker.position);
         } else {
-          marker.addListener("click", () => {
-            fetchPlaceDetails(query, (place) => {
-              infoWindow.setContent(place ? buildPlaceCard(place) : fallbackHtml);
-              infoWindow.open({ anchor: marker, map });
-            });
+          const marker = new window.google.maps.Marker({
+            map,
+            position: { lat: point.lat, lng: point.lng },
+            label: info.emoji,
+            title: point.name
           });
-          bounds.extend(marker.getPosition());
+
+          marker.addListener("click", () => {
+            infoWindow.open({ anchor: marker, map });
+          });
         }
 
-        if (ratingEl) {
-          queueLookup(query, (place) => {
-            if (place && place.rating) {
-              ratingEl.textContent = place.rating.toFixed(1);
-            }
-          });
-        }
+        bounds.extend({ lat: point.lat, lng: point.lng });
       });
 
       if (!bounds.isEmpty()) {
@@ -756,12 +595,24 @@
       clearStatus();
     };
 
-    const run = async () => {
-      if (!kmlFiles.length) {
-        reportStatus("No KML files found for this page.");
-        return;
+    const loadMapData = async () => {
+      if (mapConfig.datasetUrl) {
+        try {
+          return await loadDataset();
+        } catch (error) {
+          console.error(error);
+        }
       }
 
+      if (!kmlFiles.length) {
+        throw new Error("No restaurant dataset or KML files were found for this page.");
+      }
+
+      await ensureToGeoJSON();
+      return parseKmlFiles();
+    };
+
+    const run = async () => {
       const provider = pickProvider();
       if (!provider) {
         reportStatus(
@@ -781,10 +632,9 @@
       }
 
       try {
-        await ensureToGeoJSON();
-        const data = await parseKmlFiles();
+        const data = await loadMapData();
         if (!data.points.length) {
-          reportStatus("No map points were found in the KML files.");
+          reportStatus("No map points were found for this page.");
           return;
         }
 
@@ -797,11 +647,10 @@
         }
       } catch (error) {
         console.error(error);
-        reportStatus("Map failed to load.");
+        reportStatus(error.message || "Map failed to load.");
       }
     };
 
     run();
   })();
 </script>
-{{ end }}
