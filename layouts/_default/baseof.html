@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="{{ .Site.LanguageCode | default "en" }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{ $siteTitle := .Site.Title }}
+    {{ $pageTitle := cond .IsHome $siteTitle (printf "%s | %s" .Title $siteTitle) }}
+    {{ $summary := .Summary | default .Params.summary | plainify | htmlUnescape | chomp }}
+    {{ $description := .Description | default $summary | default .Site.Params.description }}
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $description }}">
+    <link rel="canonical" href="{{ .Permalink }}">
+    {{ with .OutputFormats.Get "RSS" }}
+    <link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .Permalink }}">
+    {{ end }}
+    {{ with .Site.Params.google_site_verification }}
+    <meta name="google-site-verification" content="{{ . }}">
+    {{ end }}
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
+    <meta property="og:url" content="{{ .Permalink }}">
+    {{ with partial "functions/featured-resource.html" . }}
+    <meta property="og:image" content="{{ .Permalink }}">
+    {{ end }}
+    {{ $style := resources.Get "css/site.css" | minify | fingerprint }}
+    <link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+    {{ if or .Params.math .Site.Params.math }}
+      {{ partial "hooks/head-start/custom.html" . }}
+    {{ end }}
+    {{ with .Site.Params.google_analytics }}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ . }}');
+    </script>
+    {{ end }}
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+    <div class="site-shell">
+      {{ partial "site-header.html" . }}
+      <main class="site-main" id="content">
+        {{ block "main" . }}{{ end }}
+      </main>
+      {{ partial "site-footer.html" . }}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+{{ define "main" }}
+  {{ $projects := where site.RegularPages "Section" "project" }}
+  <section class="container page-shell">
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Projects</div>
+        <h1 class="page-title">{{ .Title }}</h1>
+        {{ with .Content }}
+        <div class="page-copy">{{ . }}</div>
+        {{ end }}
+      </div>
+    </header>
+
+    {{ if gt (len $projects) 0 }}
+    <div class="card-grid">
+      {{ range $projects.ByDate.Reverse }}
+        {{ partial "page-card.html" (dict "page" .) }}
+      {{ end }}
+    </div>
+    {{ else }}
+    <div class="empty-state">No projects published yet.</div>
+    {{ end }}
+  </section>
+{{ end }}

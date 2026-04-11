@@ -1,0 +1,56 @@
+{{ define "main" }}
+  {{ $image := partial "functions/featured-resource.html" . }}
+  <section class="container article-shell">
+    <article class="article-panel">
+      <header class="article-header">
+        <div>
+          <div class="eyebrow">Publication</div>
+          <h1 class="article-title">{{ .Title }}</h1>
+          <div class="article-meta">
+            {{ with .Date }}<span>{{ .Format "2006" }}</span>{{ end }}
+            {{ with .Params.publication_types }}<span>{{ title (humanize (index . 0)) }}</span>{{ end }}
+          </div>
+          {{ with .Params.authors }}
+          <p class="citation">{{ partial "render-authors.html" (dict "page" $ "authors" .) }}</p>
+          {{ end }}
+          {{ with .Params.publication }}
+          <p class="citation">{{ . | markdownify }}</p>
+          {{ end }}
+          {{ with .Params.abstract }}
+          <p class="article-subtitle">{{ . }}</p>
+          {{ end }}
+          {{ with .Params.links }}
+          <div class="link-row">
+            {{ partial "page-links.html" . }}
+          </div>
+          {{ end }}
+          {{ with .Params.doi }}
+            {{ if ne . "" }}
+            <div class="link-row">
+              <a class="link-pill" href="https://doi.org/{{ . }}">DOI</a>
+            </div>
+            {{ end }}
+          {{ end }}
+        </div>
+      </header>
+
+      {{ with $image }}
+      <figure class="article-figure">
+        <img
+          alt="{{ $.Title }}"
+          src="{{ .RelPermalink }}">
+      </figure>
+      {{ end }}
+
+      {{ if or .Content .Params.summary }}
+      <div class="article-body">
+        {{ if .Content }}
+          {{ .Content }}
+        {{ else }}
+          <p>{{ .Params.summary }}</p>
+        {{ end }}
+      </div>
+      {{ end }}
+    </article>
+  </section>
+{{ end }}

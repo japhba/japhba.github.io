@@ -1,9 +1,9 @@
 {
-  "name": "hugo-blox-academic-cv-starter",
+  "name": "jan-bauer-site",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@10.14.0",
-  "description": "Academic CV starter template for Hugo Blox with Tailwind CSS v4",
+  "description": "Personal site for Jan Bauer built with plain Hugo",
   "scripts": {
     "dev": "sh scripts/with-local-env.sh hugo server --disableFastRender",
     "build": "hugo --minify && pnpm run pagefind",

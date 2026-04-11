@@ -1,0 +1,11 @@
+{{ range . }}
+  {{ $icon := .icon | default "link" }}
+  {{ $label := .label | default (title (humanize (replaceRE "^.*/" "" $icon))) }}
+  {{ $rawURL := .url }}
+  {{ $url := $rawURL }}
+  {{ if not (or (hasPrefix $rawURL "http://") (hasPrefix $rawURL "https://")) }}
+    {{ $url = $rawURL | relURL }}
+  {{ end }}
+  {{ if eq $label "Cv" }}{{ $label = "CV" }}{{ end }}
+  <a class="chip" href="{{ $url }}">{{ $label }}</a>
+{{ end }}

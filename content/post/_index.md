@@ -1,4 +1,4 @@
 ---
 title: Blog
-view: article-grid
+description: Essays, notes, and experiments.
 ---

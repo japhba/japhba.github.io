@@ -1,0 +1,12 @@
+{{ $page := . }}
+{{ $scratch := newScratch }}
+{{ range slice "featured*" "_*" "cover*" "thumbnail*" "avatar*" }}
+  {{ if not ($scratch.Get "resource") }}
+    {{ with $page.Resources.GetMatch . }}
+      {{ if reflect.IsImageResource . }}
+        {{ $scratch.Set "resource" . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ return ($scratch.Get "resource") }}

@@ -19,8 +19,6 @@ removePathAccents: true
 ## ADVANCED
 ############################
 
-build:
-  writeStats: true
 enableGitInfo: false
 summaryLength: 30
 pagination:
@@ -33,7 +31,7 @@ permalinks:
   authors: '/author/:slug/'
 disableAliases: true
 outputs:
-  home: [HTML, RSS, headers, redirects, backlinks]
+  home: [HTML, RSS]
   section: [HTML, RSS]
 imaging:
   resampleFilter: lanczos
@@ -49,6 +47,8 @@ markup:
   highlight:
     lineNos: false
   goldmark:
+    renderer:
+      unsafe: true
     extensions:
       passthrough:
         enable: true
@@ -73,5 +73,3 @@ sitemap:
   _merge: deep
 minify:
   _merge: deep
-params:
-  math: true

@@ -1,0 +1,19 @@
+{{ range . }}
+  {{ $kind := .type | default "link" }}
+  {{ $label := .label | default (humanize $kind) }}
+  {{ $rawURL := .url }}
+  {{ $url := $rawURL }}
+  {{ if not (or (hasPrefix $rawURL "http://") (hasPrefix $rawURL "https://")) }}
+    {{ $url = $rawURL | relURL }}
+  {{ end }}
+  {{ if eq $kind "site" }}{{ $label = "Project" }}{{ end }}
+  {{ if eq $kind "poster" }}{{ $label = "Poster" }}{{ end }}
+  {{ if eq $kind "video" }}{{ $label = "Video" }}{{ end }}
+  {{ if eq $kind "slides" }}{{ $label = "Slides" }}{{ end }}
+  {{ if eq $kind "source" }}{{ $label = "Source" }}{{ end }}
+  {{ if eq $kind "pdf" }}{{ $label = "PDF" }}{{ end }}
+  {{ if eq $kind "code" }}{{ $label = "Code" }}{{ end }}
+  {{ if eq $kind "dataset" }}{{ $label = "Dataset" }}{{ end }}
+  {{ if eq $kind "custom" }}{{ $label = .label | default "Link" }}{{ end }}
+  <a class="link-pill" href="{{ $url }}">{{ $label }}</a>
+{{ end }}

@@ -1,0 +1,12 @@
+{{ $page := .page }}
+{{ $authors := .authors }}
+{{ range $index, $author := $authors }}
+  {{ if gt $index 0 }}, {{ end }}
+  {{ $name := printf "%v" $author }}
+  {{ $authorPage := site.GetPage (printf "/authors/%s" $name) }}
+  {{ if and $authorPage $authorPage.RelPermalink }}
+    <a href="{{ $authorPage.RelPermalink }}">{{ $authorPage.Title }}</a>
+  {{ else }}
+    {{ if $authorPage }}{{ $authorPage.Title }}{{ else }}{{ $name }}{{ end }}
+  {{ end }}
+{{ end }}

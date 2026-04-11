@@ -1,0 +1,38 @@
+{{ define "main" }}
+  {{ $author := site.GetPage "/authors/admin" }}
+  <section class="container page-shell">
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">Resume</div>
+        <h1 class="page-title">{{ .Title }}</h1>
+        {{ with $author.Params.role }}
+        <p class="page-copy">{{ . }}</p>
+        {{ end }}
+      </div>
+    </header>
+
+    <article class="article-panel">
+      <div class="article-body">
+        {{ with $author }}
+          {{ .Content }}
+          {{ with .Params.organizations }}
+          <h2>Affiliations</h2>
+          <ul>
+            {{ range . }}
+            <li>{{ with .url }}<a href="{{ . }}">{{ end }}{{ .name }}{{ with .url }}</a>{{ end }}</li>
+            {{ end }}
+          </ul>
+          {{ end }}
+          {{ with .Params.profiles }}
+          <h2>Links</h2>
+          <div class="link-row">
+            {{ partial "profile-links.html" . }}
+          </div>
+          {{ end }}
+        {{ else }}
+          {{ .Content }}
+        {{ end }}
+      </div>
+    </article>
+  </section>
+{{ end }}

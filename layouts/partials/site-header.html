@@ -1,0 +1,24 @@
+{{ $page := . }}
+<header class="site-header">
+  <div class="container site-header-inner">
+    <a class="brand" href="{{ "/" | relLangURL }}">
+      <span class="brand-mark">JB</span>
+      <span class="brand-text">{{ .Site.Title }}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Primary">
+      {{ range .Site.Menus.main }}
+        {{ $raw := .URL }}
+        {{ $external := or (hasPrefix $raw "http://") (hasPrefix $raw "https://") }}
+        {{ $url := cond $external $raw ($raw | relURL) }}
+        {{ $active := false }}
+        {{ if and $page.IsHome (eq $url "/") }}
+          {{ $active = true }}
+        {{ else if and (not $external) (ne $url "/") (hasPrefix $page.RelPermalink $url) }}
+          {{ $active = true }}
+        {{ end }}
+        <a class="nav-link{{ if $active }} active{{ end }}" href="{{ $url }}">{{ .Name }}</a>
+      {{ end }}
+    </nav>
+  </div>
+</header>

@@ -1,0 +1,81 @@
+{{ define "main" }}
+  {{ $author := site.GetPage "/authors/admin" }}
+  {{ $avatar := "" }}
+  {{ with $author }}
+    {{ with partial "functions/featured-resource.html" . }}
+      {{ if reflect.IsImageResourceProcessable . }}
+        {{ $avatar = .Fill "720x720 Center" }}
+      {{ else }}
+        {{ $avatar = . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ $posts := where site.RegularPages "Section" "post" }}
+  {{ $posts = where $posts "Params.build.list" "!=" "never" }}
+  {{ $posts = first (.Params.posts_count | default 5) ($posts.ByDate.Reverse) }}
+
+  <section class="container hero">
+    <div class="hero-card">
+      <div class="hero-badge">{{ .Params.about_heading | default "About" }}</div>
+      <h1 class="hero-title">{{ with $author }}{{ .Title }}{{ else }}{{ site.Title }}{{ end }}</h1>
+      {{ with $author.Params.role }}
+      <p class="hero-subtitle">{{ . }}</p>
+      {{ end }}
+      {{ with $author }}
+      <div class="hero-copy">
+        {{ .Content }}
+      </div>
+      {{ end }}
+      {{ with $author.Params.profiles }}
+      <div class="chip-row">
+        {{ partial "profile-links.html" . }}
+      </div>
+      {{ end }}
+    </div>
+
+    <div class="hero-side">
+      {{ with $avatar }}
+      <div class="portrait-card panel">
+        <div class="portrait-frame">
+          <img
+            alt="{{ with $author }}{{ .Title }}{{ else }}Portrait{{ end }}"
+            src="{{ .RelPermalink }}">
+        </div>
+      </div>
+      {{ end }}
+
+      {{ with $author.Params.organizations }}
+      <dl class="info-list panel">
+        <dt class="info-label">Current Affiliations</dt>
+        <dd class="info-value">
+          {{ range $index, $org := . }}
+            {{ if gt $index 0 }}<br>{{ end }}
+            {{ with $org.url }}<a href="{{ . }}">{{ end }}{{ $org.name }}{{ with $org.url }}</a>{{ end }}
+          {{ end }}
+        </dd>
+      </dl>
+      {{ end }}
+    </div>
+  </section>
+
+  <section class="container section-shell">
+    <div class="section-header">
+      <div>
+        <div class="eyebrow">{{ .Params.posts_heading | default "Writing" }}</div>
+        <h2 class="section-title">{{ .Params.posts_title | default "Recent posts" }}</h2>
+        <p class="section-copy">Essays, notes, and experiments across neuroscience, machine learning, and the occasional side project.</p>
+      </div>
+      <a class="chip" href="{{ "/post/" | relURL }}">See all posts</a>
+    </div>
+
+    {{ if gt (len $posts) 0 }}
+    <div class="card-grid">
+      {{ range $posts }}
+        {{ partial "page-card.html" (dict "page" .) }}
+      {{ end }}
+    </div>
+    {{ else }}
+    <div class="empty-state">No posts published yet.</div>
+    {{ end }}
+  </section>
+{{ end }}

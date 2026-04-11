@@ -1,6 +1,5 @@
 ---
-title: Publications
-description: Papers, posters, and talks.
+title: Projects
 build:
   render: never
   list: never

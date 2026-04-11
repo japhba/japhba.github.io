@@ -1,0 +1,52 @@
+{{ define "main" }}
+  <section class="container page-shell">
+    <header class="page-header">
+      <div>
+        <div class="eyebrow">{{ if eq .Section "publication" }}Research{{ else if eq .Kind "term" }}Tagged{{ else if eq .Section "post" }}Writing{{ else }}Browse{{ end }}</div>
+        <h1 class="page-title">{{ .Title }}</h1>
+        {{ if .Content }}
+        <div class="page-copy">{{ .Content }}</div>
+        {{ else }}
+          {{ with .Description }}
+          <p class="page-copy">{{ . }}</p>
+          {{ end }}
+        {{ end }}
+      </div>
+    </header>
+
+    {{ if eq .Kind "taxonomyTerm" }}
+      {{ if gt (len .Pages) 0 }}
+      <div class="term-grid">
+        {{ range .Pages.ByTitle }}
+        <article class="term-card">
+          <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+          <p class="term-summary">{{ len .Pages }} {{ cond (eq (len .Pages) 1) "entry" "entries" }}</p>
+        </article>
+        {{ end }}
+      </div>
+      {{ else }}
+      <div class="empty-state">No terms available.</div>
+      {{ end }}
+    {{ else if eq .Section "publication" }}
+      {{ if gt (len .Pages) 0 }}
+      <div class="publication-list">
+        {{ range .Pages.ByDate.Reverse }}
+          {{ partial "publication-item.html" . }}
+        {{ end }}
+      </div>
+      {{ else }}
+      <div class="empty-state">No publications yet.</div>
+      {{ end }}
+    {{ else }}
+      {{ if gt (len .Pages) 0 }}
+      <div class="card-grid">
+        {{ range .Pages.ByDate.Reverse }}
+          {{ partial "page-card.html" (dict "page" .) }}
+        {{ end }}
+      </div>
+      {{ else }}
+      <div class="empty-state">Nothing published here yet.</div>
+      {{ end }}
+    {{ end }}
+  </section>
+{{ end }}

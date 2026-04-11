@@ -1,3 +1,9 @@
+---
+build:
+  render: never
+  list: never
+---
+
 Workflow for blogposts
 
  write the document in Jupyter Notebook using MyST markdown for equation references

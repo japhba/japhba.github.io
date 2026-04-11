@@ -1,0 +1,29 @@
+<article class="publication-item">
+  <div class="publication-meta">
+    {{ with .Date }}<span>{{ .Format "2006" }}</span>{{ end }}
+    {{ with .Params.publication_types }}<span>{{ title (humanize (index . 0)) }}</span>{{ end }}
+  </div>
+
+  <h2 class="publication-title">
+    <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+  </h2>
+
+  {{ with .Params.authors }}
+  <p class="citation">{{ partial "render-authors.html" (dict "page" $ "authors" .) }}</p>
+  {{ end }}
+
+  {{ with .Params.publication }}
+  <p class="citation">{{ . | markdownify }}</p>
+  {{ end }}
+
+  {{ $copy := .Params.summary | default .Params.abstract | plainify | htmlUnescape | chomp }}
+  {{ if $copy }}
+  <p class="publication-summary">{{ $copy | truncate 240 }}</p>
+  {{ end }}
+
+  {{ with .Params.links }}
+  <div class="link-row">
+    {{ partial "page-links.html" . }}
+  </div>
+  {{ end }}
+</article>
