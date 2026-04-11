@@ -3,11 +3,7 @@
   {{ $avatar := "" }}
   {{ with $author }}
     {{ with partial "functions/featured-resource.html" . }}
-      {{ if reflect.IsImageResourceProcessable . }}
-        {{ $avatar = .Fill "720x720 Center" }}
-      {{ else }}
-        {{ $avatar = . }}
-      {{ end }}
+      {{ $avatar = . }}
     {{ end }}
   {{ end }}
   {{ $posts := where site.RegularPages "Section" "post" }}
