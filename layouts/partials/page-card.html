@@ -2,7 +2,6 @@
 <article class="card">
   <div class="card-body">
     <div class="card-meta">
-      <span>{{ if eq $page.Section "project" }}Project{{ else if eq $page.Section "post" }}Post{{ else if eq $page.Section "publication" }}Publication{{ else }}{{ $page.Type | title }}{{ end }}</span>
       {{ with $page.Date }}<span>{{ .Format "2 Jan 2006" }}</span>{{ end }}
     </div>
 
@@ -17,14 +16,6 @@
       {{ if $copy }}
       <p class="card-summary">{{ $copy | truncate 180 }}</p>
       {{ end }}
-    {{ end }}
-
-    {{ with $page.Params.tags }}
-    <div class="card-footer">
-      {{ range first 3 . }}
-        <a class="tag" href="{{ "/tags/" | relURL }}{{ . | urlize }}/">{{ . }}</a>
-      {{ end }}
-    </div>
     {{ end }}
   </div>
 </article>
