@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{{ .Title }} · {{ .Site.Title }}</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root{ --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:10px 20px 8px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+  header a.back{color:var(--muted);text-decoration:none;font-size:13px;border:1px solid var(--line);padding:4px 9px;border-radius:7px}
+  header a.back:hover{border-color:var(--accent);color:var(--ink)}
+  header h1{font-size:16px;margin:0;font-weight:650}
+  header .sub{color:var(--muted);font-size:12px;max-width:760px}
+  header .sub a{color:var(--accent);text-decoration:none}
+  .status{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted)}
+  .status.live{color:#3fb950;border-color:#23502d}
+  .status.snap{color:#d29922;border-color:#4d3c12}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:8px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .controls label{display:flex;gap:6px;align-items:center;cursor:pointer;user-select:none;font-size:13px}
+  .controls input[type=search]{background:#0d1117;border:1px solid var(--line);color:var(--ink);padding:6px 10px;border-radius:7px;width:230px;font-size:13px}
+  .controls input[type=search]:focus{outline:none;border-color:var(--accent)}
+  .controls .spacer{flex:1}
+  .controls .count{color:var(--muted);font-size:12px}
+  .controls a.btn{color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:12.5px}
+  .controls a.btn:hover{border-color:var(--accent)}
+  #chart{width:100vw;height:calc(100vh - 96px)}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="{{ "/misc/" | relLangURL }}">&larr; Misc</a>
+  <h1>Intelligence&nbsp;vs&nbsp;Total&nbsp;Parameters</h1>
+  <span class="status" id="status">loading…</span>
+  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index vs total model size (billions of parameters). Only models with publicly known parameter counts appear — closed-weight frontier models are excluded because their sizes are undisclosed. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
+</header>
+<div class="controls">
+  <input type="search" id="search" placeholder="Highlight model (qwen3, gpt-oss, deepseek…)" autocomplete="off"/>
+  <label><input type="checkbox" id="logx" checked/> Log&nbsp;x-axis</label>
+  <label><input type="checkbox" id="labels"/> Labels</label>
+  <label><input type="checkbox" id="frontier" checked/> Efficiency&nbsp;frontier</label>
+  <label><input type="checkbox" id="hideest"/> Hide&nbsp;estimated</label>
+  <label><input type="checkbox" id="dimold"/> Emphasize&nbsp;recent</label>
+  <span class="spacer"></span>
+  <span class="count" id="count"></span>
+  <a class="btn" id="reset" href="#">Reset view</a>
+</div>
+<div id="chart"></div>
+
+<script>
+const API = "https://japhba-api.netlify.app/.netlify/functions/aa-models";
+const SNAPSHOT = {{ os.ReadFile "data/aa_models.json" | safeJS }};
+let DATA = SNAPSHOT;
+
+const BRAND = {
+  "OpenAI":"#10a37f","Google":"#4285f4","Meta":"#0866ff","Alibaba":"#ff6a00","DeepSeek":"#4d6bfe",
+  "Mistral":"#fa520f","xAI":"#e6edf3","NVIDIA":"#76b900","Microsoft":"#00a4ef","Z AI":"#21c7b6",
+  "Cohere":"#d18ee2","Kimi":"#7b61ff","MiniMax":"#ff4d6d","IBM":"#1f70c1","LG AI Research":"#a50034",
+  "Allen Institute for AI":"#f0529c","Liquid AI":"#00c2a8","Nous Research":"#c9a227","AI21 Labs":"#ff7a45",
+  "Xiaomi":"#ff6900","Upstage":"#5a31f4","StepFun":"#3366cc","Tencent":"#0052d9","InclusionAI":"#26a69a",
+  "Reka AI":"#9b5de5","Sarvam":"#f15bb5","MBZUAI Institute of Foundation Models":"#00bbf9","OpenBMB":"#06d6a0"
+};
+const PALETTE = ["#8ab4f8","#f28b82","#fdd663","#81c995","#c58af9","#ff8bcb","#78d9ec","#fcad70",
+  "#a1e8a1","#d7aefb","#ffd29c","#9aa0ff","#f6a5c0","#7ee0c0","#e0b0ff","#bcd35f"];
+let creators=[], colorOf={};
+function assignColors(){
+  creators=[...new Set(DATA.map(d=>d.creator||"Other"))].sort();
+  colorOf={}; let pi=0;
+  for(const c of creators){ colorOf[c]=BRAND[c]||PALETTE[pi++%PALETTE.length]; }
+}
+
+const chart=document.getElementById('chart');
+function fmtP(p){ return p>=1000 ? (p/1000).toFixed(p%1000?2:0)+'T' : (p>=1?p.toFixed(p<10?1:0):p.toFixed(2))+'B'; }
+function matchHit(d,q,c){ return d.name.toLowerCase().includes(q)||(d.slug||'').includes(q)||c.toLowerCase().includes(q); }
+function hover(d){
+  const est=d.ii_est?"  <i>(estimated)</i>":"";
+  const act=(d.active!=null)?`<br>Active params: <b>${fmtP(d.active)}</b>`:"";
+  const rel=d.release?`<br>Released: ${d.release}`:"";
+  const op=d.open?(d.openness||"Open weights"):"Proprietary";
+  const bn=[];
+  if(d.gpqa!=null) bn.push(`GPQA ${(d.gpqa*100).toFixed(0)}`);
+  if(d.aime25!=null) bn.push(`AIME25 ${(d.aime25*100).toFixed(0)}`);
+  if(d.coding!=null) bn.push(`Coding ${(+d.coding).toFixed(1)}`);
+  const bl=bn.length?`<br><span style="color:#8b949e">${bn.join(' · ')}</span>`:"";
+  return `<b>${d.name}</b><br>${d.creator||"Other"} · ${op}`+
+    `<br>Total params: <b>${fmtP(d.params)}</b>${act}`+
+    `<br>Intelligence Index: <b>${(+d.ii).toFixed(1)}</b>${est}${rel}${bl}<extra></extra>`;
+}
+function frontierPoints(rows){
+  const pts=[...rows].sort((a,b)=>a.params-b.params||b.ii-a.ii);
+  const fr=[]; let best=-Infinity;
+  for(const p of pts){ if(p.ii>best){ fr.push(p); best=p.ii; } }
+  return fr;
+}
+
+function build(){
+  const showLabels=document.getElementById('labels').checked;
+  const logx=document.getElementById('logx').checked;
+  const showFront=document.getElementById('frontier').checked;
+  const hideEst=document.getElementById('hideest').checked;
+  const dimOld=document.getElementById('dimold').checked;
+  const q=document.getElementById('search').value.trim().toLowerCase();
+
+  let rows=DATA.filter(d=>d.params!=null&&d.ii!=null&&!(hideEst&&d.ii_est));
+  document.getElementById('count').textContent=rows.length+" models shown";
+  const yMin=Math.min(...rows.map(d=>d.ii))-2, yMax=Math.max(...rows.map(d=>d.ii))+3;
+
+  const traces=[];
+  for(const c of creators){
+    const r=rows.filter(d=>(d.creator||"Other")===c);
+    if(!r.length) continue;
+    traces.push({
+      type:'scattergl', mode:showLabels?'markers+text':'markers', name:c,
+      x:r.map(d=>d.params), y:r.map(d=>d.ii), text:r.map(d=>d.name),
+      textposition:'top center', textfont:{size:9,color:'#9aa6b2'},
+      hovertemplate:r.map(hover),
+      marker:{
+        size:r.map(d=> q?(matchHit(d,q,c)?13:7):10),
+        color:colorOf[c],
+        symbol:r.map(d=>d.open?'circle':'diamond'),
+        line:{width:r.map(d=>q&&matchHit(d,q,c)?2:0.6), color:r.map(d=>q&&matchHit(d,q,c)?'#fff':'rgba(0,0,0,.45)')},
+        opacity:r.map(d=>{
+          let o=d.ii_est?0.55:0.95;
+          if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) o*=0.4; }
+          if(q) o=matchHit(d,q,c)?1:0.12;
+          return o;
+        })
+      }
+    });
+  }
+  if(showFront){
+    const fr=frontierPoints(rows);
+    traces.push({type:'scatter',mode:'lines',name:'Efficiency frontier',
+      x:fr.map(d=>d.params),y:fr.map(d=>d.ii),
+      line:{color:'rgba(230,237,243,.55)',width:1.5,dash:'dot',shape:'hv'},
+      hoverinfo:'skip',showlegend:true});
+  }
+  const layout={
+    paper_bgcolor:'#0e1116', plot_bgcolor:'#0e1116', font:{color:'#c9d1d9'},
+    margin:{l:64,r:20,t:14,b:54}, hovermode:'closest',
+    hoverlabel:{bgcolor:'#161b22',bordercolor:'#30363d',font:{size:12,color:'#e6edf3'},align:'left'},
+    xaxis:{title:{text:'Total Parameters (Billions) — '+(logx?'log scale':'linear'),font:{size:13}},
+      type:logx?'log':'linear', gridcolor:'#21262d', zeroline:false,
+      tickvals:logx?[0.3,1,3,10,30,100,300,1000]:undefined,
+      ticktext:logx?['0.3B','1B','3B','10B','30B','100B','300B','1T']:undefined},
+    yaxis:{title:{text:'Artificial Analysis Intelligence Index',font:{size:13}},
+      gridcolor:'#21262d', zeroline:false, range:[Math.max(0,yMin),yMax]},
+    legend:{font:{size:11},bgcolor:'rgba(22,27,34,.6)',bordercolor:'#30363d',borderwidth:1,
+      itemsizing:'constant',orientation:'v',x:1.005,y:1,xanchor:'left'},
+    showlegend:true
+  };
+  Plotly.react(chart,traces,layout,{responsive:true,displaylogo:false,
+    modeBarButtonsToRemove:['lasso2d','select2d'],scrollZoom:true});
+}
+
+['logx','labels','frontier','hideest','dimold'].forEach(id=>document.getElementById(id).addEventListener('change',build));
+let t; document.getElementById('search').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(build,120);});
+document.getElementById('reset').addEventListener('click',e=>{e.preventDefault();
+  document.getElementById('search').value='';
+  Plotly.relayout(chart,{'xaxis.autorange':true,'yaxis.autorange':true});build();});
+
+function setStatus(kind,text){ const s=document.getElementById('status'); s.className='status '+kind; s.textContent=text; }
+
+function render(){ assignColors(); build(); }
+
+// 1) render snapshot instantly, 2) upgrade to live data if the mirror responds.
+setStatus('snap','snapshot');
+render();
+fetch(API,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(j=>{
+  if(j&&Array.isArray(j.models)&&j.models.length>50){
+    DATA=j.models;
+    const d=j.updated?new Date(j.updated):null;
+    setStatus('live','live · '+(d?d.toISOString().slice(0,10):'updated'));
+    render();
+  }
+}).catch(()=>{ /* keep snapshot */ });
+</script>
+</body>
+</html>

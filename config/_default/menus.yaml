@@ -13,3 +13,6 @@ main:
   - name: CV
     url: /uploads/CV/CV_Jan_BAUER.pdf
     weight: 30
+  - name: Misc
+    url: /misc/
+    weight: 40

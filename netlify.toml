@@ -20,6 +20,11 @@
   to = "/.netlify/functions/chat"
   status = 200
 
+[[redirects]]
+  from = "/api/aa-models"
+  to = "/.netlify/functions/aa-models"
+  status = 200
+
 [[plugins]]
   package = "netlify-plugin-hugo-cache-resources"
   [plugins.inputs]
