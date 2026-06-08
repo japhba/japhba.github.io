@@ -1,10 +1,14 @@
 // Server-side mirror of Artificial Analysis model data.
 //
 // The official AA API (/api/v2/data/llms/models, needs x-api-key) does NOT expose
-// total parameter counts / model size, which is the whole point of this chart.
+// total parameter counts / model size, which is the whole point of the size chart.
 // That data only lives in the embedded payload of the public /models page, so we
 // scrape + parse it here (server-side) and cache the trimmed result on Netlify's
 // edge for ~12h, so the heavy parse runs ~twice a day rather than per visitor.
+//
+// We also join in per-model output speed (median tokens/s). Speed lives in separate
+// per-endpoint records keyed by a model UUID + prompt_length_type, so we collect
+// those and attach a representative value (medium-length prompt) to each model.
 
 const SRC = "https://artificialanalysis.ai/models";
 const UA =
@@ -18,10 +22,20 @@ const CORS = {
 
 const num = (x) => (typeof x === "number" && isFinite(x) ? x : null);
 
-function trim(m) {
+// Representative output speed: prefer medium-length text, then fall back.
+const PLT_PREF = ["medium", "medium_coding", "long", "100k"];
+function pickSpeed(speedMap, id) {
+  const r = speedMap[id];
+  if (!r) return null;
+  for (const k of PLT_PREF) if (r[k]) return r[k];
+  return Object.values(r)[0] || null;
+}
+
+function trim(m, speedMap) {
   const cr = m.model_creators || {};
   let act = m.inference_parameters_active_billions;
   if (act == null) act = m.activeParams;
+  const sp = pickSpeed(speedMap, m.id);
   return {
     slug: m.slug,
     name: m.short_name || m.name,
@@ -41,6 +55,8 @@ function trim(m) {
     coding: num(m.coding_index),
     license: m.license_name || null,
     url: m.model_url || null,
+    speed: sp ? Math.round(sp.spd * 10) / 10 : null,
+    ttft: sp && sp.ttft != null ? Math.round(sp.ttft * 100) / 100 : null,
   };
 }
 
@@ -59,13 +75,15 @@ function extractFlight(html) {
   return out;
 }
 
-// Walk the flight string and pull every balanced {...} that looks like a model
-// record (has slug + intelligence_index + parameters + is_open_weights as fields).
+// Walk the flight string and pull (a) model records (slug + intelligence_index +
+// parameters + is_open_weights) and (b) per-endpoint speed records (median_output_speed
+// + model_id + prompt_length_type), then join speed onto each model by UUID.
 function parseModels(flight) {
   const stack = [];
   let inStr = false,
     esc = false;
   const out = {};
+  const speedMap = {};
   for (let i = 0; i < flight.length; i++) {
     const ch = flight[i];
     if (inStr) {
@@ -80,8 +98,33 @@ function parseModels(flight) {
       const s = stack.pop();
       if (s == null) continue;
       const len = i - s;
-      if (len < 3000 || len > 300000) continue;
+      if (len > 300000) continue;
       const seg = flight.slice(s, i + 1);
+
+      // (b) speed endpoint record (small)
+      if (
+        seg.indexOf('"median_output_speed":') !== -1 &&
+        seg.indexOf('"model_id":"') !== -1 &&
+        seg.indexOf('"prompt_length_type":') !== -1
+      ) {
+        let d;
+        try {
+          d = JSON.parse(seg);
+        } catch {
+          continue;
+        }
+        if (d && typeof d.median_output_speed === "number" && d.model_id) {
+          const bucket = (speedMap[d.model_id] = speedMap[d.model_id] || {});
+          bucket[d.prompt_length_type] = {
+            spd: d.median_output_speed,
+            ttft: num(d.median_time_to_first_answer_token),
+          };
+        }
+        continue;
+      }
+
+      // (a) model record (large)
+      if (len < 3000) continue;
       if (
         seg.indexOf('"slug":"') === -1 ||
         seg.indexOf('"intelligence_index":') === -1 ||
@@ -100,7 +143,6 @@ function parseModels(flight) {
         typeof d === "object" &&
         d.slug &&
         d.intelligence_index != null &&
-        d.parameters != null &&
         "is_open_weights" in d
       ) {
         const prev = out[d.slug];
@@ -111,7 +153,7 @@ function parseModels(flight) {
       }
     }
   }
-  return Object.values(out).map(trim);
+  return Object.values(out).map((m) => trim(m, speedMap));
 }
 
 export default async (req) => {
@@ -125,8 +167,10 @@ export default async (req) => {
     if (!res.ok) throw new Error("upstream " + res.status);
     const html = await res.text();
     const flight = extractFlight(html);
+    // Keep anything plottable on either chart: needs intelligence, plus a size or a
+    // speed. (The size chart filters params client-side; the speed chart filters speed.)
     const models = parseModels(flight).filter(
-      (m) => m.params != null && m.ii != null
+      (m) => m.ii != null && (m.params != null || m.speed != null)
     );
     if (models.length < 50) throw new Error("parsed too few models: " + models.length);
 
