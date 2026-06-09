@@ -1,87 +1,88 @@
 ---
 title: Opaque serial depth
 subtitle: How much can a transformer reason without saying anything?
-summary: A two-variant graphical model of "opaque serial depth" — the longest serial computation a model can do inside its forward pass without externalising steps as chain-of-thought tokens. Plain causal attention is bounded by the number of layers L; an extra horizontal (recurrent) operation pushes it to L+T. After Rohin Shah's explanation on the 80,000 Hours podcast.
+summary: Opaque serial depth — the longest serial computation a transformer can do inside its forward pass without externalising steps as chain of thought. Stacking attention vertically is bounded by depth L; adding a horizontal attention (same layer on both sides) makes it L+T. After Rohin Shah on the 80,000 Hours podcast.
 date: 2026-06-08
 ---
 
-In a [recent 80,000 Hours podcast](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/),
-Rohin Shah (Google DeepMind) describes why today's models are **"wide but shallow"**:
-current hardware lets them do an enormous amount of work *in parallel*, but only a
-limited number of *sequential* steps within a single forward pass. Reasoning that
-needs more serial steps has to spill out into the chain of thought — tokens a human
-can read.
+On the [80,000 Hours podcast](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/),
+Rohin Shah calls today's transformers **wide but shallow** — lots of parallel work per
+forward pass, but few *sequential* steps; deeper serial reasoning has to spill into the
+chain of thought, as tokens you can read. He and colleagues
+([Brown-Cohen, Lindner & Shah, 2026](https://arxiv.org/abs/2603.09786)) formalise the
+limit as **opaque serial depth**: the longest computation a network can do *without*
+interpretable intermediate steps like chain of thought.
 
-He and colleagues make this precise in [*Quantifying the Necessity of Chain of Thought
-through Opaque Serial Depth*](https://arxiv.org/abs/2603.09786) (Brown-Cohen, Lindner
-& Shah, 2026). The **opaque serial depth** is
+![Two graphical models of a transformer residual stream: (a) attention only, longest serial path is a vertical chain of length ~L; (b) with an added horizontal attention, the path zig-zags up and across for length ~L+T.](opaque_serial_depth.png)
 
-> the length of the longest computation that can be done without the use of
-> interpretable intermediate steps like chain of thought.
+Take one causal-attention block $\mathrm{Att}$ (defined below). Stacking it the usual,
+*vertical* way, $h^{\ell+1}=\mathrm{Att}(h^{\ell})$, only ever reads a **finished** layer,
+so all positions run in parallel and depth is the lone serial axis: $\sim L$. A
+**horizontal attention** $h^{\ell}=\mathrm{Att}(h^{\ell})$ — same layer on both sides —
+reads the layer **being written**, so it resolves left-to-right across positions, and the
+longest dependency path now threads up $L$ layers *and* across $T$ positions: $\sim L+T$
+(the staircase above).
 
-In residual-stream terms: the longest chain of dependencies you can trace through the
-network *between* legible token-bottlenecks. The figure traces that longest chain
-(highlighted) for two architectures.
+One causal-attention block $\mathrm{Att}$: at query position $t$ it sums over the key
+positions $t'\le t$ — the arcs in the figure — with $\boldsymbol q_t=W_Q\boldsymbol h_t$,
+$\boldsymbol k_{t'}=W_K\boldsymbol h_{t'}$, $\boldsymbol v_{t'}=W_V\boldsymbol h_{t'}$:
 
-![Two graphical models of a transformer residual stream. (a) attention only: the longest serial path is a vertical chain of length ~L. (b) with an extra horizontal recurrent step: the path zig-zags up and across for length ~L+T.](opaque_serial_depth.png)
+$$
+\begin{aligned}
+\mathrm{Att}(\boldsymbol h)_t
+&= \sum_{t'\le t}\big(W_Q\boldsymbol h_t \cdot W_K\boldsymbol h_{t'}\big)\,W_V\boldsymbol h_{t'} \\
+&= \sum_{t'\le t}\big(\boldsymbol q_t\cdot \boldsymbol k_{t'}\big)\,\boldsymbol v_{t'}
+\end{aligned}
+$$
 
-Notation: residual stream $\boldsymbol h^{\ell}_{t}$, depth $\ell = 1,\dots,L$
-(bottom→top, with $\ell = 0$ the token embeddings), positions $t = 1,\dots,T$
-(left→right).
+(scores softmax-normalised over $t'$). Unrolling the layer loop — the only difference is
+the extra horizontal lines on the right:
 
-## (a) Attention only — depth $\sim L$
+<div style="display:flex;gap:1.25rem;flex-wrap:wrap;margin:1.25rem 0">
+<div style="flex:1 1 320px;min-width:0">
 
-Causal attention lets $\boldsymbol h^{\ell}_{t}$ read *every* earlier position
-$\{\boldsymbol h^{\ell-1}_{t'} : t' \le t\}$ of the layer below **in parallel** — a
-single attention operation, a weighted sum over $t'$. No position has to wait for
-another position to finish, so the only genuinely *serial* thing is climbing the $L$
-layers. The longest opaque chain is just the vertical
-$\boldsymbol h^{0}_{t} \to \boldsymbol h^{1}_{t} \to \dots \to \boldsymbol h^{L}_{t}$,
-of length $\sim L$. (Each layer adds a little fan-in depth for the softmax over $T$
-keys, giving $\mathcal{O}\!\big(L(\log T + \log D)\big)$ overall.)
+**(a) attention only**
 
-```text
-Algorithm (a): standard transformer layer            # opaque serial depth ~ L
-for l = 1 … L:                          # L serial layers
-    for t = 1 … T   (in parallel):      # every position at once
-        q, k, v = W_Q h^{l-1}_t , W_K h^{l-1}_t , W_V h^{l-1}_t
-        a^l_t   = sum_{t' <= t}  softmax_{t'}( q·k_{t'} / sqrt(d) ) · v_{t'}   # attend DOWN to layer l-1
-        h^l_t   = h^{l-1}_t + a^l_t                                           # residual
-# longest serial chain:   h^l_t <- h^{l-1}_t <- … <- h^0_t      =>   ~ L steps
+```python
+h1 = attn(h0)     # h^1 = Att(h^0)
+
+h2 = attn(h1)     # h^2 = Att(h^1)
+
+h3 = attn(h2)     # h^3 = Att(h^2)
+# ... L layers      depth ~ L
 ```
 
-## (b) Add a horizontal recurrent step — depth $\sim L+T$
+</div>
+<div style="flex:1 1 320px;min-width:0">
 
-Now give the attention block **one extra operation**: besides reading the layer below,
-each position also reads the *same layer's previous position*
-$\boldsymbol h^{\ell}_{t-1}$ (the orange arrows). Positions can no longer be computed
-all at once — $\boldsymbol h^{\ell}_{t}$ depends on $\boldsymbol h^{\ell}_{t-1}$, so the
-layer must run **sequentially in $t$**. The longest opaque chain can now zig-zag:
-up a layer, across a token, up a layer, … using up to $L$ vertical steps **and** $T$
-horizontal ones, for depth $\sim L+T$ ($\mathcal{O}\!\big((L+T)\log D\big)$). Far more
-hidden serial reasoning can happen before anything has to surface as a token.
+**(b) + horizontal attention**
 
-```text
-Algorithm (b): + horizontal recurrence                # opaque serial depth ~ L + T
-for l = 1 … L:
-    for t = 1 … T   (now SEQUENTIAL in t):
-        q, k, v = W_Q h^{l-1}_t , W_K h^{l-1}_t , W_V h^{l-1}_t
-        a^l_t   = sum_{t' <= t}  softmax_{t'}( q·k_{t'} / sqrt(d) ) · v_{t'}  # attend DOWN to layer l-1
-        r^l_t   = g( h^l_{t-1} , h^{l-1}_t )        # <-- EXTRA horizontal op: same layer, previous position
-        h^l_t   = h^{l-1}_t + a^l_t + r^l_t                                   # residual
-# now h^l_t depends on h^l_{t-1}  =>  the longest chain zig-zags ↑ and →   =>   ~ L + T steps
+```python
+h1 = attn(h0)     # h^1 = Att(h^0)
+h1 = attn(h1)     # h^1 = Att(h^1)   <- horizontal
+h2 = attn(h1)     # h^2 = Att(h^1)
+h2 = attn(h2)     # h^2 = Att(h^2)   <- horizontal
+h3 = attn(h2)     # h^3 = Att(h^2)
+h3 = attn(h3)     # h^3 = Att(h^3)   <- horizontal
+# ...               depth ~ L + T
 ```
 
-Why it matters for oversight: the larger a model's opaque serial depth, the more
-reasoning it can carry out inside one forward pass instead of writing it down. The
-paper computes upper bounds for Gemma 3 and argues opaque serial depth could become an
-architecture-level governance knob — e.g. Mixture-of-Experts models appear to have
-*lower* opaque depth than comparable dense models.
+</div>
+</div>
+
+The horizontal lines feed `h` straight back into the same block — $h^{\ell}$ on both
+sides — so, unlike the vertical lines, they can't be parallelised over positions: vertical
+$\mathrm{Att}$ moves $\ell\!\to\!\ell\!+\!1$ and parallelises, horizontal $\mathrm{Att}$
+stays at $\ell$ and serialises (the blank lines on the left mark exactly what (b) adds).
+
+Bigger opaque serial depth means more reasoning hidden inside one forward pass instead of
+written down — which is why it's floated as an architecture-level safety metric (the paper
+bounds it for Gemma 3, and finds Mixture-of-Experts models lower than dense ones).
 
 ---
 
-*Sources: [Rohin Shah — 80,000 Hours podcast](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/)
-· [Quantifying the Necessity of Chain of Thought through Opaque Serial Depth, arXiv:2603.09786](https://arxiv.org/abs/2603.09786).
-Figure: [PDF](opaque_serial_depth.pdf) · [TikZ source](opaque_serial_depth.tex). The
-horizontal-recurrence variant drawn here is a simplified illustration; the paper's
-$L+T$ result is derived for replacing attention with RNN blocks.*
+*[Rohin Shah — 80,000 Hours](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/)
+· [arXiv:2603.09786](https://arxiv.org/abs/2603.09786)
+· figure [PDF](opaque_serial_depth.pdf) / [TikZ](opaque_serial_depth.tex). The horizontal
+variant is a simplified illustration; the paper derives $L+T$ for replacing attention with
+RNN blocks.*

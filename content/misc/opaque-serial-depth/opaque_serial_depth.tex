@@ -8,9 +8,9 @@
   x=1.7cm, y=1.7cm,
   hnode/.style={circle, draw=black, thick, minimum size=10.5mm, inner sep=0pt, fill=blue!7, font=\small},
   inode/.style={circle, draw=black, thick, minimum size=10.5mm, inner sep=0pt, fill=black!10, font=\small},
-  vedge/.style={->, draw=black!70, thick},                 % attention: same position (vertical)
-  vatt/.style ={->, draw=black!28, thin},                  % attention: earlier positions
-  hrec/.style ={->, draw=orange!88!black, very thick},     % recurrent step (the extra op)
+  vedge/.style={->, draw=black!70, thick},                 % vertical attention: same position
+  vatt/.style ={->, draw=black!38, semithick},             % vertical attention: earlier positions
+  hatt/.style ={->, draw=orange!85!black, semithick, opacity=0.7},  % horizontal attention (causal fan)
   crit/.style ={line width=6pt, draw=teal!30, line cap=round, line join=round},
   ptitle/.style={font=\bfseries\small},
 ]
@@ -43,10 +43,12 @@
         \foreach \tp in {1,...,\tm}{ \draw[vatt] (b\lp\tp) to[bend left=8] (b\l\t); }
       \fi
   }}
-  % additional horizontal (recurrent) operation
-  \foreach \l in {1,...,\L}{ \foreach \t in {2,...,\T}{ \pgfmathtruncatemacro{\tm}{\t-1}
-    \draw[hrec] (b\l\tm) -- (b\l\t);
-  }}
+  % horizontal attention: every earlier position in a layer flows into each later one
+  \foreach \l in {1,...,\L}{
+    \foreach \t in {2,...,\T}{ \pgfmathtruncatemacro{\tm}{\t-1}
+      \foreach \tp in {1,...,\tm}{ \draw[hatt] (b\l\tp) to[bend left=28] (b\l\t); }
+    }
+  }
 \end{scope}
 
 % ============================== critical paths (background) ==============================
@@ -60,7 +62,12 @@
 \node[ptitle,align=center] at (2.5,4.4)
    {(a)\; attention only\\[2pt]\footnotesize opaque serial depth $\;\sim L$};
 \node[ptitle,align=center] at (\S+2.5,4.4)
-   {(b)\; attention $+$ horizontal recurrent step\\[2pt]\footnotesize opaque serial depth $\;\sim L+T$};
+   {(b)\; $+$ horizontal attention\\[2pt]\footnotesize opaque serial depth $\;\sim L+T$};
+
+% overall caption: index convention
+\node[align=center,font=\small] at (\S/2+2.5,5.35)
+   {residual stream $\bm h^{\ell}_{t}$\,:\;\; superscript $\ell{=}1,\dots,L$ is the layer (depth),\;\;
+    subscript $t{=}1,\dots,T$ is the position};
 
 % ============================== axes ==============================
 % depth axis (left of panel a)
@@ -75,9 +82,8 @@
 
 % ============================== legend ==============================
 \node[anchor=west,align=left,font=\footnotesize] at (0.3,-1.7)
- {\textcolor{black!70}{$\rightarrow$}~attention (same position)\quad
-  \textcolor{black!40}{$\rightarrow$}~attention (earlier positions)\quad
-  \textcolor{orange!88!black}{$\boldsymbol\rightarrow$}~recurrent step (extra op)\quad
+ {\textcolor{black!60}{$\rightarrow$}~vertical attention $\;h^{\ell+1}{=}\mathrm{Att}(h^{\ell})$\quad
+  \textcolor{orange!88!black}{$\boldsymbol\rightarrow$}~horizontal attention $\;h^{\ell}{=}\mathrm{Att}(h^{\ell})$\quad
   \textcolor{teal!45!black}{\rule{8pt}{6pt}}~longest opaque serial path};
 \end{tikzpicture}
 \end{document}
