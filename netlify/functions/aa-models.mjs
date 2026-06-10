@@ -31,11 +31,26 @@ function pickSpeed(speedMap, id) {
   return Object.values(r)[0] || null;
 }
 
+// Positive-or-null: AA uses 0 for "unset/unknown" pricing, which would break log axes.
+const posnum = (x) => {
+  const n = num(x);
+  return n != null && n > 0 ? n : null;
+};
+
 function trim(m, speedMap) {
   const cr = m.model_creators || {};
   let act = m.inference_parameters_active_billions;
   if (act == null) act = m.activeParams;
   const sp = pickSpeed(speedMap, m.id);
+  // Price: AA's headline blended figure is 3:1 input:output, in USD per 1M tokens.
+  const pin = num(m.price_1m_input_tokens);
+  const pout = num(m.price_1m_output_tokens);
+  let price = pin != null && pout != null ? (3 * pin + pout) / 4 : null;
+  if (price != null && price <= 0) price = null;
+  // Cost: actual USD to run the full Artificial Analysis Intelligence Index eval —
+  // distinct from per-token price (verbose reasoning models cost more at equal price).
+  const iic = m.intelligence_index_cost;
+  const cost = iic && typeof iic === "object" ? posnum(iic.total_cost) : null;
   return {
     slug: m.slug,
     name: m.short_name || m.name,
@@ -57,6 +72,10 @@ function trim(m, speedMap) {
     url: m.model_url || null,
     speed: sp ? Math.round(sp.spd * 10) / 10 : null,
     ttft: sp && sp.ttft != null ? Math.round(sp.ttft * 100) / 100 : null,
+    price: price != null ? Math.round(price * 1e4) / 1e4 : null,
+    price_in: posnum(pin),
+    price_out: posnum(pout),
+    cost: cost != null ? Math.round(cost * 100) / 100 : null,
   };
 }
 
@@ -170,7 +189,9 @@ export default async (req) => {
     // Keep anything plottable on either chart: needs intelligence, plus a size or a
     // speed. (The size chart filters params client-side; the speed chart filters speed.)
     const models = parseModels(flight).filter(
-      (m) => m.ii != null && (m.params != null || m.speed != null)
+      (m) =>
+        m.ii != null &&
+        (m.params != null || m.speed != null || m.price != null || m.cost != null)
     );
     if (models.length < 50) throw new Error("parsed too few models: " + models.length);
 

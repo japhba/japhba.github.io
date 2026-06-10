@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>{{ .Title }} · {{ .Site.Title }}</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<style>
+  :root{ --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:10px 20px 8px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+  header a.back{color:var(--muted);text-decoration:none;font-size:13px;border:1px solid var(--line);padding:4px 9px;border-radius:7px}
+  header a.back:hover{border-color:var(--accent);color:var(--ink)}
+  header h1{font-size:16px;margin:0;font-weight:650}
+  header .sub{color:var(--muted);font-size:12px;max-width:820px}
+  header .sub a{color:var(--accent);text-decoration:none}
+  .status{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:2px 9px;color:var(--muted)}
+  .status.live{color:#3fb950;border-color:#23502d}
+  .status.snap{color:#d29922;border-color:#4d3c12}
+  .controls{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:8px 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .controls label{display:flex;gap:6px;align-items:center;cursor:pointer;user-select:none;font-size:13px}
+  .controls .group{display:flex;gap:12px;align-items:center;padding:3px 10px;border:1px solid var(--line);border-radius:8px}
+  .controls .group .tag{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-right:1px solid var(--line);padding-right:10px;margin-right:2px}
+  .controls .axis input:disabled+span{opacity:.4}
+  .controls input[type=search]{background:#0d1117;border:1px solid var(--line);color:var(--ink);padding:6px 10px;border-radius:7px;width:220px;font-size:13px}
+  .controls input[type=search]:focus{outline:none;border-color:var(--accent)}
+  .controls .spacer{flex:1}
+  .controls .count{color:var(--muted);font-size:12px}
+  .controls a.btn{color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:12.5px}
+  .controls a.btn:hover{border-color:var(--accent)}
+  #chart{width:100vw;height:calc(100vh - 122px)}
+  #hint{position:fixed;inset:0;display:none;align-items:center;justify-content:center;color:var(--muted);font-size:15px;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" href="{{ "/misc/" | relLangURL }}">&larr; Misc</a>
+  <h1>Intelligence&nbsp;vs&nbsp;Cost,&nbsp;Speed&nbsp;&amp;&nbsp;Price</h1>
+  <span class="status" id="status">loading…</span>
+  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), and <b>output&nbsp;speed</b>. Pick one axis for a 2-D scatter, two for a 3-D scatter you can drag to rotate. Intelligence is always the vertical axis. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
+</header>
+<div class="controls">
+  <div class="group">
+    <span class="tag">Axes</span>
+    <label class="axis"><input type="checkbox" class="ax" value="cost" checked/><span>Cost&nbsp;($&nbsp;to&nbsp;run&nbsp;AAII)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="speed" checked/><span>Speed&nbsp;(tok/s)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="price"/><span>Price&nbsp;($/1M&nbsp;tok)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="ttft"/><span>Latency&nbsp;(TTFT)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="params"/><span>Params&nbsp;(B)</span></label>
+  </div>
+  <input type="search" id="search" placeholder="Highlight (gpt-5, claude, gemini…)" autocomplete="off"/>
+  <label><input type="checkbox" id="logax" checked/> Log&nbsp;axes</label>
+  <label><input type="checkbox" id="labels"/> Labels</label>
+  <label><input type="checkbox" id="frontier" checked/> Frontier&nbsp;(2-D)</label>
+  <label><input type="checkbox" id="hideest"/> Hide&nbsp;estimated</label>
+  <label><input type="checkbox" id="openonly"/> Open&nbsp;weights&nbsp;only</label>
+  <label><input type="checkbox" id="dimold"/> Emphasize&nbsp;recent</label>
+  <span class="spacer"></span>
+  <span class="count" id="count"></span>
+  <a class="btn" id="reset" href="#">Reset view</a>
+</div>
+<div id="chart"></div>
+<div id="hint">Tick one or two axes above to plot.</div>
+
+<script>
+const API = "https://japhba-api.netlify.app/.netlify/functions/aa-models";
+const SNAPSHOT = {{ os.ReadFile "data/aa_tradeoffs.json" | safeJS }};
+let DATA = SNAPSHOT;
+
+// Axis catalogue. goodLow = "lower is better" (used to orient the 2-D frontier).
+const AX = {
+  ii    : {label:'Intelligence Index', short:'Intelligence', unit:'',           goodLow:false, log:false,
+           ticks:null},
+  cost  : {label:'Cost to run Intelligence Index', short:'Cost', unit:'USD',    goodLow:true,  log:true,
+           ticks:[[1,'$1'],[3,'$3'],[10,'$10'],[30,'$30'],[100,'$100'],[300,'$300'],[1000,'$1k'],[3000,'$3k'],[10000,'$10k']]},
+  speed : {label:'Median output speed', short:'Speed', unit:'tok/s',            goodLow:false, log:true,
+           ticks:[[10,'10'],[20,'20'],[50,'50'],[100,'100'],[200,'200'],[500,'500'],[1000,'1000']]},
+  price : {label:'Blended price', short:'Price', unit:'$/1M tokens',            goodLow:true,  log:true,
+           ticks:[[0.1,'$0.1'],[0.3,'$0.3'],[1,'$1'],[3,'$3'],[10,'$10'],[30,'$30'],[100,'$100']]},
+  ttft  : {label:'Time to first token', short:'Latency', unit:'s',             goodLow:true,  log:true,
+           ticks:[[0.5,'0.5'],[1,'1'],[2,'2'],[5,'5'],[10,'10'],[30,'30'],[100,'100']]},
+  params: {label:'Total parameters', short:'Params', unit:'B',                  goodLow:false, log:true,
+           ticks:[[0.3,'0.3B'],[1,'1B'],[3,'3B'],[10,'10B'],[30,'30B'],[100,'100B'],[300,'300B'],[1000,'1T']]},
+};
+
+const BRAND = {
+  "OpenAI":"#10a37f","Google":"#4285f4","Meta":"#0866ff","Alibaba":"#ff6a00","DeepSeek":"#4d6bfe",
+  "Mistral":"#fa520f","xAI":"#e6edf3","NVIDIA":"#76b900","Microsoft":"#00a4ef","Z AI":"#21c7b6",
+  "Anthropic":"#d4a27f","Cohere":"#d18ee2","Kimi":"#7b61ff","MiniMax":"#ff4d6d","IBM":"#1f70c1",
+  "LG AI Research":"#a50034","Allen Institute for AI":"#f0529c","Liquid AI":"#00c2a8",
+  "Nous Research":"#c9a227","AI21 Labs":"#ff7a45","Xiaomi":"#ff6900","Upstage":"#5a31f4",
+  "StepFun":"#3366cc","Tencent":"#0052d9","InclusionAI":"#26a69a","Reka AI":"#9b5de5",
+  "Sarvam":"#f15bb5","MBZUAI Institute of Foundation Models":"#00bbf9","OpenBMB":"#06d6a0",
+  "Inception":"#ff9f1c"
+};
+const PALETTE = ["#8ab4f8","#f28b82","#fdd663","#81c995","#c58af9","#ff8bcb","#78d9ec","#fcad70",
+  "#a1e8a1","#d7aefb","#ffd29c","#9aa0ff","#f6a5c0","#7ee0c0","#e0b0ff","#bcd35f"];
+let creators=[], colorOf={};
+function assignColors(){
+  creators=[...new Set(DATA.map(d=>d.creator||"Other"))].sort();
+  colorOf={}; let pi=0;
+  for(const c of creators){ colorOf[c]=BRAND[c]||PALETTE[pi++%PALETTE.length]; }
+}
+
+const chart=document.getElementById('chart');
+const $=id=>document.getElementById(id);
+function selectedAxes(){ return [...document.querySelectorAll('.ax:checked')].map(c=>c.value); }
+
+function fmtP(p){ return p>=1000 ? (p/1000).toFixed(p%1000?2:0)+'T' : (p>=1?p.toFixed(p<10?1:0):p.toFixed(2))+'B'; }
+function fmtUSD(v){ return v>=1000 ? '$'+(v/1000).toFixed(v%1000?1:0)+'k' : (v>=1?'$'+v.toFixed(v<10?2:0):'$'+v.toFixed(3)); }
+function fmtVal(k,v){
+  if(v==null) return '—';
+  if(k==='cost') return fmtUSD(v);
+  if(k==='price') return fmtUSD(v)+'/M';
+  if(k==='speed') return v.toFixed(0)+' tok/s';
+  if(k==='ttft')  return v.toFixed(2)+' s';
+  if(k==='params')return fmtP(v);
+  if(k==='ii')    return v.toFixed(1);
+  return ''+v;
+}
+function matchHit(d,q,c){ return d.name.toLowerCase().includes(q)||(d.slug||'').includes(q)||c.toLowerCase().includes(q); }
+
+function hover(d){
+  const est=d.ii_est?"  <i>(est.)</i>":"";
+  const op=d.open?(d.openness||"Open weights"):"Proprietary";
+  const lines=[`<b>${d.name}</b>`,`${d.creator||"Other"} · ${op}`,
+    `Intelligence Index: <b>${(+d.ii).toFixed(1)}</b>${est}`];
+  if(d.cost!=null)  lines.push(`Cost to run AAII: <b>${fmtUSD(d.cost)}</b>`);
+  if(d.price!=null) lines.push(`Price: <b>${fmtUSD(d.price)}/M</b>`+(d.price_in!=null?` <span style="color:#8b949e">(in ${fmtUSD(d.price_in)} / out ${fmtUSD(d.price_out)})</span>`:''));
+  if(d.speed!=null) lines.push(`Output speed: <b>${(+d.speed).toFixed(0)} tok/s</b>`);
+  if(d.ttft!=null)  lines.push(`Latency (TTFT): <b>${d.ttft}s</b>`);
+  if(d.params!=null)lines.push(`Total params: <b>${fmtP(d.params)}</b>`);
+  if(d.release)     lines.push(`<span style="color:#8b949e">Released ${d.release}</span>`);
+  return lines.join('<br>')+'<extra></extra>';
+}
+
+// 2-D Pareto frontier: best intelligence at each level of the x-axis, oriented by goodLow.
+function frontierPoints(rows,ax){
+  const lo=AX[ax].goodLow;
+  const pts=[...rows].sort((a,b)=> lo ? (a[ax]-b[ax]||b.ii-a.ii) : (b[ax]-a[ax]||b.ii-a.ii));
+  const fr=[]; let best=-Infinity;
+  for(const p of pts){ if(p.ii>best){ fr.push(p); best=p.ii; } }
+  return fr.sort((a,b)=>a[ax]-b[ax]);
+}
+
+// Axis spec shared by 2-D (xaxis/yaxis) and 3-D (scene.*axis).
+function axisSpec(k,log){
+  const a=AX[k];
+  const useLog=log&&a.log;
+  const unit=a.unit?` (${a.unit})`:'';
+  const spec={
+    title:{text:a.label+unit+(useLog?' — log':''),font:{size:12}},
+    type:useLog?'log':'linear', gridcolor:'#21262d', zerolinecolor:'#30363d', zeroline:false,
+    backgroundcolor:'#0e1116', showbackground:true, color:'#c9d1d9'
+  };
+  if(useLog&&a.ticks){ spec.tickvals=a.ticks.map(t=>t[0]); spec.ticktext=a.ticks.map(t=>t[1]); }
+  return spec;
+}
+
+let lastMode=null;
+const CONFIG={responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d'],scrollZoom:true};
+
+function build(){
+  const axes=selectedAxes();
+  const mode = axes.length>=2 ? '3d' : (axes.length===1 ? '2d' : 'none');
+  $('hint').style.display = mode==='none' ? 'flex' : 'none';
+  $('frontier').parentElement.style.opacity = mode==='2d' ? 1 : .4;
+  if(mode==='none'){ Plotly.purge(chart); lastMode=null; $('count').textContent=''; return; }
+
+  const showLabels=$('labels').checked, log=$('logax').checked, dimOld=$('dimold').checked;
+  const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
+  const q=$('search').value.trim().toLowerCase();
+
+  const xk=axes[0], yk=(mode==='3d'?axes[1]:'ii'), zk=(mode==='3d'?'ii':null);
+  const sizeK=axes.length>=3?axes[2]:null;          // 3rd ticked axis → marker size
+  const need=[...new Set([xk, mode==='3d'?yk:null, 'ii', sizeK].filter(Boolean))];
+
+  let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&need.every(k=>d[k]!=null));
+  // marker-size scale for an optional 3rd axis (log-spaced 6→24px)
+  let sLo=0,sHi=1;
+  if(sizeK&&rows.length){ const vs=rows.map(d=>Math.log10(d[sizeK])); sLo=Math.min(...vs); sHi=Math.max(...vs)||sLo+1; }
+  const sizeOf=d=>{ if(!sizeK) return null; const t=(Math.log10(d[sizeK])-sLo)/((sHi-sLo)||1); return 6+18*t; };
+
+  let extra = sizeK?`  ·  size = ${AX[sizeK].short}`:'';
+  $('count').textContent=`${rows.length} models · ${mode==='3d'?'3-D':'2-D'}${extra}`;
+
+  const traces=[];
+  for(const c of creators){
+    const r=rows.filter(d=>(d.creator||"Other")===c);
+    if(!r.length) continue;
+    const baseSize=d=> q?(matchHit(d,q,c)?13:7):10;
+    const tr={
+      name:c, mode:showLabels?'markers+text':'markers',
+      x:r.map(d=>d[xk]), y:r.map(d=>d[yk]), text:r.map(d=>d.name),
+      textposition:'top center', textfont:{size:9,color:'#9aa6b2'},
+      hovertemplate:r.map(hover),
+      marker:{
+        color:colorOf[c], symbol:r.map(d=>d.open?'circle':'diamond'),
+        size:r.map(d=> sizeK ? sizeOf(d)*(q&&matchHit(d,q,c)?1.3:1) : baseSize(d)),
+        opacity:r.map(d=>{
+          let o=d.ii_est?0.55:0.95;
+          if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) o*=0.4; }
+          if(q) o=matchHit(d,q,c)?1:0.12;
+          return o;
+        })
+      }
+    };
+    if(mode==='3d'){ tr.type='scatter3d'; tr.z=r.map(d=>d.ii); tr.marker.line={width:0.5,color:'rgba(0,0,0,.5)'}; }
+    else { tr.type='scattergl';
+      tr.marker.line={width:r.map(d=>q&&matchHit(d,q,c)?2:0.6),color:r.map(d=>q&&matchHit(d,q,c)?'#fff':'rgba(0,0,0,.45)')}; }
+    traces.push(tr);
+  }
+
+  if(mode==='2d'&&$('frontier').checked&&rows.length){
+    const fr=frontierPoints(rows,xk);
+    traces.push({type:'scatter',mode:'lines',name:AX[xk].short+'/intelligence frontier',
+      x:fr.map(d=>d[xk]),y:fr.map(d=>d.ii),
+      line:{color:'rgba(230,237,243,.55)',width:1.5,dash:'dot',shape:'hv'},
+      hoverinfo:'skip',showlegend:true});
+  }
+
+  const common={paper_bgcolor:'#0e1116',plot_bgcolor:'#0e1116',font:{color:'#c9d1d9'},
+    hovermode:'closest',hoverlabel:{bgcolor:'#161b22',bordercolor:'#30363d',font:{size:12,color:'#e6edf3'},align:'left'},
+    legend:{font:{size:11},bgcolor:'rgba(22,27,34,.6)',bordercolor:'#30363d',borderwidth:1,
+      itemsizing:'constant',orientation:'v',x:1.005,y:1,xanchor:'left'},
+    showlegend:true, uirevision:axes.join('|')};
+
+  let layout;
+  if(mode==='3d'){
+    layout={...common, margin:{l:0,r:0,t:0,b:0},
+      scene:{ xaxis:axisSpec(xk,log), yaxis:axisSpec(yk,log), zaxis:axisSpec('ii',false),
+        bgcolor:'#0e1116', uirevision:axes.join('|'),
+        camera:{eye:{x:1.7,y:1.6,z:0.9}} }};
+  } else {
+    const yMin=Math.min(...rows.map(d=>d.ii))-2, yMax=Math.max(...rows.map(d=>d.ii))+3;
+    const xa=axisSpec(xk,log), ya=axisSpec('ii',false);
+    ya.range=[Math.max(0,yMin),yMax];
+    layout={...common, margin:{l:64,r:20,t:14,b:54}, xaxis:xa, yaxis:ya};
+  }
+
+  if(mode!==lastMode){ Plotly.newPlot(chart,traces,layout,CONFIG); lastMode=mode; }
+  else { Plotly.react(chart,traces,layout,CONFIG); }
+}
+
+document.querySelectorAll('.ax').forEach(c=>c.addEventListener('change',build));
+['logax','labels','frontier','hideest','openonly','dimold'].forEach(id=>$(id).addEventListener('change',build));
+let t; $('search').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(build,120);});
+$('reset').addEventListener('click',e=>{e.preventDefault(); $('search').value='';
+  if(lastMode==='3d'){ Plotly.relayout(chart,{'scene.camera':{eye:{x:1.7,y:1.6,z:0.9}}}); }
+  else if(lastMode==='2d'){ Plotly.relayout(chart,{'xaxis.autorange':true,'yaxis.autorange':true}); }
+  build();});
+
+function setStatus(kind,text){ const s=$('status'); s.className='status '+kind; s.textContent=text; }
+function render(){ assignColors(); build(); }
+
+// 1) render the baked snapshot instantly; 2) upgrade to the live mirror only if it
+//    carries the cost/price fields (older mirror deploys don't — keep snapshot until then).
+setStatus('snap','snapshot');
+render();
+fetch(API,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(j=>{
+  if(j&&Array.isArray(j.models)){
+    const rich=j.models.filter(m=>m&&m.ii!=null&&(m.cost!=null||m.price!=null));
+    if(rich.length>50){
+      DATA=rich;
+      const d=j.updated?new Date(j.updated):null;
+      setStatus('live','live · '+(d?d.toISOString().slice(0,10):'updated'));
+      render();
+    }
+  }
+}).catch(()=>{ /* keep snapshot */ });
+</script>
+</body>
+</html>
