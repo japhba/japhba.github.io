@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>{{ .Title }} · {{ .Site.Title }}</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
 <style>
   :root{ --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e; --line:#30363d; --accent:#58a6ff; }
   *{box-sizing:border-box}
@@ -23,15 +29,34 @@
   .controls label{display:flex;gap:6px;align-items:center;cursor:pointer;user-select:none;font-size:13px}
   .controls .group{display:flex;gap:12px;align-items:center;padding:3px 10px;border:1px solid var(--line);border-radius:8px}
   .controls .group .tag{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em;border-right:1px solid var(--line);padding-right:10px;margin-right:2px}
-  .controls .axis input:disabled+span{opacity:.4}
   .controls input[type=search]{background:#0d1117;border:1px solid var(--line);color:var(--ink);padding:6px 10px;border-radius:7px;width:220px;font-size:13px}
   .controls input[type=search]:focus{outline:none;border-color:var(--accent)}
+  .controls input[type=range]{width:96px;accent-color:var(--accent);cursor:pointer}
+  .controls select{background:#0d1117;border:1px solid var(--line);color:var(--ink);padding:5px 8px;border-radius:7px;font-size:13px;cursor:pointer}
+  .controls select:focus{outline:none;border-color:var(--accent)}
   .controls .spacer{flex:1}
   .controls .count{color:var(--muted);font-size:12px}
   .controls a.btn{color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:12.5px}
   .controls a.btn:hover{border-color:var(--accent)}
-  #chart{width:100vw;height:calc(100vh - 122px)}
-  #hint{position:fixed;inset:0;display:none;align-items:center;justify-content:center;color:var(--muted);font-size:15px;pointer-events:none}
+  .dis{opacity:.4}
+  #stage{position:relative;width:100vw;height:calc(100vh - 122px)}
+  #plot2d,#plot3d{position:absolute;inset:0}
+  #plot3d{display:none;touch-action:none}
+  #plot3d canvas{display:block}
+  #hint{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:var(--muted);font-size:15px;pointer-events:none}
+  #tip{position:absolute;pointer-events:none;display:none;z-index:5;max-width:300px;
+    background:#161b22;border:1px solid #30363d;border-radius:8px;padding:8px 10px;font-size:12px;color:var(--ink);
+    box-shadow:0 6px 24px rgba(0,0,0,.5)}
+  #tip b{color:#fff}
+  #legend{position:absolute;top:10px;right:10px;z-index:4;display:none;max-height:calc(100% - 20px);overflow:auto;
+    background:rgba(22,27,34,.72);border:1px solid #30363d;border-radius:8px;padding:7px 9px;font-size:11.5px;backdrop-filter:blur(3px)}
+  #legend .li{display:flex;gap:7px;align-items:center;cursor:pointer;padding:1px 2px;white-space:nowrap}
+  #legend .li.off{opacity:.35}
+  #legend .sw{width:10px;height:10px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+  #legend .hd{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 4px}
+  #orient{position:absolute;left:12px;bottom:10px;z-index:4;display:none;color:var(--muted);font-size:11px;
+    background:rgba(22,27,34,.6);border:1px solid #30363d;border-radius:7px;padding:5px 9px}
+  #orient b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -39,7 +64,7 @@
   <a class="back" href="{{ "/misc/" | relLangURL }}">&larr; Misc</a>
   <h1>Intelligence&nbsp;vs&nbsp;Cost,&nbsp;Speed&nbsp;&amp;&nbsp;Price</h1>
   <span class="status" id="status">loading…</span>
-  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), and <b>output&nbsp;speed</b>. Pick one axis for a 2-D scatter, two for a 3-D scatter you can drag to rotate. Intelligence is always the vertical axis. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
+  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), <b>output&nbsp;speed</b>, <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), latency, size, <b>context&nbsp;window</b> or <b>long&#8209;context&nbsp;reasoning</b> (AA&#8209;LCR, the successor to needle&#8209;in&#8209;a&#8209;haystack). One axis &rarr; 2-D scatter; two axes &rarr; a WebGL 3-D scatter you can drag to orbit (scroll to zoom). The vertical (up) axis is Intelligence by default but can be set to any metric &mdash; e.g.&nbsp;context&nbsp;window &mdash; via the <b>Vertical</b> selector. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
 </header>
 <div class="controls">
   <div class="group">
@@ -49,11 +74,28 @@
     <label class="axis"><input type="checkbox" class="ax" value="price"/><span>Price&nbsp;($/1M&nbsp;tok)</span></label>
     <label class="axis"><input type="checkbox" class="ax" value="ttft"/><span>Latency&nbsp;(TTFT)</span></label>
     <label class="axis"><input type="checkbox" class="ax" value="params"/><span>Params&nbsp;(B)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="context"/><span>Context&nbsp;(tokens)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="lcr"/><span>AA&#8209;LCR&nbsp;(%)</span></label>
+  </div>
+  <div class="group">
+    <span class="tag">Vertical</span>
+    <select id="vaxis" title="Which metric is the vertical (up) axis">
+      <option value="ii" selected>Intelligence</option>
+      <option value="lcr">AA&#8209;LCR (%)</option>
+      <option value="context">Context</option>
+      <option value="params">Params</option>
+      <option value="speed">Speed</option>
+      <option value="price">Price</option>
+      <option value="cost">Cost</option>
+      <option value="ttft">Latency</option>
+    </select>
   </div>
   <input type="search" id="search" placeholder="Highlight (gpt-5, claude, gemini…)" autocomplete="off"/>
   <label><input type="checkbox" id="logax" checked/> Log&nbsp;axes</label>
+  <label><input type="checkbox" id="frontier" checked/> Pareto&nbsp;frontier</label>
+  <label id="lab-falpha">Frontier&nbsp;α <input type="range" id="falpha" min="0" max="0.6" step="0.01" value="0.16"/></label>
+  <label id="lab-stems"><input type="checkbox" id="stems" checked/> Stems&nbsp;(3-D)</label>
   <label><input type="checkbox" id="labels"/> Labels</label>
-  <label><input type="checkbox" id="frontier" checked/> Frontier&nbsp;(2-D)</label>
   <label><input type="checkbox" id="hideest"/> Hide&nbsp;estimated</label>
   <label><input type="checkbox" id="openonly"/> Open&nbsp;weights&nbsp;only</label>
   <label><input type="checkbox" id="dimold"/> Emphasize&nbsp;recent</label>
@@ -61,18 +103,27 @@
   <span class="count" id="count"></span>
   <a class="btn" id="reset" href="#">Reset view</a>
 </div>
-<div id="chart"></div>
-<div id="hint">Tick one or two axes above to plot.</div>
+<div id="stage">
+  <div id="plot2d"></div>
+  <div id="plot3d">
+    <div id="tip"></div>
+    <div id="legend"></div>
+    <div id="orient"></div>
+  </div>
+  <div id="hint">Tick one or two axes above to plot.</div>
+</div>
 
-<script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
 const API = "https://japhba-api.netlify.app/.netlify/functions/aa-models";
 const SNAPSHOT = {{ os.ReadFile "data/aa_tradeoffs.json" | safeJS }};
 let DATA = SNAPSHOT;
 
-// Axis catalogue. goodLow = "lower is better" (used to orient the 2-D frontier).
+// Axis catalogue. goodLow = "lower is better" (orients the Pareto frontier).
 const AX = {
-  ii    : {label:'Intelligence Index', short:'Intelligence', unit:'',           goodLow:false, log:false,
-           ticks:null},
+  ii    : {label:'Intelligence Index', short:'Intelligence', unit:'',           goodLow:false, log:false, ticks:null},
   cost  : {label:'Cost to run Intelligence Index', short:'Cost', unit:'USD',    goodLow:true,  log:true,
            ticks:[[1,'$1'],[3,'$3'],[10,'$10'],[30,'$30'],[100,'$100'],[300,'$300'],[1000,'$1k'],[3000,'$3k'],[10000,'$10k']]},
   speed : {label:'Median output speed', short:'Speed', unit:'tok/s',            goodLow:false, log:true,
@@ -83,6 +134,9 @@ const AX = {
            ticks:[[0.5,'0.5'],[1,'1'],[2,'2'],[5,'5'],[10,'10'],[30,'30'],[100,'100']]},
   params: {label:'Total parameters', short:'Params', unit:'B',                  goodLow:false, log:true,
            ticks:[[0.3,'0.3B'],[1,'1B'],[3,'3B'],[10,'10B'],[30,'30B'],[100,'100B'],[300,'300B'],[1000,'1T']]},
+  context:{label:'Context window', short:'Context', unit:'tokens',              goodLow:false, log:true,
+           ticks:[[4096,'4k'],[8192,'8k'],[32768,'32k'],[65536,'64k'],[131072,'128k'],[262144,'256k'],[1000000,'1M'],[2000000,'2M'],[10000000,'10M']]},
+  lcr   : {label:'Long-context reasoning (AA-LCR)', short:'AA-LCR', unit:'%',    goodLow:false, log:false, ticks:null},
 };
 
 const BRAND = {
@@ -103,13 +157,21 @@ function assignColors(){
   colorOf={}; let pi=0;
   for(const c of creators){ colorOf[c]=BRAND[c]||PALETTE[pi++%PALETTE.length]; }
 }
+const hidden=new Set();   // creators toggled off via the legend
 
-const chart=document.getElementById('chart');
 const $=id=>document.getElementById(id);
-function selectedAxes(){ return [...document.querySelectorAll('.ax:checked')].map(c=>c.value); }
+const stage=$('stage'), p2=$('plot2d'), p3=$('plot3d');
+function vAxis(){ return $('vaxis').value; }
+// Floor axes = checked boxes minus whatever is on the vertical (no axis plotted twice).
+function selectedAxes(){ const vk=vAxis(); return [...document.querySelectorAll('.ax:checked')].map(c=>c.value).filter(k=>k!==vk); }
+// Grey out the checkbox of the metric currently on the vertical axis.
+function syncVerticalUI(){ const vk=vAxis();
+  document.querySelectorAll('.axis').forEach(l=>{ const inp=l.querySelector('.ax'); const isV=inp.value===vk;
+    inp.disabled=isV; l.classList.toggle('dis',isV); }); }
 
 function fmtP(p){ return p>=1000 ? (p/1000).toFixed(p%1000?2:0)+'T' : (p>=1?p.toFixed(p<10?1:0):p.toFixed(2))+'B'; }
 function fmtUSD(v){ return v>=1000 ? '$'+(v/1000).toFixed(v%1000?1:0)+'k' : (v>=1?'$'+v.toFixed(v<10?2:0):'$'+v.toFixed(3)); }
+function fmtCtx(v){ return v>=1e6 ? (v/1e6).toFixed(v%1e6?1:0)+'M' : v>=1e3 ? Math.round(v/1e3)+'k' : ''+v; }
 function fmtVal(k,v){
   if(v==null) return '—';
   if(k==='cost') return fmtUSD(v);
@@ -117,159 +179,453 @@ function fmtVal(k,v){
   if(k==='speed') return v.toFixed(0)+' tok/s';
   if(k==='ttft')  return v.toFixed(2)+' s';
   if(k==='params')return fmtP(v);
+  if(k==='context')return fmtCtx(v);
+  if(k==='lcr')   return v.toFixed(0)+'%';
   if(k==='ii')    return v.toFixed(1);
   return ''+v;
 }
-function matchHit(d,q,c){ return d.name.toLowerCase().includes(q)||(d.slug||'').includes(q)||c.toLowerCase().includes(q); }
-
-function hover(d){
+function matchHit(d,q,c){ return d.name.toLowerCase().includes(q)||(d.slug||'').includes(q)||(c||'').toLowerCase().includes(q); }
+function hoverHTML(d){
   const est=d.ii_est?"  <i>(est.)</i>":"";
   const op=d.open?(d.openness||"Open weights"):"Proprietary";
-  const lines=[`<b>${d.name}</b>`,`${d.creator||"Other"} · ${op}`,
-    `Intelligence Index: <b>${(+d.ii).toFixed(1)}</b>${est}`];
-  if(d.cost!=null)  lines.push(`Cost to run AAII: <b>${fmtUSD(d.cost)}</b>`);
-  if(d.price!=null) lines.push(`Price: <b>${fmtUSD(d.price)}/M</b>`+(d.price_in!=null?` <span style="color:#8b949e">(in ${fmtUSD(d.price_in)} / out ${fmtUSD(d.price_out)})</span>`:''));
-  if(d.speed!=null) lines.push(`Output speed: <b>${(+d.speed).toFixed(0)} tok/s</b>`);
-  if(d.ttft!=null)  lines.push(`Latency (TTFT): <b>${d.ttft}s</b>`);
-  if(d.params!=null)lines.push(`Total params: <b>${fmtP(d.params)}</b>`);
-  if(d.release)     lines.push(`<span style="color:#8b949e">Released ${d.release}</span>`);
-  return lines.join('<br>')+'<extra></extra>';
+  const L=[`<b>${d.name}</b>`,`${d.creator||"Other"} · ${op}`,`Intelligence Index: <b>${(+d.ii).toFixed(1)}</b>${est}`];
+  if(d.cost!=null)  L.push(`Cost to run AAII: <b>${fmtUSD(d.cost)}</b>`);
+  if(d.price!=null) L.push(`Price: <b>${fmtUSD(d.price)}/M</b>`+(d.price_in!=null?` <span style="color:#8b949e">(in ${fmtUSD(d.price_in)} / out ${fmtUSD(d.price_out)})</span>`:''));
+  if(d.speed!=null) L.push(`Output speed: <b>${(+d.speed).toFixed(0)} tok/s</b>`);
+  if(d.ttft!=null)  L.push(`Latency (TTFT): <b>${d.ttft}s</b>`);
+  if(d.params!=null)L.push(`Total params: <b>${fmtP(d.params)}</b>`);
+  if(d.context!=null)L.push(`Context window: <b>${fmtCtx(d.context)}</b>`);
+  if(d.lcr!=null)   L.push(`AA-LCR (long-context reasoning): <b>${(+d.lcr).toFixed(0)}%</b>`);
+  if(d.release)     L.push(`<span style="color:#8b949e">Released ${d.release}</span>`);
+  return L.join('<br>');
 }
 
-// 2-D Pareto frontier: best intelligence at each level of the x-axis, oriented by goodLow.
-function frontierPoints(rows,ax){
-  const lo=AX[ax].goodLow;
-  const pts=[...rows].sort((a,b)=> lo ? (a[ax]-b[ax]||b.ii-a.ii) : (b[ax]-a[ax]||b.ii-a.ii));
+// Multi-objective Pareto set: maximize ii, optimize each floor axis in its good direction.
+function paretoSet(rows,keys){
+  const objs=keys.map(k=>({k, s: k==='ii'?1:(AX[k].goodLow?-1:1)}));
+  const g=(d,o)=>d[o.k]*o.s;
+  const out=[];
+  for(const p of rows){
+    let dom=false;
+    for(const q of rows){ if(q===p) continue;
+      let ge=true, gt=false;
+      for(const o of objs){ const a=g(p,o), b=g(q,o); if(b<a){ge=false;break;} if(b>a) gt=true; }
+      if(ge&&gt){ dom=true; break; } }
+    if(!dom) out.push(p);
+  }
+  return out;
+}
+
+/* ============================ 2-D (Plotly) ============================ */
+let plotlyLive=false;
+function frontier2d(rows,ax,vk){
+  const loX=AX[ax].goodLow, sV=AX[vk].goodLow?-1:1;   // sV orients "better" on the vertical
+  const pts=[...rows].sort((a,b)=> loX ? (a[ax]-b[ax]||sV*(b[vk]-a[vk])) : (b[ax]-a[ax]||sV*(b[vk]-a[vk])));
   const fr=[]; let best=-Infinity;
-  for(const p of pts){ if(p.ii>best){ fr.push(p); best=p.ii; } }
+  for(const p of pts){ const v=sV*p[vk]; if(v>best){ fr.push(p); best=v; } }
   return fr.sort((a,b)=>a[ax]-b[ax]);
 }
-
-// Axis spec shared by 2-D (xaxis/yaxis) and 3-D (scene.*axis).
-function axisSpec(k,log){
-  const a=AX[k];
-  const useLog=log&&a.log;
-  const unit=a.unit?` (${a.unit})`:'';
-  const spec={
-    title:{text:a.label+unit+(useLog?' — log':''),font:{size:12}},
-    type:useLog?'log':'linear', gridcolor:'#21262d', zerolinecolor:'#30363d', zeroline:false,
-    backgroundcolor:'#0e1116', showbackground:true, color:'#c9d1d9'
-  };
-  if(useLog&&a.ticks){ spec.tickvals=a.ticks.map(t=>t[0]); spec.ticktext=a.ticks.map(t=>t[1]); }
-  return spec;
+function axisSpec2d(k,log){
+  const a=AX[k], useLog=log&&a.log, unit=a.unit?` (${a.unit})`:'';
+  const s={title:{text:a.label+unit+(useLog?' — log':''),font:{size:12}},
+    type:useLog?'log':'linear', gridcolor:'#21262d', zeroline:false};
+  if(useLog&&a.ticks){ s.tickvals=a.ticks.map(t=>t[0]); s.ticktext=a.ticks.map(t=>t[1]); }
+  return s;
+}
+function build2d(xk,vk){
+  const log=$('logax').checked, dimOld=$('dimold').checked, showLabels=$('labels').checked;
+  const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
+  const q=$('search').value.trim().toLowerCase();
+  let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&!hidden.has(d.creator||'Other')&&d[xk]!=null&&d[vk]!=null);
+  $('count').textContent=`${rows.length} models · 2-D`;
+  if(!rows.length){ Plotly.purge(p2); plotlyLive=false; return; }
+  const traces=[];
+  for(const c of creators){
+    const r=rows.filter(d=>(d.creator||"Other")===c); if(!r.length) continue;
+    traces.push({type:'scattergl', mode:showLabels?'markers+text':'markers', name:c,
+      x:r.map(d=>d[xk]), y:r.map(d=>d[vk]), text:r.map(d=>d.name),
+      textposition:'top center', textfont:{size:9,color:'#9aa6b2'},
+      hovertemplate:r.map(d=>hoverHTML(d)+'<extra></extra>'),
+      marker:{ size:r.map(d=> q?(matchHit(d,q,c)?13:7):10), color:colorOf[c],
+        symbol:r.map(d=>d.open?'circle':'diamond'),
+        line:{width:r.map(d=>q&&matchHit(d,q,c)?2:0.6),color:r.map(d=>q&&matchHit(d,q,c)?'#fff':'rgba(0,0,0,.45)')},
+        opacity:r.map(d=>{ let o=d.ii_est?0.55:0.95;
+          if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) o*=0.4; }
+          if(q) o=matchHit(d,q,c)?1:0.12; return o; }) }});
+  }
+  if($('frontier').checked&&rows.length){
+    const fr=frontier2d(rows,xk,vk);
+    traces.push({type:'scatter',mode:'lines',name:AX[xk].short+'/'+AX[vk].short+' frontier',
+      x:fr.map(d=>d[xk]),y:fr.map(d=>d[vk]),
+      line:{color:'rgba(230,237,243,.55)',width:1.5,dash:'dot',shape:'hv'},hoverinfo:'skip',showlegend:true});
+  }
+  const xa=axisSpec2d(xk,log), ya=axisSpec2d(vk,log);
+  if(!(log&&AX[vk].log)){ const vs=rows.map(d=>d[vk]); const lo=Math.min(...vs), hi=Math.max(...vs);
+    const pad=(hi-lo||1)*0.06; ya.range=[Math.max(0,lo-pad),hi+pad*1.4]; }   // linear vertical: pad; log vertical: autorange
+  const layout={paper_bgcolor:'#0e1116',plot_bgcolor:'#0e1116',font:{color:'#c9d1d9'},
+    margin:{l:64,r:20,t:14,b:54},hovermode:'closest',
+    hoverlabel:{bgcolor:'#161b22',bordercolor:'#30363d',font:{size:12,color:'#e6edf3'},align:'left'},
+    xaxis:xa,yaxis:ya, uirevision:xk+'|'+vk,
+    legend:{font:{size:11},bgcolor:'rgba(22,27,34,.6)',bordercolor:'#30363d',borderwidth:1,
+      itemsizing:'constant',orientation:'v',x:1.005,y:1,xanchor:'left'},showlegend:true};
+  Plotly.react(p2,traces,layout,{responsive:true,displaylogo:false,
+    modeBarButtonsToRemove:['lasso2d','select2d'],scrollZoom:true});
+  plotlyLive=true;
 }
 
-let lastMode=null;
-const CONFIG={responsive:true,displaylogo:false,modeBarButtonsToRemove:['lasso2d','select2d'],scrollZoom:true};
+/* ============================ 3-D (Three.js) ============================ */
+const SPAN=100, C=SPAN/2;
+let renderer,scene,cam,controls,gAxes,gData,raf=0,three=false;
+let axSig='', pickList=[], hoverActive=false;
+const tip=$('tip'), legend=$('legend'), orient=$('orient');
 
-function build(){
-  const axes=selectedAxes();
-  const mode = axes.length>=2 ? '3d' : (axes.length===1 ? '2d' : 'none');
-  $('hint').style.display = mode==='none' ? 'flex' : 'none';
-  $('frontier').parentElement.style.opacity = mode==='2d' ? 1 : .4;
-  if(mode==='none'){ Plotly.purge(chart); lastMode=null; $('count').textContent=''; return; }
+const VERT=`
+  attribute float size; attribute float alpha; attribute vec3 acolor;
+  varying vec3 vC; varying float vA; uniform float uScale;
+  void main(){ vC=acolor; vA=alpha;
+    vec4 mv=modelViewMatrix*vec4(position,1.0);
+    gl_PointSize=clamp(size*uScale/max(-mv.z,0.001),2.0,90.0);
+    gl_Position=projectionMatrix*mv; }`;
+// pseudo-PBR: treat each point sprite as a lit sphere (screen-space normal) →
+// diffuse + Blinn-Phong spec + rim, so the cloud reads with real volume/depth.
+const FRAG=`
+  varying vec3 vC; varying float vA;
+  void main(){
+    vec2 uv=gl_PointCoord*2.0-1.0;
+    float r2=dot(uv,uv);
+    if(r2>1.0) discard;
+    float z=sqrt(1.0-r2);
+    vec3 N=vec3(uv.x,-uv.y,z);
+    vec3 L=normalize(vec3(0.38,0.55,0.78));
+    float diff=clamp(dot(N,L),0.0,1.0);
+    vec3 H=normalize(L+vec3(0.0,0.0,1.0));
+    float spec=pow(clamp(dot(N,H),0.0,1.0),28.0)*0.55;
+    float rim=pow(1.0-z,2.0)*0.18;
+    vec3 col=vC*(0.32+0.85*diff)+spec+rim;
+    float edge=smoothstep(1.0,0.84,r2);
+    gl_FragColor=vec4(col, vA*edge); }`;
+const RINGFRAG=`
+  varying vec3 vC; varying float vA;
+  void main(){ float d=length(gl_PointCoord-0.5);
+    if(d>0.5||d<0.34) discard;
+    gl_FragColor=vec4(vC, vA); }`;
 
-  const showLabels=$('labels').checked, log=$('logax').checked, dimOld=$('dimold').checked;
+function ptMaterial(frag){
+  return new THREE.ShaderMaterial({uniforms:{uScale:{value:600}},vertexShader:VERT,fragmentShader:frag,
+    transparent:true, depthWrite:frag===FRAG, depthTest:true});
+}
+function makeLabel(text,color='#d7e0ea',px=42,weight=600){
+  const font=`${weight} ${px}px -apple-system,Segoe UI,Roboto,sans-serif`;
+  const cv=document.createElement('canvas'), ctx=cv.getContext('2d');
+  ctx.font=font; const w=Math.ceil(ctx.measureText(text).width);
+  cv.width=w+16; cv.height=px+14;
+  ctx.font=font; ctx.textBaseline='middle';
+  ctx.shadowColor='rgba(0,0,0,.92)'; ctx.shadowBlur=6; ctx.fillStyle=color;
+  ctx.fillText(text,8,cv.height/2);
+  const tex=new THREE.CanvasTexture(cv); tex.minFilter=THREE.LinearFilter; tex.anisotropy=2;
+  const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false,depthWrite:false});
+  const sp=new THREE.Sprite(mat); const s=0.052;
+  sp.scale.set(cv.width*s,cv.height*s,1); sp.renderOrder=10;
+  sp.userData={tex,mat}; return sp;
+}
+function disposeGroup(g){
+  g.traverse(o=>{ if(o.geometry)o.geometry.dispose();
+    if(o.userData&&o.userData.tex)o.userData.tex.dispose();
+    if(o.material){ const m=o.material; (Array.isArray(m)?m:[m]).forEach(x=>{ if(x!==FILL&&x!==WIRE&&x.dispose)x.dispose(); }); } });
+  g.clear();
+}
+// PBR frontier surface: flat-shaded so each triangle facet catches the light at its
+// own angle → the draped sheet's curvature reads as depth. Opacity is user-controlled.
+const FILL=new THREE.MeshStandardMaterial({color:0x8fc3ff,transparent:true,opacity:0.16,side:THREE.DoubleSide,
+  depthWrite:false, metalness:0.15, roughness:0.45, flatShading:true,
+  emissive:0x16314f, emissiveIntensity:0.6});
+const WIRE=new THREE.LineBasicMaterial({color:0xbfe0ff,transparent:true,opacity:0.5});
+
+function niceTicks(lo,hi,n=5){
+  const span=hi-lo||1, raw=span/n, mag=Math.pow(10,Math.floor(Math.log10(raw)));
+  const norm=raw/mag, step=(norm>=5?5:norm>=2?2:1)*mag;
+  const out=[]; for(let v=Math.ceil(lo/step)*step; v<=hi+1e-9; v+=step) out.push(+v.toFixed(6));
+  return out;
+}
+// domain in transformed space; norm()→[0,1]
+function domain(rows,k){
+  const log=AX[k].log && $('logax').checked;   // ii.log is false, so Intelligence stays linear
+  const vals=rows.map(d=>d[k]).filter(v=>v!=null&&(!log||v>0));
+  let lo=Math.min(...vals), hi=Math.max(...vals);
+  if(log){ lo=Math.log10(lo); hi=Math.log10(hi); }
+  if(!(hi>lo)) hi=lo+1;
+  const pad=(hi-lo)*(k==='ii'?0.06:0.05);
+  return {lo:lo-pad, hi:hi+pad+(k==='ii'?pad:0), log};
+}
+const tf=(v,dom)=> dom.log?Math.log10(v):v;
+const norm=(v,dom)=> (tf(v,dom)-dom.lo)/(dom.hi-dom.lo);
+function ticksFor(k,dom){
+  if(dom.log&&AX[k].ticks) return AX[k].ticks.filter(([v])=>{const t=Math.log10(v);return t>=dom.lo-1e-9&&t<=dom.hi+1e-9;})
+    .map(([v,l])=>({pos:norm(v,dom),label:l}));
+  const lo=dom.lo, hi=dom.hi;
+  return niceTicks(lo,hi,5).filter(v=>v>=lo-1e-9&&v<=hi+1e-9).map(v=>({pos:(v-lo)/(hi-lo),label:fmtVal(k,v)}));
+}
+
+function lineSeg(arr,color,opacity){
+  const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.Float32BufferAttribute(arr,3));
+  return new THREE.LineSegments(g,new THREE.LineBasicMaterial({color,transparent:true,opacity}));
+}
+function buildAxes(dx,dy,dz,xk,yk,vk){
+  const g=new THREE.Group();
+  // bounding cube edges
+  const e=[], pts=[[0,0,0],[SPAN,0,0],[0,0,SPAN],[SPAN,0,SPAN]];
+  // 4 verticals + top/bottom rectangles
+  const corners=[[0,0,0],[SPAN,0,0],[SPAN,0,SPAN],[0,0,SPAN]];
+  for(let i=0;i<4;i++){ const a=corners[i],b=corners[(i+1)%4];
+    e.push(...a,...b); e.push(a[0],SPAN,a[2],b[0],SPAN,b[2]); e.push(a[0],0,a[2],a[0],SPAN,a[2]); }
+  g.add(lineSeg(e,0x30363d,0.85));
+  // floor grid
+  const fg=[]; for(const t of ticksFor(xk,dx)){ const x=t.pos*SPAN; fg.push(x,0,0, x,0,SPAN); }
+  for(const t of ticksFor(yk,dy)){ const z=t.pos*SPAN; fg.push(0,0,z, SPAN,0,z); }
+  g.add(lineSeg(fg,0x222a33,0.9));
+  // vertical reference lines on two back edges
+  const vg=[]; for(const t of ticksFor(vk,dz)){ const y=t.pos*SPAN; vg.push(0,y,0, SPAN,y,0); vg.push(0,y,0, 0,y,SPAN); }
+  g.add(lineSeg(vg,0x222a33,0.8));
+  // tick labels
+  for(const t of ticksFor(xk,dx)) { const s=makeLabel(t.label,'#8b949e',34); s.position.set(t.pos*SPAN,-4,-5); g.add(s); }
+  for(const t of ticksFor(yk,dy)) { const s=makeLabel(t.label,'#8b949e',34); s.position.set(-5,-4,t.pos*SPAN); g.add(s); }
+  for(const t of ticksFor(vk,dz)){ const s=makeLabel(t.label,'#8b949e',34); s.position.set(-6,t.pos*SPAN,-6); g.add(s); }
+  // axis titles
+  const at=(k)=>AX[k].short+(AX[k].unit?` (${AX[k].unit})`:'');
+  const tx=makeLabel(at(xk),'#c9d1d9',46,700); tx.position.set(C,-12,-10); g.add(tx);
+  const tz=makeLabel(at(yk),'#c9d1d9',46,700); tz.position.set(-12,-12,C); g.add(tz);
+  const ty=makeLabel(at(vk),'#c9d1d9',46,700); ty.position.set(-14,SPAN+8,-14); g.add(ty);
+  return g;
+}
+
+// compact Bowyer–Watson Delaunay over floor coords; returns triangles of input indices
+function delaunay(P){
+  const n=P.length; if(n<3) return [];
+  let mnx=Infinity,mny=Infinity,mxx=-Infinity,mxy=-Infinity;
+  for(const p of P){ mnx=Math.min(mnx,p.x);mny=Math.min(mny,p.y);mxx=Math.max(mxx,p.x);mxy=Math.max(mxy,p.y); }
+  const dmax=Math.max(mxx-mnx,mxy-mny)||1, mx=(mnx+mxx)/2, my=(mny+mxy)/2;
+  const V=P.map(p=>({x:p.x,y:p.y}));
+  V.push({x:mx-20*dmax,y:my-dmax},{x:mx,y:my+20*dmax},{x:mx+20*dmax,y:my-dmax});
+  const cc=(a,b,c)=>{ const A=V[a],B=V[b],Cc=V[c];
+    const d=2*(A.x*(B.y-Cc.y)+B.x*(Cc.y-A.y)+Cc.x*(A.y-B.y)); if(Math.abs(d)<1e-12) return null;
+    const ax2=A.x*A.x+A.y*A.y,bx2=B.x*B.x+B.y*B.y,cx2=Cc.x*Cc.x+Cc.y*Cc.y;
+    const ux=(ax2*(B.y-Cc.y)+bx2*(Cc.y-A.y)+cx2*(A.y-B.y))/d;
+    const uy=(ax2*(Cc.x-B.x)+bx2*(A.x-Cc.x)+cx2*(B.x-A.x))/d;
+    return {ux,uy,r2:(A.x-ux)**2+(A.y-uy)**2}; };
+  let tris=[[n,n+1,n+2]];
+  for(let i=0;i<n;i++){
+    const edges=[]; const keep=[];
+    for(const t of tris){ const c=cc(t[0],t[1],t[2]);
+      if(c&&((V[i].x-c.ux)**2+(V[i].y-c.uy)**2)<=c.r2+1e-7){ edges.push([t[0],t[1]],[t[1],t[2]],[t[2],t[0]]); }
+      else keep.push(t); }
+    tris=keep;
+    for(let a=0;a<edges.length;a++){ if(!edges[a])continue;
+      for(let b=a+1;b<edges.length;b++){ if(!edges[b])continue;
+        if((edges[a][0]===edges[b][1]&&edges[a][1]===edges[b][0])||(edges[a][0]===edges[b][0]&&edges[a][1]===edges[b][1])){ edges[a]=null; edges[b]=null; break; } } }
+    for(const e of edges){ if(e) tris.push([e[0],e[1],i]); }
+  }
+  return tris.filter(t=>t[0]<n&&t[1]<n&&t[2]<n);
+}
+
+function initThree(){
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setClearColor(0x0e1116,1);
+  p3.insertBefore(renderer.domElement,p3.firstChild);
+  scene=new THREE.Scene(); scene.fog=new THREE.Fog(0x0e1116, SPAN*1.4, SPAN*4.2);
+  // lights for the PBR frontier surface (points are lit in-shader, not by these)
+  scene.add(new THREE.AmbientLight(0xffffff,0.5));
+  const key=new THREE.DirectionalLight(0xffffff,0.95); key.position.set(SPAN*0.6,SPAN*1.5,SPAN*0.9); scene.add(key);
+  scene.add(new THREE.HemisphereLight(0xbcd7ff,0x0a0d12,0.55));
+  cam=new THREE.PerspectiveCamera(45,1,0.5,4000);
+  controls=new OrbitControls(cam,renderer.domElement);
+  controls.enableDamping=true; controls.dampingFactor=0.08; controls.target.set(C,C*0.92,C);
+  controls.minDistance=SPAN*0.7; controls.maxDistance=SPAN*4;
+  gAxes=new THREE.Group(); gData=new THREE.Group(); scene.add(gAxes,gData);
+  resize3(); new ResizeObserver(resize3).observe(p3);
+  renderer.domElement.addEventListener('pointermove',onMove);
+  renderer.domElement.addEventListener('pointerleave',()=>{tip.style.display='none';});
+  three=true;
+}
+function resetCam(){
+  cam.position.set(SPAN*1.85,SPAN*1.55,SPAN*2.05); controls.target.set(C,C*0.92,C); controls.update();
+}
+function resize3(){
+  if(!renderer) return;
+  const w=p3.clientWidth||1, h=p3.clientHeight||1;
+  renderer.setSize(w,h); cam.aspect=w/h; cam.updateProjectionMatrix();
+}
+function loop(){
+  if(!three||mode!=='3d'){ raf=0; return; }
+  raf=requestAnimationFrame(loop);
+  const h=p3.clientHeight||600;
+  gData.traverse(o=>{ if(o.material&&o.material.uniforms&&o.material.uniforms.uScale) o.material.uniforms.uScale.value=h*0.62; });
+  controls.update(); renderer.render(scene,cam);
+}
+
+function build3d(xk,yk,vk){
+  if(!three) initThree();
+  const log=$('logax').checked, dimOld=$('dimold').checked, showStems=$('stems').checked;
+  const showFront=$('frontier').checked, showLabels=$('labels').checked;
   const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
   const q=$('search').value.trim().toLowerCase();
 
-  const xk=axes[0], yk=(mode==='3d'?axes[1]:'ii'), zk=(mode==='3d'?'ii':null);
-  const sizeK=axes.length>=3?axes[2]:null;          // 3rd ticked axis → marker size
-  const need=[...new Set([xk, mode==='3d'?yk:null, 'ii', sizeK].filter(Boolean))];
+  let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&!hidden.has(d.creator||'Other')
+    &&d[xk]!=null&&d[yk]!=null&&d[vk]!=null);
+  if(!rows.length){ disposeGroup(gData); $('count').textContent='0 models'; buildLegend(rows); if(!raf)loop(); return; }
 
-  let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&need.every(k=>d[k]!=null));
-  // marker-size scale for an optional 3rd axis (log-spaced 6→24px)
-  let sLo=0,sHi=1;
-  if(sizeK&&rows.length){ const vs=rows.map(d=>Math.log10(d[sizeK])); sLo=Math.min(...vs); sHi=Math.max(...vs)||sLo+1; }
-  const sizeOf=d=>{ if(!sizeK) return null; const t=(Math.log10(d[sizeK])-sLo)/((sHi-sLo)||1); return 6+18*t; };
+  const dx=domain(rows,xk), dy=domain(rows,yk), dz=domain(rows,vk);
+  const pos=d=>[norm(d[xk],dx)*SPAN, norm(d[vk],dz)*SPAN, norm(d[yk],dy)*SPAN];
 
-  let extra = sizeK?`  ·  size = ${AX[sizeK].short}`:'';
-  $('count').textContent=`${rows.length} models · ${mode==='3d'?'3-D':'2-D'}${extra}`;
+  // axes only rebuilt when the (axes + log) signature changes → keeps the camera steady on toggles
+  const sig=[xk,yk,vk,log].join('|');
+  if(sig!==axSig){ disposeGroup(gAxes); gAxes.add(buildAxes(dx,dy,dz,xk,yk,vk)); axSig=sig; if(!gAxes.userData.framed){resetCam();gAxes.userData.framed=true;} }
 
-  const traces=[];
-  for(const c of creators){
-    const r=rows.filter(d=>(d.creator||"Other")===c);
-    if(!r.length) continue;
-    const baseSize=d=> q?(matchHit(d,q,c)?13:7):10;
-    const tr={
-      name:c, mode:showLabels?'markers+text':'markers',
-      x:r.map(d=>d[xk]), y:r.map(d=>d[yk]), text:r.map(d=>d.name),
-      textposition:'top center', textfont:{size:9,color:'#9aa6b2'},
-      hovertemplate:r.map(hover),
-      marker:{
-        color:colorOf[c], symbol:r.map(d=>d.open?'circle':'diamond'),
-        size:r.map(d=> sizeK ? sizeOf(d)*(q&&matchHit(d,q,c)?1.3:1) : baseSize(d)),
-        opacity:r.map(d=>{
-          let o=d.ii_est?0.55:0.95;
-          if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) o*=0.4; }
-          if(q) o=matchHit(d,q,c)?1:0.12;
-          return o;
-        })
-      }
-    };
-    if(mode==='3d'){ tr.type='scatter3d'; tr.z=r.map(d=>d.ii); tr.marker.line={width:0.5,color:'rgba(0,0,0,.5)'}; }
-    else { tr.type='scattergl';
-      tr.marker.line={width:r.map(d=>q&&matchHit(d,q,c)?2:0.6),color:r.map(d=>q&&matchHit(d,q,c)?'#fff':'rgba(0,0,0,.45)')}; }
-    traces.push(tr);
+  disposeGroup(gData);
+  const paretoOn=showFront&&rows.length>2;
+  const pset=paretoOn?new Set(paretoSet(rows,[xk,yk,vk])):new Set();
+
+  // main point cloud
+  const N=rows.length, P=new Float32Array(N*3), COL=new Float32Array(N*3), SZ=new Float32Array(N), AL=new Float32Array(N);
+  const stemArr=[]; pickList=[];
+  const col=new THREE.Color();
+  rows.forEach((d,i)=>{
+    const p=pos(d); P[i*3]=p[0];P[i*3+1]=p[1];P[i*3+2]=p[2];
+    col.set(colorOf[d.creator||'Other']||'#8ab4f8'); COL[i*3]=col.r;COL[i*3+1]=col.g;COL[i*3+2]=col.b;
+    let s=d.ii_est?1.9:2.4; if(pset.has(d)) s*=1.18; if(q&&matchHit(d,q,d.creator)) s*=1.5;
+    SZ[i]=s;
+    let a=d.ii_est?0.6:0.96;
+    if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) a*=0.42; }
+    if(q) a=matchHit(d,q,d.creator)?1:0.1;
+    AL[i]=a;
+    if(showStems){ stemArr.push(p[0],0,p[2], p[0],p[1],p[2]); }
+    pickList.push({d, v:new THREE.Vector3(p[0],p[1],p[2])});
+  });
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.BufferAttribute(P,3));
+  geo.setAttribute('acolor',new THREE.BufferAttribute(COL,3));
+  geo.setAttribute('size',new THREE.BufferAttribute(SZ,1));
+  geo.setAttribute('alpha',new THREE.BufferAttribute(AL,1));
+  gData.add(new THREE.Points(geo,ptMaterial(FRAG)));
+
+  if(showStems&&stemArr.length){
+    const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.Float32BufferAttribute(stemArr,3));
+    gData.add(new THREE.LineSegments(sg,new THREE.LineBasicMaterial({color:0x8b949e,transparent:true,opacity:0.18})));
   }
 
-  if(mode==='2d'&&$('frontier').checked&&rows.length){
-    const fr=frontierPoints(rows,xk);
-    traces.push({type:'scatter',mode:'lines',name:AX[xk].short+'/intelligence frontier',
-      x:fr.map(d=>d[xk]),y:fr.map(d=>d.ii),
-      line:{color:'rgba(230,237,243,.55)',width:1.5,dash:'dot',shape:'hv'},
-      hoverinfo:'skip',showlegend:true});
+  // Pareto: translucent surface + wire + rings on the frontier models
+  if(paretoOn){
+    const pp=[...pset];
+    const floor=pp.map(d=>({x:norm(d[xk],dx)*SPAN, y:norm(d[yk],dy)*SPAN}));
+    const tris=delaunay(floor);
+    if(tris.length){
+      const vp=pp.map(pos);
+      const fa=[]; for(const t of tris){ for(const idx of t){ fa.push(vp[idx][0],vp[idx][1],vp[idx][2]); } }
+      const mg=new THREE.BufferGeometry(); mg.setAttribute('position',new THREE.Float32BufferAttribute(fa,3)); mg.computeVertexNormals();
+      gData.add(new THREE.Mesh(mg,FILL));
+      const we=[]; for(const t of tris){ const a=vp[t[0]],b=vp[t[1]],c=vp[t[2]]; we.push(...a,...b,...b,...c,...c,...a); }
+      const wg=new THREE.BufferGeometry(); wg.setAttribute('position',new THREE.Float32BufferAttribute(we,3));
+      gData.add(new THREE.LineSegments(wg,WIRE));
+    }
+    // rings
+    const M=pp.length, RP=new Float32Array(M*3), RC=new Float32Array(M*3), RS=new Float32Array(M), RA=new Float32Array(M);
+    pp.forEach((d,i)=>{ const p=pos(d); RP[i*3]=p[0];RP[i*3+1]=p[1];RP[i*3+2]=p[2];
+      col.set('#eaf2ff'); RC[i*3]=col.r;RC[i*3+1]=col.g;RC[i*3+2]=col.b; RS[i]=4.6; RA[i]=0.95; });
+    const rg=new THREE.BufferGeometry();
+    rg.setAttribute('position',new THREE.BufferAttribute(RP,3)); rg.setAttribute('acolor',new THREE.BufferAttribute(RC,3));
+    rg.setAttribute('size',new THREE.BufferAttribute(RS,1)); rg.setAttribute('alpha',new THREE.BufferAttribute(RA,1));
+    gData.add(new THREE.Points(rg,ptMaterial(RINGFRAG)));
   }
 
-  const common={paper_bgcolor:'#0e1116',plot_bgcolor:'#0e1116',font:{color:'#c9d1d9'},
-    hovermode:'closest',hoverlabel:{bgcolor:'#161b22',bordercolor:'#30363d',font:{size:12,color:'#e6edf3'},align:'left'},
-    legend:{font:{size:11},bgcolor:'rgba(22,27,34,.6)',bordercolor:'#30363d',borderwidth:1,
-      itemsizing:'constant',orientation:'v',x:1.005,y:1,xanchor:'left'},
-    showlegend:true, uirevision:axes.join('|')};
-
-  let layout;
-  if(mode==='3d'){
-    layout={...common, margin:{l:0,r:0,t:0,b:0},
-      scene:{ xaxis:axisSpec(xk,log), yaxis:axisSpec(yk,log), zaxis:axisSpec('ii',false),
-        bgcolor:'#0e1116', uirevision:axes.join('|'),
-        camera:{eye:{x:1.7,y:1.6,z:0.9}} }};
-  } else {
-    const yMin=Math.min(...rows.map(d=>d.ii))-2, yMax=Math.max(...rows.map(d=>d.ii))+3;
-    const xa=axisSpec(xk,log), ya=axisSpec('ii',false);
-    ya.range=[Math.max(0,yMin),yMax];
-    layout={...common, margin:{l:64,r:20,t:14,b:54}, xaxis:xa, yaxis:ya};
+  // labels: search hits, else Pareto points, else top-N along the vertical axis
+  if(showLabels){
+    const sV=AX[vk].goodLow?-1:1;
+    let labelRows = q ? rows.filter(d=>matchHit(d,q,d.creator))
+      : paretoOn ? [...pset] : [...rows].sort((a,b)=>sV*(b[vk]-a[vk])).slice(0,12);
+    labelRows.slice(0,44).forEach(d=>{ const p=pos(d); const s=makeLabel(d.name,'#e6edf3',34,600);
+      s.position.set(p[0],p[1]+3.2,p[2]); gData.add(s); });
   }
 
-  if(mode!==lastMode){ Plotly.newPlot(chart,traces,layout,CONFIG); lastMode=mode; }
-  else { Plotly.react(chart,traces,layout,CONFIG); }
+  $('count').textContent=`${N} models · 3-D`+(paretoOn?` · ${pset.size} on frontier`:'');
+  buildLegend(rows);
+  orient.style.display='block';
+  orient.innerHTML=`drag = orbit · scroll = zoom · <b>↑</b> ${AX[vk].short} &nbsp; <b>→</b> ${AX[xk].short} &nbsp; <b>↗</b> ${AX[yk].short}`;
+  if(!raf) loop();
 }
 
-document.querySelectorAll('.ax').forEach(c=>c.addEventListener('change',build));
-['logax','labels','frontier','hideest','openonly','dimold'].forEach(id=>$(id).addEventListener('change',build));
-let t; $('search').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(build,120);});
-$('reset').addEventListener('click',e=>{e.preventDefault(); $('search').value='';
-  if(lastMode==='3d'){ Plotly.relayout(chart,{'scene.camera':{eye:{x:1.7,y:1.6,z:0.9}}}); }
-  else if(lastMode==='2d'){ Plotly.relayout(chart,{'xaxis.autorange':true,'yaxis.autorange':true}); }
+function buildLegend(rows){
+  const present=[...new Set(DATA.map(d=>d.creator||'Other'))].sort();
+  legend.innerHTML='<div class="hd">Creators — click to toggle</div>'+
+    present.map(c=>`<div class="li ${hidden.has(c)?'off':''}" data-c="${c.replace(/"/g,'&quot;')}">
+      <span class="sw" style="background:${colorOf[c]||'#8ab4f8'}"></span>${c}</div>`).join('');
+  legend.style.display='block';
+  legend.querySelectorAll('.li').forEach(el=>el.onclick=()=>{
+    const c=el.getAttribute('data-c'); if(hidden.has(c)) hidden.delete(c); else hidden.add(c); build(); });
+}
+
+function onMove(ev){
+  if(!pickList.length) return;
+  const r=renderer.domElement.getBoundingClientRect();
+  const mx=ev.clientX-r.left, my=ev.clientY-r.top;
+  let best=null, bd=16;
+  for(const it of pickList){
+    const v=it.v.clone().project(cam);
+    if(v.z>1) continue;
+    const sx=(v.x*0.5+0.5)*r.width, sy=(-v.y*0.5+0.5)*r.height;
+    const dist=Math.hypot(sx-mx,sy-my);
+    if(dist<bd){ bd=dist; best=it; }
+  }
+  if(best){ tip.innerHTML=hoverHTML(best.d); tip.style.display='block';
+    const tw=tip.offsetWidth, th=tip.offsetHeight;
+    let lx=mx+14, ly=my+14; if(lx+tw>r.width) lx=mx-tw-14; if(ly+th>r.height) ly=my-th-14;
+    tip.style.left=lx+'px'; tip.style.top=ly+'px'; }
+  else tip.style.display='none';
+}
+
+/* ============================ router ============================ */
+let mode=null;
+function build(){
+  const vk=vAxis();
+  const axes=selectedAxes();   // floor axes, already excluding the vertical
+  const m = axes.length>=2 ? '3d' : (axes.length===1 ? '2d' : 'none');
+  mode=m;
+  $('hint').style.display = m==='none' ? 'flex' : 'none';
+  $('lab-stems').classList.toggle('dis', m!=='3d');
+  $('lab-falpha').classList.toggle('dis', m!=='3d' || !$('frontier').checked);
+  if(m!=='3d' && raf){ cancelAnimationFrame(raf); raf=0; }   // pause WebGL loop when 3-D is hidden
+  if(m==='none'){ p2.style.display='none'; p3.style.display='none'; legend.style.display='none'; orient.style.display='none';
+    if(tip)tip.style.display='none'; $('count').textContent=''; return; }
+  if(m==='2d'){ p3.style.display='none'; p2.style.display='block'; legend.style.display='none'; orient.style.display='none';
+    build2d(axes[0],vk); Plotly.Plots.resize(p2); }
+  else { if(plotlyLive){ Plotly.purge(p2); plotlyLive=false; } p2.style.display='none'; p3.style.display='block';
+    build3d(axes[0],axes[1],vk); resize3(); }
+}
+
+document.querySelectorAll('.ax').forEach(c=>c.addEventListener('change',()=>{ axSig=''; if(gAxes)gAxes.userData.framed=false; build(); }));
+$('vaxis').addEventListener('change',()=>{ axSig=''; if(gAxes)gAxes.userData.framed=false; syncVerticalUI(); build(); });
+['logax','frontier','stems','labels','hideest','openonly','dimold'].forEach(id=>$(id).addEventListener('change',()=>{
+  if(id==='logax') axSig=''; build(); }));
+$('falpha').addEventListener('input',()=>{ const v=parseFloat($('falpha').value);
+  FILL.opacity=v; WIRE.opacity=Math.min(0.7,0.18+v*2); });  // live; the render loop picks it up
+let t; $('search').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(build,140);});
+$('reset').addEventListener('click',e=>{e.preventDefault(); $('search').value=''; hidden.clear();
+  if(mode==='3d'){ resetCam(); } else if(mode==='2d'){ Plotly.relayout(p2,{'xaxis.autorange':true,'yaxis.autorange':true}); }
   build();});
+window.addEventListener('resize',()=>{ if(mode==='2d')Plotly.Plots.resize(p2); else resize3(); });
 
 function setStatus(kind,text){ const s=$('status'); s.className='status '+kind; s.textContent=text; }
 function render(){ assignColors(); build(); }
 
-// 1) render the baked snapshot instantly; 2) upgrade to the live mirror only if it
-//    carries the cost/price fields (older mirror deploys don't — keep snapshot until then).
 setStatus('snap','snapshot');
+syncVerticalUI();
 render();
 fetch(API,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(j=>{
   if(j&&Array.isArray(j.models)){
     const rich=j.models.filter(m=>m&&m.ii!=null&&(m.cost!=null||m.price!=null));
-    if(rich.length>50){
-      DATA=rich;
-      const d=j.updated?new Date(j.updated):null;
-      setStatus('live','live · '+(d?d.toISOString().slice(0,10):'updated'));
-      render();
-    }
+    if(rich.length>50){ DATA=rich; const d=j.updated?new Date(j.updated):null;
+      setStatus('live','live · '+(d?d.toISOString().slice(0,10):'updated')); render(); }
   }
-}).catch(()=>{ /* keep snapshot */ });
+}).catch(()=>{});
 </script>
 </body>
 </html>

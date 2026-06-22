@@ -1,28 +1,31 @@
-// Server-side mirror of Artificial Analysis model data.
+// Refresh the committed Artificial Analysis snapshots used by the /misc AA charts.
 //
-// The official AA API (/api/v2/data/llms/models, needs x-api-key) does NOT expose
-// total parameter counts / model size, which is the whole point of the size chart.
-// That data only lives in the embedded payload of the public /models page, so we
-// scrape + parse it here (server-side) and cache the trimmed result on Netlify's
-// edge for ~12h, so the heavy parse runs ~twice a day rather than per visitor.
+// The interactive charts (layouts/aa{cube,speed,graph}/single.html) try a live
+// fetch first, but that pointed at a Netlify Function site that no longer exists,
+// so in practice they always fall back to the static snapshots in data/. This
+// script regenerates those snapshots by scraping the same embedded payload the
+// old Netlify Function did, so a daily GitHub Action keeps them current (new
+// models like GLM 5.2 show up within a day instead of never).
 //
-// We also join in per-model output speed (median tokens/s). Speed lives in separate
-// per-endpoint records keyed by a model UUID + prompt_length_type, so we collect
-// those and attach a representative value (medium-length prompt) to each model.
+// Parse logic is kept in sync with netlify/functions/aa-models.mjs by hand — if
+// you change field extraction in one, mirror it in the other.
+
+import { writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
 const SRC = "https://artificialanalysis.ai/models";
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36";
 
-const CORS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-};
+const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "data");
 
 const num = (x) => (typeof x === "number" && isFinite(x) ? x : null);
+const posnum = (x) => {
+  const n = num(x);
+  return n != null && n > 0 ? n : null;
+};
 
-// Representative output speed: prefer medium-length text, then fall back.
 const PLT_PREF = ["medium", "medium_coding", "long", "100k"];
 function pickSpeed(speedMap, id) {
   const r = speedMap[id];
@@ -31,28 +34,19 @@ function pickSpeed(speedMap, id) {
   return Object.values(r)[0] || null;
 }
 
-// Positive-or-null: AA uses 0 for "unset/unknown" pricing, which would break log axes.
-const posnum = (x) => {
-  const n = num(x);
-  return n != null && n > 0 ? n : null;
-};
-
 function trim(m, speedMap) {
   const cr = m.model_creators || {};
   let act = m.inference_parameters_active_billions;
   if (act == null) act = m.activeParams;
   const sp = pickSpeed(speedMap, m.id);
-  // Price: AA's headline blended figure is 3:1 input:output, in USD per 1M tokens.
   const pin = num(m.price_1m_input_tokens);
   const pout = num(m.price_1m_output_tokens);
   let price = pin != null && pout != null ? (3 * pin + pout) / 4 : null;
   if (price != null && price <= 0) price = null;
-  // Cost: actual USD to run the full Artificial Analysis Intelligence Index eval —
-  // distinct from per-token price (verbose reasoning models cost more at equal price).
   const iic = m.intelligence_index_cost;
   const cost = iic && typeof iic === "object" ? posnum(iic.total_cost) : null;
   // Long-context reasoning: AA-LCR, AA's successor to needle-in-a-haystack.
-  // Stored 0-1 in the payload; exposed as a percentage so it can be a plot axis.
+  // Stored 0-1 in the payload; we expose it as a percentage to plot as an axis.
   const lcr = num(m.lcr);
   return {
     slug: m.slug,
@@ -84,7 +78,6 @@ function trim(m, speedMap) {
   };
 }
 
-// Concatenate the Next.js flight payload chunks the page ships inline.
 function extractFlight(html) {
   const re = /self\.__next_f\.push\(\[\d+,\s*("(?:[^"\\]|\\.)*")\]\)/g;
   let out = "";
@@ -99,9 +92,6 @@ function extractFlight(html) {
   return out;
 }
 
-// Walk the flight string and pull (a) model records (slug + intelligence_index +
-// parameters + is_open_weights) and (b) per-endpoint speed records (median_output_speed
-// + model_id + prompt_length_type), then join speed onto each model by UUID.
 function parseModels(flight) {
   const stack = [];
   let inStr = false,
@@ -125,9 +115,9 @@ function parseModels(flight) {
       if (len > 300000) continue;
       const seg = flight.slice(s, i + 1);
 
-      // (b) speed endpoint record (small). Gate on size: AA now also embeds
-      // per-prompt performance inside each (large) model record, so an unguarded
-      // match here would swallow whole model records and drop the model.
+      // Speed-endpoint records are small standalone objects. Gate on size: AA now
+      // also embeds per-prompt performance inside each (large) model record, so an
+      // unguarded match here would swallow whole model records and drop the model.
       if (
         len < 3000 &&
         seg.indexOf('"median_output_speed":') !== -1 &&
@@ -150,7 +140,6 @@ function parseModels(flight) {
         continue;
       }
 
-      // (a) model record (large)
       if (len < 3000) continue;
       if (
         seg.indexOf('"slug":"') === -1 ||
@@ -183,52 +172,47 @@ function parseModels(flight) {
   return Object.values(out).map((m) => trim(m, speedMap));
 }
 
-export default async (req) => {
-  if (req.method === "OPTIONS")
-    return new Response(null, { status: 204, headers: CORS });
+async function main() {
+  const res = await fetch(SRC, {
+    headers: { "User-Agent": UA, Accept: "text/html" },
+  });
+  if (!res.ok) throw new Error("upstream " + res.status);
+  const html = await res.text();
+  const flight = extractFlight(html);
+  const all = parseModels(flight);
 
-  try {
-    const res = await fetch(SRC, {
-      headers: { "User-Agent": UA, Accept: "text/html" },
-    });
-    if (!res.ok) throw new Error("upstream " + res.status);
-    const html = await res.text();
-    const flight = extractFlight(html);
-    // Keep anything plottable on either chart: needs intelligence, plus a size or a
-    // speed. (The size chart filters params client-side; the speed chart filters speed.)
-    const models = parseModels(flight).filter(
-      (m) =>
-        m.ii != null &&
-        (m.params != null ||
-          m.speed != null ||
-          m.price != null ||
-          m.cost != null ||
-          m.context != null)
-    );
-    if (models.length < 50) throw new Error("parsed too few models: " + models.length);
+  // Same plottability gate as the old function: needs intelligence plus at least
+  // one quantitative axis. Each chart filters further client-side.
+  const models = all.filter(
+    (m) =>
+      m.ii != null &&
+      (m.params != null ||
+        m.speed != null ||
+        m.price != null ||
+        m.cost != null ||
+        m.context != null)
+  );
+  if (models.length < 50)
+    throw new Error("parsed too few models: " + models.length);
 
-    const body = JSON.stringify({
-      updated: new Date().toISOString(),
-      count: models.length,
-      source: SRC,
-      models,
-    });
-    return new Response(body, {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        // Browser cache 1h; Netlify edge serves cached for 12h and refreshes in
-        // the background for a day after that, so the scrape runs ~twice/day.
-        "Cache-Control": "public, max-age=3600",
-        "Netlify-CDN-Cache-Control":
-          "public, durable, s-maxage=43200, stale-while-revalidate=86400",
-        ...CORS,
-      },
-    });
-  } catch (e) {
-    return new Response(
-      JSON.stringify({ error: String(e && e.message ? e.message : e) }),
-      { status: 502, headers: { "Content-Type": "application/json", ...CORS } }
+  // All three charts read a sibling snapshot of the same shape; they differ only
+  // in which field they filter on, so the same superset works for each.
+  const targets = ["aa_tradeoffs.json", "aa_speed.json", "aa_models.json"];
+  for (const f of targets) {
+    await writeFile(
+      join(DATA_DIR, f),
+      JSON.stringify(models, null, 0) + "\n",
+      "utf8"
     );
   }
-};
+  const glm = models.find((m) => m.slug === "glm-5-2");
+  console.log(
+    `wrote ${models.length} models to ${targets.join(", ")}` +
+      (glm ? `  (GLM 5.2 present: ii=${glm.ii?.toFixed(1)}, ctx=${glm.context}, lcr=${glm.lcr}%)` : "  (GLM 5.2 NOT found)")
+  );
+}
+
+main().catch((e) => {
+  console.error("update-aa failed:", e.message || e);
+  process.exit(1);
+});

@@ -1,0 +1,62 @@
+name: Update Artificial Analysis snapshot
+
+# The /misc AA charts (intelligence-tradeoffs, intelligence-speed, model-size) read
+# committed JSON snapshots in data/. They try a live fetch first, but that points at
+# a Netlify Function that no longer exists, so in practice they always render the
+# committed snapshot. This job rescrapes Artificial Analysis daily and commits the
+# refreshed snapshot, then triggers the Pages deploy, so new models (e.g. GLM 5.2)
+# and updated benchmarks/prices appear within a day instead of never.
+
+on:
+  schedule:
+    # Daily at 06:17 UTC (offset off the hour to avoid the cron rush).
+    - cron: '17 6 * * *'
+  # Allows running it manually from the Actions tab.
+  workflow_dispatch:
+
+permissions:
+  contents: write   # commit the refreshed snapshot
+  actions: write    # dispatch the Pages deploy workflow
+
+concurrency:
+  group: update-aa
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.repository_owner != 'HugoBlox'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Scrape Artificial Analysis and refresh snapshots
+        run: node scripts/update-aa.mjs
+
+      - name: Commit and push if the snapshot changed
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- data/; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Snapshot unchanged; nothing to do."
+          else
+            git add data/aa_tradeoffs.json data/aa_speed.json data/aa_models.json
+            git commit -m "Refresh Artificial Analysis snapshot (automated)"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # workflow_dispatch via GITHUB_TOKEN is the documented exception to the
+      # no-recursion rule, so this reliably kicks off the existing Pages deploy.
+      - name: Trigger Pages deploy
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run publish.yaml
