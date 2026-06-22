@@ -1,5 +1,6 @@
 ---
 title: Opaque serial depth
+draft: true
 subtitle: How much can a transformer reason without saying anything?
 summary: Opaque serial depth — the longest serial computation a transformer can do inside its forward pass without externalising steps as chain of thought. Stacking attention vertically is bounded by depth L; adding a horizontal attention (same layer on both sides) makes it L+T. After Rohin Shah on the 80,000 Hours podcast.
 date: 2026-06-08
