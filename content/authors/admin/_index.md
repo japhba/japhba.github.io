@@ -15,7 +15,7 @@ role: PhD student in Theoretical Neuroscience
 # Short bio (displayed in user profile at end of posts)
 bio: |
   <p>Hi there! I'm Jan :)</p>
-  <p>Currently, I'm a PhD student in theoretical neuroscience at <a href="https://www.ucl.ac.uk/gatsby">UCL's Gatsby Unit</a>. Currently, I am also a MATS scholar working with Neel Nanda on using meta-models to interpret (latent) reasoning.</p>
+  <p>Currently, I'm a PhD student in theoretical neuroscience at <a href="https://www.ucl.ac.uk/gatsby">UCL's Gatsby Unit</a>. I am also a MATS fellow working with Neel Nanda on using meta-models to interpret (latent) reasoning.</p>
   <p>I am interested in how the numerous components of neural circuits reliably implement complex function. To this end, I try to develop models that capture <a href="https://arxiv.org/abs/2411.03840">simple aspects of cognition</a>, but are still easy to understand. I believe that <a href="https://www.lesswrong.com/posts/cPEoZWEPLCgtQKath/towards-a-unified-interpretability-of-artificial-and">bridging perspectives from both artificial and biological intelligence</a> brings great synergies, as both of these fields fundamentally have the shared goal of understanding neural systems.</p>
   <p>Before coming to London, I've been working <a href="https://elsc.huji.ac.il">at ELSC at the Hebrew University</a> and at <a href="https://www.fz-juelich.de/en/ias/ias-6/forschung/theory-of-multi-scale-neuronal-networks">Juelich research center, Germany</a>.</p>
 
