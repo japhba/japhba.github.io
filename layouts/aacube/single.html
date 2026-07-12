@@ -90,7 +90,7 @@
       <option value="ttft">Latency</option>
     </select>
   </div>
-  <input type="search" id="search" placeholder="Highlight (gpt-5, claude, gemini…)" autocomplete="off"/>
+  <input type="search" id="search" placeholder="Highlight (gpt-5, claude AND open, gemini OR grok…)" autocomplete="off"/>
   <label><input type="checkbox" id="logax" checked/> Log&nbsp;axes</label>
   <label><input type="checkbox" id="frontier" checked/> Pareto&nbsp;frontier</label>
   <label id="lab-falpha">Frontier&nbsp;α <input type="range" id="falpha" min="0" max="0.6" step="0.01" value="0.16"/></label>
@@ -184,7 +184,15 @@ function fmtVal(k,v){
   if(k==='ii')    return v.toFixed(1);
   return ''+v;
 }
-function matchHit(d,q,c){ return d.name.toLowerCase().includes(q)||(d.slug||'').includes(q)||(c||'').toLowerCase().includes(q); }
+// Query syntax: "OR" splits into alternatives, "AND" (or the default of a
+// bare query) requires every term to hit; e.g. "gpt AND openai OR claude".
+function matchHit(d,q,c){
+  const hay=(d.name+' '+(d.slug||'')+' '+(c||'')).toLowerCase();
+  return q.split(/\s+or\s+/i).some(group=>{
+    const terms=group.split(/\s+and\s+/i).map(t=>t.trim()).filter(Boolean);
+    return terms.length>0 && terms.every(t=>hay.includes(t));
+  });
+}
 function hoverHTML(d){
   const est=d.ii_est?"  <i>(est.)</i>":"";
   const op=d.open?(d.openness||"Open weights"):"Proprietary";
