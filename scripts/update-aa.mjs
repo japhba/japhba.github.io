@@ -26,54 +26,56 @@ const posnum = (x) => {
   return n != null && n > 0 ? n : null;
 };
 
-const PLT_PREF = ["medium", "medium_coding", "long", "100k"];
-function pickSpeed(speedMap, id) {
-  const r = speedMap[id];
+const PLT_PREF = ["medium", "long", "hundredK", "mediumParallel"];
+function pickSpeed(m) {
+  const r = m.performanceByPromptType;
   if (!r) return null;
   for (const k of PLT_PREF) if (r[k]) return r[k];
   return Object.values(r)[0] || null;
 }
 
-function trim(m, speedMap) {
-  const cr = m.model_creators || {};
-  let act = m.inference_parameters_active_billions;
-  if (act == null) act = m.activeParams;
-  const sp = pickSpeed(speedMap, m.id);
-  const pin = num(m.price_1m_input_tokens);
-  const pout = num(m.price_1m_output_tokens);
+function trim(m) {
+  const cr = m.creator || {};
+  let act = m.inferenceParametersActiveBillions;
+  const sp = pickSpeed(m);
+  const pin = num(m.price1mInputTokens);
+  const pout = num(m.price1mOutputTokens);
   let price = pin != null && pout != null ? (3 * pin + pout) / 4 : null;
   if (price != null && price <= 0) price = null;
-  const iic = m.intelligence_index_cost;
-  const cost = iic && typeof iic === "object" ? posnum(iic.total_cost) : null;
+  const iic = m.intelligenceIndexCost;
+  const cost = iic && typeof iic === "object" ? posnum(iic.total) : null;
   // Long-context reasoning: AA-LCR, AA's successor to needle-in-a-haystack.
   // Stored 0-1 in the payload; we expose it as a percentage to plot as an axis.
   const lcr = num(m.lcr);
   return {
     slug: m.slug,
-    name: m.short_name || m.name,
+    name: m.shortName || m.name,
     creator: (cr && cr.name) || null,
     params: num(m.parameters),
     active: num(act),
-    ii: num(m.intelligence_index),
-    ii_est: !!m.intelligence_index_is_estimated,
-    open: !!m.is_open_weights,
-    openness: m.open_source_categorization || null,
-    reasoning: !!m.reasoning_model,
-    release: m.release_date || null,
+    ii: num(m.intelligenceIndex),
+    ii_est: !!m.intelligenceIndexIsEstimated,
+    open: !!m.isOpenWeights,
+    openness: m.openSourceCategorization || null,
+    reasoning: !!m.isReasoning,
+    release: m.releaseDate || null,
     gpqa: num(m.gpqa),
     aime25: num(m.aime25),
     hle: num(m.hle),
-    mmlu_pro: num(m.mmlu_pro),
-    coding: num(m.coding_index),
-    license: m.license_name || null,
-    url: m.model_url || null,
-    speed: sp ? Math.round(sp.spd * 10) / 10 : null,
-    ttft: sp && sp.ttft != null ? Math.round(sp.ttft * 100) / 100 : null,
+    mmlu_pro: num(m.mmluPro),
+    coding: num(m.codingIndex),
+    license: m.licenseName || null,
+    url: m.detailsUrl || m.externalUrl || (m.slug ? `/models/${m.slug}` : null),
+    speed: sp ? Math.round(sp.medianOutputSpeed * 10) / 10 : null,
+    ttft:
+      sp && sp.medianTimeToFirstAnswerToken != null
+        ? Math.round(sp.medianTimeToFirstAnswerToken * 100) / 100
+        : null,
     price: price != null ? Math.round(price * 1e4) / 1e4 : null,
     price_in: posnum(pin),
     price_out: posnum(pout),
     cost: cost != null ? Math.round(cost * 100) / 100 : null,
-    context: num(m.context_window_tokens),
+    context: num(m.contextWindowTokens),
     lcr: lcr != null ? Math.round(lcr * 1000) / 10 : null,
   };
 }
@@ -97,7 +99,6 @@ function parseModels(flight) {
   let inStr = false,
     esc = false;
   const out = {};
-  const speedMap = {};
   for (let i = 0; i < flight.length; i++) {
     const ch = flight[i];
     if (inStr) {
@@ -112,40 +113,14 @@ function parseModels(flight) {
       const s = stack.pop();
       if (s == null) continue;
       const len = i - s;
-      if (len > 300000) continue;
+      if (len > 300000 || len < 3000) continue;
       const seg = flight.slice(s, i + 1);
 
-      // Speed-endpoint records are small standalone objects. Gate on size: AA now
-      // also embeds per-prompt performance inside each (large) model record, so an
-      // unguarded match here would swallow whole model records and drop the model.
-      if (
-        len < 3000 &&
-        seg.indexOf('"median_output_speed":') !== -1 &&
-        seg.indexOf('"model_id":"') !== -1 &&
-        seg.indexOf('"prompt_length_type":') !== -1
-      ) {
-        let d;
-        try {
-          d = JSON.parse(seg);
-        } catch {
-          continue;
-        }
-        if (d && typeof d.median_output_speed === "number" && d.model_id) {
-          const bucket = (speedMap[d.model_id] = speedMap[d.model_id] || {});
-          bucket[d.prompt_length_type] = {
-            spd: d.median_output_speed,
-            ttft: num(d.median_time_to_first_answer_token),
-          };
-        }
-        continue;
-      }
-
-      if (len < 3000) continue;
       if (
         seg.indexOf('"slug":"') === -1 ||
-        seg.indexOf('"intelligence_index":') === -1 ||
+        seg.indexOf('"intelligenceIndex":') === -1 ||
         seg.indexOf('"parameters":') === -1 ||
-        seg.indexOf('"is_open_weights":') === -1
+        seg.indexOf('"isOpenWeights":') === -1
       )
         continue;
       let d;
@@ -158,8 +133,8 @@ function parseModels(flight) {
         d &&
         typeof d === "object" &&
         d.slug &&
-        d.intelligence_index != null &&
-        "is_open_weights" in d
+        d.intelligenceIndex != null &&
+        "isOpenWeights" in d
       ) {
         const prev = out[d.slug];
         if (!prev || Object.keys(d).length > prev.__n) {
@@ -169,7 +144,7 @@ function parseModels(flight) {
       }
     }
   }
-  return Object.values(out).map((m) => trim(m, speedMap));
+  return Object.values(out).map((m) => trim(m));
 }
 
 async function main() {
@@ -192,7 +167,10 @@ async function main() {
         m.cost != null ||
         m.context != null)
   );
-  if (models.length < 50)
+  // AA's page now only inlines full stats for its ~25 headline models in the
+  // initial SSR payload (the rest load from a separate binary chart manifest
+  // we don't parse), so the old 50-model floor is no longer reachable.
+  if (models.length < 20)
     throw new Error("parsed too few models: " + models.length);
 
   // All three charts read a sibling snapshot of the same shape; they differ only
