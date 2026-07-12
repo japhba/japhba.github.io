@@ -94,6 +94,45 @@ function extractFlight(html) {
   return out;
 }
 
+// The /models page also embeds a lightweight catalog (id/slug/name/creator,
+// no stats) covering every model AA tracks, current and deprecated. We use
+// it only to pick one slug outside the ~25-model headline set, whose own
+// page we then fetch to recover the long tail (see main()).
+function parseCatalog(flight) {
+  const key = '"models":[';
+  const i = flight.indexOf(key);
+  if (i === -1) return [];
+  const start = i + key.length - 1; // include the leading '['
+  let depth = 0,
+    inStr = false,
+    esc = false,
+    end = -1;
+  for (let k = start; k < flight.length; k++) {
+    const c = flight[k];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (c === "\\") esc = true;
+      else if (c === '"') inStr = false;
+      continue;
+    }
+    if (c === '"') inStr = true;
+    else if (c === "[") depth++;
+    else if (c === "]") {
+      depth--;
+      if (depth === 0) {
+        end = k + 1;
+        break;
+      }
+    }
+  }
+  if (end === -1) return [];
+  try {
+    return JSON.parse(flight.slice(start, end));
+  } catch {
+    return [];
+  }
+}
+
 function parseModels(flight) {
   const stack = [];
   let inStr = false,
@@ -147,14 +186,41 @@ function parseModels(flight) {
   return Object.values(out).map((m) => trim(m));
 }
 
-async function main() {
-  const res = await fetch(SRC, {
+async function fetchFlight(url) {
+  const res = await fetch(url, {
     headers: { "User-Agent": UA, Accept: "text/html" },
   });
-  if (!res.ok) throw new Error("upstream " + res.status);
-  const html = await res.text();
-  const flight = extractFlight(html);
-  const all = parseModels(flight);
+  if (!res.ok) throw new Error("upstream " + res.status + " for " + url);
+  return extractFlight(await res.text());
+}
+
+async function main() {
+  const flight = await fetchFlight(SRC);
+  const headline = parseModels(flight);
+  const bySlug = new Map(headline.map((m) => [m.slug, m]));
+
+  // Every individual model page (/models/<slug>) embeds not just that model
+  // but the same shared ~300-model leaderboard table used across the site —
+  // verified empirically across several unrelated slugs. So one extra fetch
+  // (any slug not already in the headline set) recovers the long tail; more
+  // fetches turn up nothing new. Best-effort: fall back to headline-only if
+  // it fails.
+  const catalog = parseCatalog(flight);
+  const extraSlug = catalog
+    .map((m) => m.slug)
+    .find((s) => s && !bySlug.has(s));
+  let longTail = 0;
+  if (extraSlug) {
+    try {
+      const f = await fetchFlight(`${SRC}/${extraSlug}`);
+      for (const m of parseModels(f)) bySlug.set(m.slug, m);
+      longTail = bySlug.size - headline.length;
+    } catch {
+      /* headline-only fallback */
+    }
+  }
+
+  const all = [...bySlug.values()];
 
   // Same plottability gate as the old function: needs intelligence plus at least
   // one quantitative axis. Each chart filters further client-side.
@@ -167,10 +233,10 @@ async function main() {
         m.cost != null ||
         m.context != null)
   );
-  // AA's page now only inlines full stats for its ~25 headline models in the
-  // initial SSR payload (the rest load from a separate binary chart manifest
-  // we don't parse), so the old 50-model floor is no longer reachable.
-  if (models.length < 20)
+  console.log(
+    `headline: ${headline.length}, long tail added: ${longTail}`
+  );
+  if (models.length < 100)
     throw new Error("parsed too few models: " + models.length);
 
   // All three charts read a sibling snapshot of the same shape; they differ only
