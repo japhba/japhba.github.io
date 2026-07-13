@@ -64,6 +64,7 @@ function trim(m) {
     hle: num(m.hle),
     mmlu_pro: num(m.mmluPro),
     coding: num(m.codingIndex),
+    agentic: num(m.agenticIndex),
     license: m.licenseName || null,
     url: m.detailsUrl || m.externalUrl || (m.slug ? `/models/${m.slug}` : null),
     speed: sp ? Math.round(sp.medianOutputSpeed * 10) / 10 : null,

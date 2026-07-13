@@ -64,7 +64,7 @@
   <a class="back" href="{{ "/misc/" | relLangURL }}">&larr; Misc</a>
   <h1>Intelligence&nbsp;vs&nbsp;Cost,&nbsp;Speed&nbsp;&amp;&nbsp;Price</h1>
   <span class="status" id="status">loading…</span>
-  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), <b>output&nbsp;speed</b>, <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), latency, size, <b>context&nbsp;window</b> or <b>long&#8209;context&nbsp;reasoning</b> (AA&#8209;LCR, the successor to needle&#8209;in&#8209;a&#8209;haystack). One axis &rarr; 2-D scatter; two axes &rarr; a WebGL 3-D scatter you can drag to orbit (scroll to zoom). The vertical (up) axis is Intelligence by default but can be set to any metric &mdash; e.g.&nbsp;context&nbsp;window &mdash; via the <b>Vertical</b> selector. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
+  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), <b>output&nbsp;speed</b>, <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), latency, size, <b>context&nbsp;window</b>, <b>long&#8209;context&nbsp;reasoning</b> (AA&#8209;LCR, the successor to needle&#8209;in&#8209;a&#8209;haystack) or <b>Agentic&nbsp;Index</b> (AA's composite score over tool&#8209;use and multi&#8209;step agentic tasks, e.g.&nbsp;τ&#8209;bench and Terminal&#8209;Bench). One axis &rarr; 2-D scatter; two axes &rarr; a WebGL 3-D scatter you can drag to orbit (scroll to zoom). The vertical (up) axis is Intelligence by default but can be set to any metric &mdash; e.g.&nbsp;context&nbsp;window &mdash; via the <b>Vertical</b> selector. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
 </header>
 <div class="controls">
   <div class="group">
@@ -76,12 +76,14 @@
     <label class="axis"><input type="checkbox" class="ax" value="params"/><span>Params&nbsp;(B)</span></label>
     <label class="axis"><input type="checkbox" class="ax" value="context"/><span>Context&nbsp;(tokens)</span></label>
     <label class="axis"><input type="checkbox" class="ax" value="lcr"/><span>AA&#8209;LCR&nbsp;(%)</span></label>
+    <label class="axis"><input type="checkbox" class="ax" value="agentic"/><span>Agentic&nbsp;Index</span></label>
   </div>
   <div class="group">
     <span class="tag">Vertical</span>
     <select id="vaxis" title="Which metric is the vertical (up) axis">
       <option value="ii" selected>Intelligence</option>
       <option value="lcr">AA&#8209;LCR (%)</option>
+      <option value="agentic">Agentic Index</option>
       <option value="context">Context</option>
       <option value="params">Params</option>
       <option value="speed">Speed</option>
@@ -137,6 +139,7 @@ const AX = {
   context:{label:'Context window', short:'Context', unit:'tokens',              goodLow:false, log:true,
            ticks:[[4096,'4k'],[8192,'8k'],[32768,'32k'],[65536,'64k'],[131072,'128k'],[262144,'256k'],[1000000,'1M'],[2000000,'2M'],[10000000,'10M']]},
   lcr   : {label:'Long-context reasoning (AA-LCR)', short:'AA-LCR', unit:'%',    goodLow:false, log:false, ticks:null},
+  agentic:{label:'Agentic Index', short:'Agentic', unit:'',          goodLow:false, log:false, ticks:null},
 };
 
 const BRAND = {
