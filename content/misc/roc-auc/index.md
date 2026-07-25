@@ -186,8 +186,8 @@ apart the two distributions sit — to see the curve bow toward the perfect corn
     $('critSl').value=Math.round((c-CMIN)/(CMAX-CMIN)*1000);
   }
   // ---- animation ----
-  function tick(ts){if(!playing)return;if(!t0)t0=ts;var p=((ts-t0)%DUR)/DUR;c=CMIN+(CMAX-CMIN)*p;render();raf=requestAnimationFrame(tick);}
-  function play(){playing=true;t0=0;$('playIco').textContent='❚❚';$('playTxt').textContent='Pause';raf=requestAnimationFrame(tick);}
+  function tick(ts){if(!playing)return;if(!t0)t0=ts;var p=(ts-t0)/DUR;if(p>=1){c=CMAX;render();pause();return;}c=CMIN+(CMAX-CMIN)*p;render();raf=requestAnimationFrame(tick);}
+  function play(){playing=true;t0=0;c=CMIN;$('playIco').textContent='❚❚';$('playTxt').textContent='Pause';raf=requestAnimationFrame(tick);}
   function pause(){playing=false;if(raf)cancelAnimationFrame(raf);$('playIco').textContent='▶';$('playTxt').textContent='Sweep criterion';}
   $('play').addEventListener('click',function(){playing?pause():play();});
   $('reset').addEventListener('click',function(){pause();c=0;dprime=1.5;$('dpSl').value=150;render();});
@@ -332,53 +332,33 @@ probability of responding "$\mathtt{s_1}$" against stimulus intensity, is the **
 function**. It is the same construction seen along a different axis, and this section makes
 that exact — every formula below reduces to its counterpart above in the right limit.
 
-### Notation
-
-Carried over unchanged from the first half:
-
-| symbol | meaning |
-|---|---|
-| $\mathtt{s_0},\ \mathtt{s_1}$ | the two stimuli, equivalently the two classes to be told apart |
-| $n$ | the decision variable — a spike count above, any scalar readout here |
-| $c$ | the **criterion**: report "$\mathtt{s_1}$" when $n>c$ |
-| $\mathrm{TPR}(c),\ \mathrm{FPR}(c)$ | hit rate and false-alarm rate at criterion $c$ |
-| $d'=\mu_1-\mu_0$ | separation of the two response distributions |
-| $\Phi$ | standard normal CDF |
-
-Introduced here, because one distribution per class is no longer enough:
-
-| symbol | meaning |
-|---|---|
-| $i$ | index over **items** — individual neurons, subjects, or models |
-| $\mu_i$ | item $i$'s mean decision variable: its **latent score** |
-| $x$ | the **stimulus level**, the quantity the experimenter varies |
-| $\Delta(x)$ | how much stimulus level $x$ adds to the decision variable |
-| $\sigma$ | **within-item** noise: trial-to-trial spread at fixed $i$ |
-| $s$ | **between-item** spread of $\mu_i$ inside one class |
-| $\mu_0,\ \mu_1$ | class means of $\mu_i$, so that $d'=\mu_1-\mu_0$ as above |
-| $\beta_i$ | item $i$'s sensitivity to the stimulus; $\beta_i=1$ unless stated |
-
-The first half is the special case $s=0$ and $\sigma=1$: one response distribution per class
-with no item-to-item variation, unit variance. Everything below collapses to it there.
-
 ### The decision variable, now with a stimulus in it
 
-One trial on item $i$ at stimulus level $x$ produces
+The first half had exactly one response distribution per stimulus. Here we need many, because
+there are many **items** — individual neurons, subjects, or models — indexed by $i$. Write
+$\mu_i$ for **item $i$'s mean decision variable**, its latent score. Everything else carries
+over untouched: $n$ is still the decision variable, $c$ is still the criterion, and the rule is
+still "report $\mathtt{s_1}$ when $n>c$".
+
+What the experimenter varies is the **stimulus level** $x$, and $\Delta(x)$ denotes **how much
+stimulus level $x$ adds to the decision variable**. One trial on item $i$ at level $x$ then
+produces
 
 $$
 n \;=\; \mu_i + \Delta(x) + \varepsilon, \qquad \varepsilon\sim\mathcal N(0,\sigma^2),
 $$
 
-and the observer reports "$\mathtt{s_1}$" when $n>c$, exactly the rule from the first half.
-Hence
+where $\sigma$ is the **within-item noise**, the trial-to-trial spread at fixed $i$. The first
+half's unit-variance distributions are the case $\sigma=1$. Applying the unchanged decision
+rule,
 
 $$
 P_i(x)\;=\;P(n>c)\;=\;\Phi\!\left(\frac{\mu_i+\Delta(x)-c}{\sigma}\right).
 $$
 
 That is the psychometric function: a sigmoid in $\Delta(x)$, centred where
-$\Delta(x)=c-\mu_i$, with slope set by $1/\sigma$. The noise that smeared the two
-distributions above is the same $\sigma$ that sets how gently this curve rises.
+$\Delta(x)=c-\mu_i$, with slope set by $1/\sigma$. The noise that smeared the two distributions
+above is the same $\sigma$ that sets how gently this curve rises.
 
 ### The threshold is the latent, measured against the criterion
 
@@ -410,9 +390,12 @@ and shows one curve per item; the ROC eliminates it and shows the trade-off it g
 
 ### Two AUCs, and why the swept one is smaller
 
-Here the two halves genuinely differ, because $s>0$ introduces a second variance. Let the item
-latents be $\mu_i\sim\mathcal N(\mu_1,s^2)$ for $\mathtt{s_1}$ items and
-$\mathcal N(\mu_0,s^2)$ for $\mathtt{s_0}$ items. Ranking items by their true latent gives
+Here the two halves genuinely differ, because a second variance appears. Let the item latents
+be $\mu_i\sim\mathcal N(\mu_1,s^2)$ for $\mathtt{s_1}$ items and $\mathcal N(\mu_0,s^2)$ for
+$\mathtt{s_0}$ items. That introduces $s$, the **between-item spread** of $\mu_i$ within one
+class, and the class means $\mu_0,\mu_1$, so that $d'=\mu_1-\mu_0$ exactly as in the first
+half — which is now visibly the case $s=0$, one distribution per class with no item-to-item
+variation. Ranking items by their true latent gives
 
 $$
 \mathrm{AUC}_{\text{latent}}\;=\;P(\mu_i^{(1)}>\mu_j^{(0)})\;=\;\Phi\!\left(\frac{d'}{s\sqrt2}\right).
@@ -445,7 +428,8 @@ readouts in the widget below is exactly this term.
 ### When the correspondence breaks
 
 All of it rests on $\Delta(x)$ shifting every item equally. Let the stimulus instead couple to
-item $i$ through its own sensitivity $\beta_i$:
+item $i$ through its own **sensitivity** $\beta_i$, a per-item multiplier that has silently
+been $1$ everywhere above:
 
 $$
 n \;=\; \mu_i + \beta_i\,\Delta(x) + \varepsilon .
