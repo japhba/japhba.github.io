@@ -326,126 +326,154 @@ $d'$ slider to watch the distributions separate and the area fill in.
 
 ## Psychometric curves: the same sweep, seen from the stimulus side
 
-Everything above moves the criterion $c$ and holds the stimulus fixed. Psychophysics does the
+Everything above holds the stimulus fixed and slides the criterion $c$. Psychophysics does the
 opposite, holding the observer fixed and moving the **stimulus**. The resulting plot, the
 probability of responding "$\mathtt{s_1}$" against stimulus intensity, is the **psychometric
-function**. It looks like a different experiment. It is the same construction, and the
-correspondence is worth making exact, because it decides when a stimulus sweep does and does
-not hand you an AUC.
+function**. It is the same construction seen along a different axis, and this section makes
+that exact — every formula below reduces to its counterpart above in the right limit.
 
-### A latent score, a criterion, and noise
+### Notation
 
-Let item $i$ carry a latent quantity $g_i$, and let a stimulus at level $x$ add $c(x)$ to it.
-The observer reports "$\mathtt{s_1}$" when the total clears zero, up to decision noise
-$\varepsilon\sim\mathcal N(0,\sigma^2)$:
+Carried over unchanged from the first half:
+
+| symbol | meaning |
+|---|---|
+| $\mathtt{s_0},\ \mathtt{s_1}$ | the two stimuli, equivalently the two classes to be told apart |
+| $n$ | the decision variable — a spike count above, any scalar readout here |
+| $c$ | the **criterion**: report "$\mathtt{s_1}$" when $n>c$ |
+| $\mathrm{TPR}(c),\ \mathrm{FPR}(c)$ | hit rate and false-alarm rate at criterion $c$ |
+| $d'=\mu_1-\mu_0$ | separation of the two response distributions |
+| $\Phi$ | standard normal CDF |
+
+Introduced here, because one distribution per class is no longer enough:
+
+| symbol | meaning |
+|---|---|
+| $i$ | index over **items** — individual neurons, subjects, or models |
+| $\mu_i$ | item $i$'s mean decision variable: its **latent score** |
+| $x$ | the **stimulus level**, the quantity the experimenter varies |
+| $\Delta(x)$ | how much stimulus level $x$ adds to the decision variable |
+| $\sigma$ | **within-item** noise: trial-to-trial spread at fixed $i$ |
+| $s$ | **between-item** spread of $\mu_i$ inside one class |
+| $\mu_0,\ \mu_1$ | class means of $\mu_i$, so that $d'=\mu_1-\mu_0$ as above |
+| $\beta_i$ | item $i$'s sensitivity to the stimulus; $\beta_i=1$ unless stated |
+
+The first half is the special case $s=0$ and $\sigma=1$: one response distribution per class
+with no item-to-item variation, unit variance. Everything below collapses to it there.
+
+### The decision variable, now with a stimulus in it
+
+One trial on item $i$ at stimulus level $x$ produces
 
 $$
-\text{respond } \mathtt{s_1} \iff g_i + c(x) + \varepsilon > 0 ,
+n \;=\; \mu_i + \Delta(x) + \varepsilon, \qquad \varepsilon\sim\mathcal N(0,\sigma^2),
 $$
 
-which gives
+and the observer reports "$\mathtt{s_1}$" when $n>c$, exactly the rule from the first half.
+Hence
 
 $$
-P_i(x) \;=\; \Phi\!\left(\frac{g_i + c(x)}{\sigma}\right).
+P_i(x)\;=\;P(n>c)\;=\;\Phi\!\left(\frac{\mu_i+\Delta(x)-c}{\sigma}\right).
 $$
 
-That is the psychometric function: a sigmoid in $c(x)$, located at $c=-g_i$, with slope
-$1/\sigma$. The noise that smears the criterion in the plots above is the same noise that sets
-how gently this curve rises.
+That is the psychometric function: a sigmoid in $\Delta(x)$, centred where
+$\Delta(x)=c-\mu_i$, with slope set by $1/\sigma$. The noise that smeared the two
+distributions above is the same $\sigma$ that sets how gently this curve rises.
 
-### The threshold *is* the latent score
+### The threshold is the latent, measured against the criterion
 
-Define the threshold $x^{*}_i$ by $P_i(x^{*}_i)=\tfrac12$. Then
+Define item $i$'s threshold $x^{*}_i$ by $P_i(x^{*}_i)=\tfrac12$. Then
 
 $$
-c(x^{*}_i) \;=\; -\,g_i .
+\Delta(x^{*}_i)\;=\;c-\mu_i .
 $$
 
-Where the curve crosses 50% is the latent, sign flipped. Fitting a psychometric threshold is
-therefore not merely a curve fit, it is a measurement of $g_i$ on the criterion's own scale,
-and one threshold per item gives a per-item score you can rank.
+Where the curve crosses 50% returns $\mu_i$, read off against the criterion. Fitting a
+psychometric threshold is therefore a measurement of the latent, not merely a curve fit, and
+one threshold per item gives a per-item score that can be ranked.
 
 ### Sweeping the stimulus sweeps the criterion
 
-Because $c(x)$ enters identically for every item, adding $c$ to every latent is
-indistinguishable from subtracting $c$ from the criterion. The stimulus axis and the criterion
-axis are one axis read in opposite directions:
+Rearrange the decision rule. Reporting "$\mathtt{s_1}$" when $\mu_i+\Delta(x)+\varepsilon>c$ is
+the same as reporting it when $\mu_i+\varepsilon>c-\Delta(x)$. So define the **effective
+criterion**
 
 $$
-\tau \;=\; -\,c(x).
+c_{\text{eff}}(x)\;=\;c-\Delta(x),
 $$
 
-With two populations this closes the loop. Each stimulus level yields one pair
-$\big(\mathrm{FPR}(x),\mathrm{TPR}(x)\big)$, and the sweep traces an ROC exactly as the
-criterion sweep did. The psychometric plot and the ROC are two projections of one object: the
-first keeps the stimulus axis and shows a curve per item, the second eliminates it and shows
-the trade-off it generates.
+and raising the stimulus lowers the effective criterion one for one. The stimulus axis and the
+criterion axis of the first half are the same axis, traversed in opposite directions. Each
+stimulus level therefore yields one pair $\big(\mathrm{FPR},\mathrm{TPR}\big)$ and the sweep
+traces an ROC, exactly as sliding $c$ did above. The psychometric plot keeps the stimulus axis
+and shows one curve per item; the ROC eliminates it and shows the trade-off it generates.
 
 ### Two AUCs, and why the swept one is smaller
 
-Here the pictures stop being interchangeable, in a way that matters in practice. Let the
-population latents be $g\sim\mathcal N(\mu_1,s^2)$ and $\mathcal N(\mu_0,s^2)$, where $s$ is
-the spread **between items** and $\sigma$ is the decision noise **within** an item. Ranking
-items by their true latent gives
+Here the two halves genuinely differ, because $s>0$ introduces a second variance. Let the item
+latents be $\mu_i\sim\mathcal N(\mu_1,s^2)$ for $\mathtt{s_1}$ items and
+$\mathcal N(\mu_0,s^2)$ for $\mathtt{s_0}$ items. Ranking items by their true latent gives
 
 $$
-\mathrm{AUC}_{\text{latent}} = P(g_1>g_0) = \Phi\!\left(\frac{\Delta\mu}{s\sqrt2}\right),
-\qquad \Delta\mu=\mu_1-\mu_0 .
+\mathrm{AUC}_{\text{latent}}\;=\;P(\mu_i^{(1)}>\mu_j^{(0)})\;=\;\Phi\!\left(\frac{d'}{s\sqrt2}\right).
 $$
 
-Ranking instead by observed binary responses, swept over $x$, uses
-$\mathbb E_g\big[\Phi((g+c)/\sigma)\big]=\Phi\big((\mu+c)/\sqrt{\sigma^2+s^2}\big)$, so
+Ranking instead by observed binary responses swept over $x$ uses
+$\mathbb E_\mu\big[\Phi((\mu-c_{\text{eff}})/\sigma)\big]
+=\Phi\big((\bar\mu-c_{\text{eff}})/\sqrt{\sigma^2+s^2}\big)$, so
 
 $$
-\mathrm{TPR}(x)=\Phi\!\left(\frac{\mu_1+c}{\sqrt{\sigma^2+s^2}}\right),\qquad
-\mathrm{FPR}(x)=\Phi\!\left(\frac{\mu_0+c}{\sqrt{\sigma^2+s^2}}\right),
+\mathrm{TPR}(x)=\Phi\!\left(\frac{\mu_1-c_{\text{eff}}(x)}{\sqrt{\sigma^2+s^2}}\right),\qquad
+\mathrm{FPR}(x)=\Phi\!\left(\frac{\mu_0-c_{\text{eff}}(x)}{\sqrt{\sigma^2+s^2}}\right),
 $$
 
 a unit-slope zROC, and therefore
 
 $$
-\mathrm{AUC}_{\text{swept}} = \Phi\!\left(\frac{\Delta\mu}{\sqrt2\,\sqrt{\sigma^2+s^2}}\right)
-\;\le\; \mathrm{AUC}_{\text{latent}} .
+\mathrm{AUC}_{\text{swept}}\;=\;\Phi\!\left(\frac{d'}{\sqrt2\,\sqrt{\sigma^2+s^2}}\right)
+\;\le\;\mathrm{AUC}_{\text{latent}} .
 $$
 
-**Decision noise attenuates the swept AUC**, and it does so however finely you sweep. The
-ladder buys the operating point, not the noise. If the latent is directly readable, a firing
-rate, a log-odds, a logit, you recover the unattenuated number; if only binary responses are
-observable you pay the $\sigma$ penalty. The gap between the two readouts in the widget below
-is exactly this term.
+Set $s=0$ and $\sigma=1$ and this is $\Phi(d'/\sqrt2)$, the first half's result, as it must be.
+
+**Within-item noise attenuates the swept AUC**, however finely the stimulus is sampled.
+Sweeping buys the operating point, not the noise. If the latent is directly readable — a
+firing rate, a log-odds, a logit — the unattenuated number is recovered; if only binary
+responses are observable, the $\sigma$ penalty is unavoidable. The gap between the two
+readouts in the widget below is exactly this term.
 
 ### When the correspondence breaks
 
-All of it rests on $c(x)$ shifting every item equally. Let the stimulus interact with the item
-instead, through a per-item sensitivity $\beta_i$:
+All of it rests on $\Delta(x)$ shifting every item equally. Let the stimulus instead couple to
+item $i$ through its own sensitivity $\beta_i$:
 
 $$
-\text{respond } \mathtt{s_1} \iff g_i + \beta_i\,c(x) + \varepsilon > 0 .
+n \;=\; \mu_i + \beta_i\,\Delta(x) + \varepsilon .
 $$
 
-Now the ordering of items by $P_i(x)$ depends on $x$, and the psychometric curves cross.
+The ordering of items by $P_i(x)$ now depends on $x$, and the psychometric curves cross.
 Different stimulus levels induce different rankings, so no single score generates the traced
-operating points, and the area under them is not $P(g_1>g_0)$ for any $g$. What remains is a
-perfectly meaningful **operating characteristic**, a statement about which
+operating points, and the area under them is not $P(\mu^{(1)}>\mu^{(0)})$ for any latent. What
+remains is a perfectly meaningful **operating characteristic**, a statement about which
 $(\mathrm{FPR},\mathrm{TPR})$ pairs are reachable, but it is not an ROC and its area is not an
 AUC.
 
-The diagnostic shows up on both sides: crossing curves in the left panel, and a rank
-correlation below $1$ between the orderings at two stimulus levels. Raise the heterogeneity
-slider and watch $\tau$ fall away from $1$ while the two AUC readouts drift apart.
+The diagnostic appears on both sides: crossing curves in the left panel, and a rank correlation
+below $1$ between orderings at two stimulus levels. Raise the heterogeneity slider and watch
+$\tau$ fall away from $1$ while the two AUC readouts drift apart.
 
 ### Saturation, and why a constant response is not a null result
 
 One corollary deserves its own line. If every item sits far from the criterion,
-$|g_i+c|\gg\sigma$, then $P_i(x)\approx 0$ or $1$ for all $i$ at once. The latents still
-differ. The responses do not. Between-item structure is squashed by the floor or the ceiling,
-and any statistic computed on the responses, AUC included, collapses toward chance.
+$|\mu_i-c_{\text{eff}}|\gg\sigma$, then $P_i(x)\approx 0$ or $1$ for all $i$ at once. The
+latents still differ. The responses do not. Between-item structure is squashed by the floor or
+the ceiling, and any statistic computed on the responses, AUC included, collapses toward
+chance.
 
 So a classifier that answers the same way every time is not evidence that no signal exists. It
 is evidence that the measurement was taken at the wrong place on the stimulus axis. The two
-repairs are the two halves of this page: move $c(x)$ until the population straddles the
-criterion, which is what a well-chosen ladder does, or read the latent directly and never
-binarise at all.
+repairs are the two halves of this page: move $\Delta(x)$ until the population straddles the
+criterion, or read the latent directly and never binarise at all.
 
 <div id="psycho">
 <div class="ps-top">
@@ -457,19 +485,19 @@ binarise at all.
 </span>
 </div>
 <div class="ps-grid">
-<div class="panel"><div class="panel-h">Psychometric curves — one per item, P(respond s₁) vs stimulus</div>
+<div class="panel"><div class="panel-h">Psychometric curves — one per item, P(report s₁) vs stimulus level x</div>
 <svg id="psCurves" viewBox="0 0 440 240"></svg></div>
-<div class="panel"><div class="panel-h">ROC traced by sweeping the stimulus</div>
+<div class="panel"><div class="panel-h">ROC traced by sweeping x</div>
 <svg id="psRoc" viewBox="0 0 250 240"></svg></div>
 </div>
 <div class="ps-ctrl">
-<span class="sl">separation Δμ <input type="range" id="psDp" min="0" max="3" step="0.05" value="1.4"><b id="psDpV">1.40</b></span>
-<span class="sl">item spread s <input type="range" id="psS" min="0.1" max="2" step="0.05" value="0.7"><b id="psSV">0.70</b></span>
-<span class="sl">decision noise σ <input type="range" id="psSig" min="0.1" max="2" step="0.05" value="0.5"><b id="psSigV">0.50</b></span>
-<span class="sl">heterogeneity <input type="range" id="psHet" min="0" max="1.2" step="0.02" value="0"><b id="psHetV">0.00</b></span>
+<span class="sl">separation d′ <input type="range" id="psDp" min="0" max="3" step="0.05" value="1.4"><b id="psDpV">1.40</b></span>
+<span class="sl">between-item s <input type="range" id="psS" min="0.1" max="2" step="0.05" value="0.7"><b id="psSV">0.70</b></span>
+<span class="sl">within-item σ <input type="range" id="psSig" min="0.1" max="2" step="0.05" value="0.5"><b id="psSigV">0.50</b></span>
+<span class="sl">heterogeneity of β<sub>i</sub> <input type="range" id="psHet" min="0" max="1.2" step="0.02" value="0"><b id="psHetV">0.00</b></span>
 <span class="sl">stimulus x <input type="range" id="psX" min="-6" max="6" step="0.05" value="0"><b id="psXV">0.00</b></span>
 </div>
-<div class="hint">Drag <i>stimulus x</i> to travel along the ROC. Raise <i>decision noise</i> to watch the swept AUC fall below the latent one. Raise <i>heterogeneity</i> until the curves cross and τ drops, at which point the traced area stops being an AUC. (Sixteen items on a fixed quantile grid stand in for the two populations, so the readouts track the closed forms only up to discretisation; at very small σ the swept value can sit a few thousandths above the latent one for that reason alone.)</div>
+<div class="hint">The widget sets c = 0 and Δ(x) = x, so the effective criterion is c<sub>eff</sub> = −x and moving the stimulus slider slides the criterion of the first half leftward. Drag <i>stimulus x</i> to travel along the ROC. Raise <i>within-item σ</i> to watch the swept AUC fall below the latent one. Raise <i>heterogeneity</i> until the curves cross and τ drops, at which point the traced area stops being an AUC. (Sixteen items on a fixed quantile grid stand in for the two populations, so the readouts track the closed forms only up to discretisation; at very small σ the swept value can sit a few thousandths above the latent one for that reason alone.)</div>
 </div>
 
 <style>
@@ -534,7 +562,7 @@ function draw(){
   for(var t=0;t<NS;t+=2){d+=(t?'L':'M')+sx(xs[t]).toFixed(1)+' '+sy(P(it[i],xs[t])).toFixed(1);}
   e+='<path d="'+d+'" fill="none" stroke="'+(it[i].cls?'#1a5b59':'#9c4a26')+'" stroke-width="1.1" opacity=".62"/>';}
  e+='<line x1="'+sx(x)+'" y1="'+T+'" x2="'+sx(x)+'" y2="'+B+'" stroke="#7c3aed" stroke-width="1.6"/>';
- e+='<text x="'+R+'" y="'+(B+16)+'" font-size="9.5" fill="#6f6256" text-anchor="end">stimulus x   (criterion τ = −c(x))</text>';
+ e+='<text x="'+R+'" y="'+(B+16)+'" font-size="9.5" fill="#6f6256" text-anchor="end">stimulus x   (effective criterion c_eff = c − Δ(x))</text>';
  e+='<text x="'+L+'" y="'+(T-4)+'" font-size="9.5" fill="#1a5b59">s₁ items</text>';
  e+='<text x="'+(L+54)+'" y="'+(T-4)+'" font-size="9.5" fill="#9c4a26">s₀ items</text>';
  q('psCurves').innerHTML=e;
