@@ -324,6 +324,146 @@ so $d'=0$ gives AUC $=\tfrac12$ (the dashed no-discrimination diagonal, pure cha
 larger $d'$ pushes the curve toward the perfect corner $(0,1)$ with AUC $\to 1$. Pull the
 $d'$ slider to watch the distributions separate and the area fill in.
 
+## The whole confusion matrix, and where precision sits
+
+The ROC above uses two numbers, $\mathrm{TPR}(c)$ and $\mathrm{FPR}(c)$. They are two of eight
+ratios you can form from the four cells of a confusion matrix, and it is worth seeing why those
+two and not the others. In the figure below, the dashed line splits **relevant** elements from
+irrelevant ones (the actual class), and the circle is what the classifier **selected** (the
+predicted class). Everything else is bookkeeping on the four regions that creates.
+
+
+<style>
+#confmat{--card:#fffdf8;--ink:#2b2018;--muted:#6f6256;--line:rgba(31,24,18,.16);--grid:rgba(31,24,18,.08);--crit:#7c3aed;--fa:#b4532a;--hit:#1f6765;--s0:#9c4a26;--s1:#1a5b59;margin:1.9rem 0;padding:1.05rem 1.1rem 1.15rem;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 44px rgba(38,23,12,.10);font:13px/1.45 var(--font-sans,system-ui,sans-serif);color:var(--ink);max-width:none;overflow-x:auto}
+#confmat svg{display:block;width:100%;height:auto;max-width:640px;margin:.2rem auto .9rem}
+#confmat table.cm{border-collapse:separate;border-spacing:3px;width:100%;font-size:12px}
+#confmat table.cm th,#confmat table.cm td{padding:.42rem .5rem;vertical-align:top;border-radius:7px}
+#confmat .blank{background:transparent;border:none}
+#confmat .actual{background:rgba(31,24,18,.06);text-align:center;letter-spacing:.04em;text-transform:uppercase;font-size:11px;color:var(--muted)}
+#confmat .pred{background:rgba(31,24,18,.06);writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;letter-spacing:.04em;text-transform:uppercase;font-size:11px;color:var(--muted);white-space:nowrap}
+#confmat th.p{background:rgba(26,91,89,.13);color:var(--s1)}
+#confmat th.n{background:rgba(156,74,38,.13);color:var(--s0)}
+#confmat .cell{text-align:center;font-size:12px}
+#confmat .cell b{display:block;font-size:17px;line-height:1.2}
+#confmat .cell span{display:block;font-size:10.5px;color:var(--muted);margin-top:.15rem}
+#confmat .cell.tp{background:rgba(31,103,101,.20);color:var(--hit)}
+#confmat .cell.fp{background:rgba(180,83,42,.20);color:var(--fa)}
+#confmat .cell.fn{background:rgba(31,103,101,.09);color:var(--hit)}
+#confmat .cell.tn{background:rgba(180,83,42,.09);color:var(--fa)}
+#confmat .met{background:transparent;padding:0 !important}
+#confmat .m{background:rgba(124,58,237,.09);border:1px solid rgba(124,58,237,.22);border-radius:7px;padding:.3rem .45rem;margin:0 0 3px 0;font-size:11.5px;line-height:1.35}
+#confmat .m:last-child{margin-bottom:0}
+#confmat .m.hi{background:rgba(124,58,237,.20);border-color:var(--crit);box-shadow:0 0 0 1px rgba(124,58,237,.25)}
+#confmat .m b{color:var(--crit)}
+#confmat .m.hi b{font-size:12.5px}
+#confmat .m i{color:var(--muted);font-size:10.5px}
+#confmat .m code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.8px;color:var(--ink)}
+#confmat .colmet{background:rgba(31,24,18,.06);color:var(--muted);font-size:11px;font-weight:500;text-align:right;vertical-align:middle}
+#confmat .cap{font-size:10.5px;color:var(--muted);font-style:italic;margin:.5rem 0 0 .15rem}
+</style>
+<div id="confmat">
+<svg id="prfig" viewBox="0 0 610 330" role="img" aria-label="Precision and recall over a set of elements">
+  <rect x="20" y="48" width="290" height="232" fill="none" stroke="rgba(31,24,18,.35)" rx="6"/>
+  <rect x="20" y="48" width="145" height="232" fill="#1a5b59" opacity=".07"/>
+  <circle cx="165" cy="164" r="82" fill="#7c3aed" opacity=".07"/>
+  <circle cx="38.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="82.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="102.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="123.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="143.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="164.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="184.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="204.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="225.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="245.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="38.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="82.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="102.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="123.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="143.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="164.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="184.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="204.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="225.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="245.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="59.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="82.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="102.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="123.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="143.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="164.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="184.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="204.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="225.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="245.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="80.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="101.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="101.0" cy="82.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="101.0" cy="102.8" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="101.0" cy="123.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="101.0" cy="143.6" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="101.0" cy="164.0" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="101.0" cy="184.4" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="101.0" cy="204.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="101.0" cy="225.2" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="101.0" cy="245.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="101.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="122.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="122.0" cy="82.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="122.0" cy="102.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="123.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="143.6" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="164.0" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="184.4" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="204.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="225.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="122.0" cy="245.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="122.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="143.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="143.0" cy="82.4" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="143.0" cy="102.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="123.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="143.6" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="164.0" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="184.4" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="204.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="225.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="143.0" cy="245.6" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="143.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="164.0" cy="62.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="164.0" cy="82.4" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="102.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="123.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="143.6" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="164.0" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="184.4" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="204.8" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="225.2" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="245.6" r="3.6" fill="#1a5b59" opacity="1"/><circle cx="164.0" cy="266.0" r="3.6" fill="#1a5b59" opacity=".28"/><circle cx="185.0" cy="62.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="185.0" cy="82.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="185.0" cy="102.8" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="123.2" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="143.6" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="164.0" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="184.4" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="204.8" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="225.2" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="185.0" cy="245.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="185.0" cy="266.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="206.0" cy="62.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="206.0" cy="82.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="206.0" cy="102.8" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="123.2" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="143.6" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="164.0" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="184.4" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="204.8" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="225.2" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="206.0" cy="245.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="206.0" cy="266.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="227.0" cy="62.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="227.0" cy="82.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="227.0" cy="102.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="227.0" cy="123.2" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="227.0" cy="143.6" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="227.0" cy="164.0" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="227.0" cy="184.4" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="227.0" cy="204.8" r="3.6" fill="#9c4a26" opacity="1"/><circle cx="227.0" cy="225.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="227.0" cy="245.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="227.0" cy="266.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="62.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="82.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="102.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="123.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="143.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="164.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="184.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="204.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="225.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="245.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="248.0" cy="266.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="62.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="82.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="102.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="123.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="143.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="164.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="184.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="204.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="225.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="245.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="269.0" cy="266.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="62.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="82.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="102.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="123.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="143.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="164.0" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="184.4" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="204.8" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="225.2" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="245.6" r="3.6" fill="#9c4a26" opacity=".28"/><circle cx="290.0" cy="266.0" r="3.6" fill="#9c4a26" opacity=".28"/>
+  <circle cx="165" cy="164" r="82" fill="none" stroke="#7c3aed" stroke-width="2"/>
+  <line x1="165" y1="48" x2="165" y2="280" stroke="#1a5b59" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <text x="22" y="38" font-size="11.5" fill="#1a5b59" font-weight="600">← relevant elements (actual P)</text>
+  <text x="310" y="38" font-size="11.5" fill="#9c4a26" text-anchor="end">not relevant (actual N) →</text>
+  <text x="165" y="298" font-size="11.5" fill="#7c3aed" text-anchor="middle">circle = selected elements (predicted P)</text>
+  <text x="126" y="150" font-size="14" font-weight="700" fill="#1a5b59">TP</text>
+  <text x="126" y="164" font-size="9.5" fill="#6f6256">28</text>
+  <text x="205" y="150" font-size="14" font-weight="700" fill="#9c4a26">FP</text>
+  <text x="205" y="164" font-size="9.5" fill="#6f6256">19</text>
+  <text x="52" y="86" font-size="14" font-weight="700" fill="#1a5b59" opacity=".55">FN</text>
+  <text x="52" y="100" font-size="9.5" fill="#6f6256">49</text>
+  <text x="272" y="86" font-size="14" font-weight="700" fill="#9c4a26" opacity=".55">TN</text>
+  <text x="272" y="100" font-size="9.5" fill="#6f6256">47</text>
+  <text x="372" y="70" font-size="12" font-weight="700" fill="#2b2018">Precision — of everything SELECTED,</text>
+  <text x="372" y="86" font-size="12" font-weight="700" fill="#2b2018">how much was relevant?</text>
+  <rect x="372" y="96" width="128.7" height="26" fill="#1a5b59" rx="3"/><rect x="500.7" y="96" width="87.3" height="26" fill="#9c4a26" rx="3"/><text x="436.3" y="113" font-size="11" fill="#fff" text-anchor="middle">TP 28</text><text x="544.3" y="113" font-size="11" fill="#fff" text-anchor="middle">FP 19</text>
+  <text x="372" y="144" font-size="12.5" fill="#7c3aed" font-weight="700">= 28/(28+19) = 0.60</text>
+  <text x="372" y="188" font-size="12" font-weight="700" fill="#2b2018">Recall — of everything RELEVANT,</text>
+  <text x="372" y="204" font-size="12" font-weight="700" fill="#2b2018">how much was selected?</text>
+  <rect x="372" y="214" width="78.5" height="26" fill="#1a5b59" rx="3"/><rect x="450.5" y="214" width="137.5" height="26" fill="#8fb3b1" rx="3"/><text x="411.3" y="231" font-size="11" fill="#fff" text-anchor="middle">TP 28</text><text x="519.3" y="231" font-size="11" fill="#fff" text-anchor="middle">FN 49</text>
+  <text x="372" y="262" font-size="12.5" fill="#7c3aed" font-weight="700">= 28/(28+49) = 0.36</text>
+</svg>
+<table class="cm">
+<thead>
+<tr><td class="blank" colspan="2" rowspan="2"></td>
+<th class="actual" colspan="2">Actual condition</th>
+<th class="actual" rowspan="2">conditioned on the <em>prediction</em><br>(row-normalised)</th></tr>
+<tr><th class="p">Positive&nbsp;(P)</th><th class="n">Negative&nbsp;(N)</th></tr>
+</thead>
+<tbody>
+<tr><th class="pred" rowspan="2">Predicted</th><th class="p">Positive&nbsp;(PP)</th>
+<td class="cell tp"><b>TP</b><span>true positive<br>hit</span></td>
+<td class="cell fp"><b>FP</b><span>false positive<br>type&nbsp;I error, false alarm</span></td>
+<td class="met">
+<div class="m hi"><b>Precision</b> = PPV <i>positive predictive value</i><br><code>TP / (TP + FP)</code></div>
+<div class="m"><b>FDR</b> <i>false discovery rate</i><br><code>FP / (TP + FP)</code> = 1 &minus; precision</div>
+</td></tr>
+<tr><th class="n">Negative&nbsp;(PN)</th>
+<td class="cell fn"><b>FN</b><span>false negative<br>type&nbsp;II error, miss</span></td>
+<td class="cell tn"><b>TN</b><span>true negative<br>correct rejection</span></td>
+<td class="met">
+<div class="m"><b>FOR</b> <i>false omission rate</i><br><code>FN / (FN + TN)</code></div>
+<div class="m"><b>NPV</b> <i>negative predictive value</i><br><code>TN / (FN + TN)</code></div>
+</td></tr>
+<tr><th class="colmet" colspan="2">conditioned on the <em>actual class</em><br>(column-normalised) &mdash; <b>the ROC axes</b> &rarr;</th>
+<td class="met">
+<div class="m hi"><b>Recall</b> = TPR = sensitivity = hit rate<br><code>TP / P = TP / (TP + FN)</code></div>
+<div class="m"><b>FNR</b> <i>miss rate</i><br><code>FN / P</code> = 1 &minus; recall</div>
+</td>
+<td class="met">
+<div class="m hi"><b>FPR</b> = fall-out = false-alarm rate<br><code>FP / N = FP / (FP + TN)</code></div>
+<div class="m"><b>TNR</b> <i>specificity, selectivity</i><br><code>TN / N</code> = 1 &minus; FPR</div>
+</td>
+<td class="met">
+<div class="m"><b>Prevalence</b> <code>P / (P + N)</code></div>
+<div class="m"><b>Accuracy</b> <code>(TP + TN) / (P + N)</code></div>
+<div class="m"><b>F<sub>1</sub></b> <code>2 PPV&middot;TPR / (PPV + TPR)</code></div>
+<div class="m"><b>Youden's J</b> <i>= informedness</i> <code>TPR &minus; FPR</code></div>
+<div class="m"><b>Markedness</b> <code>PPV + NPV &minus; 1</code></div>
+<div class="m"><b>MCC</b> <code>&radic;(J &middot; markedness)</code></div>
+</td></tr>
+</tbody>
+</table>
+<div class="cap">Every derived metric is highlighted; the three the rest of this page leans on &mdash; precision, recall, FPR &mdash; carry the stronger outline. Layout after <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia: Precision and recall</a>; the figure redraws <span style="font-style:normal">Precisionrecall.svg</span> from that article with counts taken from the dots actually plotted.</div>
+
+</div>
+
+The two the whole subject is named after, written out:
+
+$$
+\text{Precision}\;=\;\frac{TP}{TP+FP},
+\qquad\qquad
+\text{Recall}\;=\;\frac{TP}{TP+FN}\;=\;\mathrm{TPR}.
+$$
+
+Read them off the figure. Precision divides by everything **inside the circle**: of what the
+classifier picked, how much should it have picked? Recall divides by everything **left of the
+dashed line**: of what it should have picked, how much did it get? Same numerator, different
+denominator, and the denominators are what separate them.
+
+That difference decides which pair belongs on an ROC. Recall and FPR are **column-normalised**:
+each is conditioned on the actual class, so neither depends on how many positives there are.
+Precision is **row-normalised**, conditioned on the prediction, and its denominator mixes the
+two classes — so it moves when prevalence moves, even with the classifier untouched. Make
+positives rarer and precision falls while recall, FPR and the entire ROC stay exactly where they
+were. That is why AUC is a property of the classifier alone, and why a precision-recall curve,
+which is often the more useful thing to look at when positives are rare, is not comparable
+across datasets with different base rates.
+
+Two rows of the table are also worth connecting to what came earlier: **Youden's J**, $\mathrm{TPR}-\mathrm{FPR}$,
+is the vertical distance from the ROC curve to the diagonal, so maximising it picks the
+operating point where the curve is furthest above chance — the tangent-slope-1 point. And
+**markedness** is its row-normalised mirror, $\mathrm{PPV}+\mathrm{NPV}-1$; the Matthews
+correlation coefficient is the geometric mean of the two, which is what makes MCC symmetric
+under swapping the roles of prediction and truth.
+
+
 ## Psychometric curves: the same sweep, seen from the stimulus side
 
 Everything above holds the stimulus fixed and slides the criterion $c$. Psychophysics does the
