@@ -324,6 +324,245 @@ so $d'=0$ gives AUC $=\tfrac12$ (the dashed no-discrimination diagonal, pure cha
 larger $d'$ pushes the curve toward the perfect corner $(0,1)$ with AUC $\to 1$. Pull the
 $d'$ slider to watch the distributions separate and the area fill in.
 
+## Psychometric curves: the same sweep, seen from the stimulus side
+
+Everything above moves the criterion $c$ and holds the stimulus fixed. Psychophysics does the
+opposite, holding the observer fixed and moving the **stimulus**. The resulting plot, the
+probability of responding "$\mathtt{s_1}$" against stimulus intensity, is the **psychometric
+function**. It looks like a different experiment. It is the same construction, and the
+correspondence is worth making exact, because it decides when a stimulus sweep does and does
+not hand you an AUC.
+
+### A latent score, a criterion, and noise
+
+Let item $i$ carry a latent quantity $g_i$, and let a stimulus at level $x$ add $c(x)$ to it.
+The observer reports "$\mathtt{s_1}$" when the total clears zero, up to decision noise
+$\varepsilon\sim\mathcal N(0,\sigma^2)$:
+
+$$
+\text{respond } \mathtt{s_1} \iff g_i + c(x) + \varepsilon > 0 ,
+$$
+
+which gives
+
+$$
+P_i(x) \;=\; \Phi\!\left(\frac{g_i + c(x)}{\sigma}\right).
+$$
+
+That is the psychometric function: a sigmoid in $c(x)$, located at $c=-g_i$, with slope
+$1/\sigma$. The noise that smears the criterion in the plots above is the same noise that sets
+how gently this curve rises.
+
+### The threshold *is* the latent score
+
+Define the threshold $x^{*}_i$ by $P_i(x^{*}_i)=\tfrac12$. Then
+
+$$
+c(x^{*}_i) \;=\; -\,g_i .
+$$
+
+Where the curve crosses 50% is the latent, sign flipped. Fitting a psychometric threshold is
+therefore not merely a curve fit, it is a measurement of $g_i$ on the criterion's own scale,
+and one threshold per item gives a per-item score you can rank.
+
+### Sweeping the stimulus sweeps the criterion
+
+Because $c(x)$ enters identically for every item, adding $c$ to every latent is
+indistinguishable from subtracting $c$ from the criterion. The stimulus axis and the criterion
+axis are one axis read in opposite directions:
+
+$$
+\tau \;=\; -\,c(x).
+$$
+
+With two populations this closes the loop. Each stimulus level yields one pair
+$\big(\mathrm{FPR}(x),\mathrm{TPR}(x)\big)$, and the sweep traces an ROC exactly as the
+criterion sweep did. The psychometric plot and the ROC are two projections of one object: the
+first keeps the stimulus axis and shows a curve per item, the second eliminates it and shows
+the trade-off it generates.
+
+### Two AUCs, and why the swept one is smaller
+
+Here the pictures stop being interchangeable, in a way that matters in practice. Let the
+population latents be $g\sim\mathcal N(\mu_1,s^2)$ and $\mathcal N(\mu_0,s^2)$, where $s$ is
+the spread **between items** and $\sigma$ is the decision noise **within** an item. Ranking
+items by their true latent gives
+
+$$
+\mathrm{AUC}_{\text{latent}} = P(g_1>g_0) = \Phi\!\left(\frac{\Delta\mu}{s\sqrt2}\right),
+\qquad \Delta\mu=\mu_1-\mu_0 .
+$$
+
+Ranking instead by observed binary responses, swept over $x$, uses
+$\mathbb E_g\big[\Phi((g+c)/\sigma)\big]=\Phi\big((\mu+c)/\sqrt{\sigma^2+s^2}\big)$, so
+
+$$
+\mathrm{TPR}(x)=\Phi\!\left(\frac{\mu_1+c}{\sqrt{\sigma^2+s^2}}\right),\qquad
+\mathrm{FPR}(x)=\Phi\!\left(\frac{\mu_0+c}{\sqrt{\sigma^2+s^2}}\right),
+$$
+
+a unit-slope zROC, and therefore
+
+$$
+\mathrm{AUC}_{\text{swept}} = \Phi\!\left(\frac{\Delta\mu}{\sqrt2\,\sqrt{\sigma^2+s^2}}\right)
+\;\le\; \mathrm{AUC}_{\text{latent}} .
+$$
+
+**Decision noise attenuates the swept AUC**, and it does so however finely you sweep. The
+ladder buys the operating point, not the noise. If the latent is directly readable, a firing
+rate, a log-odds, a logit, you recover the unattenuated number; if only binary responses are
+observable you pay the $\sigma$ penalty. The gap between the two readouts in the widget below
+is exactly this term.
+
+### When the correspondence breaks
+
+All of it rests on $c(x)$ shifting every item equally. Let the stimulus interact with the item
+instead, through a per-item sensitivity $\beta_i$:
+
+$$
+\text{respond } \mathtt{s_1} \iff g_i + \beta_i\,c(x) + \varepsilon > 0 .
+$$
+
+Now the ordering of items by $P_i(x)$ depends on $x$, and the psychometric curves cross.
+Different stimulus levels induce different rankings, so no single score generates the traced
+operating points, and the area under them is not $P(g_1>g_0)$ for any $g$. What remains is a
+perfectly meaningful **operating characteristic**, a statement about which
+$(\mathrm{FPR},\mathrm{TPR})$ pairs are reachable, but it is not an ROC and its area is not an
+AUC.
+
+The diagnostic shows up on both sides: crossing curves in the left panel, and a rank
+correlation below $1$ between the orderings at two stimulus levels. Raise the heterogeneity
+slider and watch $\tau$ fall away from $1$ while the two AUC readouts drift apart.
+
+### Saturation, and why a constant response is not a null result
+
+One corollary deserves its own line. If every item sits far from the criterion,
+$|g_i+c|\gg\sigma$, then $P_i(x)\approx 0$ or $1$ for all $i$ at once. The latents still
+differ. The responses do not. Between-item structure is squashed by the floor or the ceiling,
+and any statistic computed on the responses, AUC included, collapses toward chance.
+
+So a classifier that answers the same way every time is not evidence that no signal exists. It
+is evidence that the measurement was taken at the wrong place on the stimulus axis. The two
+repairs are the two halves of this page: move $c(x)$ until the population straddles the
+criterion, which is what a well-chosen ladder does, or read the latent directly and never
+binarise at all.
+
+<div id="psycho">
+<div class="ps-top">
+<span class="ps-ttl">Psychometric sweep ↔ ROC</span>
+<span class="ps-read">
+<span class="chip lat">AUC latent <b id="psAucLat">–</b></span>
+<span class="chip swp">AUC swept <b id="psAucSwp">–</b></span>
+<span class="chip tau">rank τ <b id="psTau">–</b></span>
+</span>
+</div>
+<div class="ps-grid">
+<div class="panel"><div class="panel-h">Psychometric curves — one per item, P(respond s₁) vs stimulus</div>
+<svg id="psCurves" viewBox="0 0 440 240"></svg></div>
+<div class="panel"><div class="panel-h">ROC traced by sweeping the stimulus</div>
+<svg id="psRoc" viewBox="0 0 250 240"></svg></div>
+</div>
+<div class="ps-ctrl">
+<span class="sl">separation Δμ <input type="range" id="psDp" min="0" max="3" step="0.05" value="1.4"><b id="psDpV">1.40</b></span>
+<span class="sl">item spread s <input type="range" id="psS" min="0.1" max="2" step="0.05" value="0.7"><b id="psSV">0.70</b></span>
+<span class="sl">decision noise σ <input type="range" id="psSig" min="0.1" max="2" step="0.05" value="0.5"><b id="psSigV">0.50</b></span>
+<span class="sl">heterogeneity <input type="range" id="psHet" min="0" max="1.2" step="0.02" value="0"><b id="psHetV">0.00</b></span>
+<span class="sl">stimulus x <input type="range" id="psX" min="-6" max="6" step="0.05" value="0"><b id="psXV">0.00</b></span>
+</div>
+<div class="hint">Drag <i>stimulus x</i> to travel along the ROC. Raise <i>decision noise</i> to watch the swept AUC fall below the latent one. Raise <i>heterogeneity</i> until the curves cross and τ drops, at which point the traced area stops being an AUC. (Sixteen items on a fixed quantile grid stand in for the two populations, so the readouts track the closed forms only up to discretisation; at very small σ the swept value can sit a few thousandths above the latent one for that reason alone.)</div>
+</div>
+
+<style>
+#psycho{--card:#fffdf8;--ink:#2b2018;--muted:#6f6256;--line:rgba(31,24,18,.16);--grid:rgba(31,24,18,.08);--crit:#7c3aed;--s0:#9c4a26;--s1:#1a5b59;margin:1.9rem 0;padding:1.05rem 1.1rem 1.15rem;background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:0 14px 44px rgba(38,23,12,.10);font:13px/1.45 var(--font-sans,system-ui,sans-serif);color:var(--ink);max-width:none}
+#psycho .ps-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem 1rem;margin-bottom:.65rem}
+#psycho .ps-ttl{font-weight:700;font-size:13.5px}
+#psycho .ps-read{margin-left:auto;display:flex;flex-wrap:wrap;gap:.35rem .5rem}
+#psycho .chip{display:inline-flex;align-items:baseline;gap:.32em;border:1px solid var(--line);border-radius:999px;padding:.13rem .55rem;font-size:11.5px;background:rgba(255,255,255,.5);white-space:nowrap}
+#psycho .chip b{font-variant-numeric:tabular-nums;font-weight:700;font-size:12.5px}
+#psycho .chip.lat b{color:var(--s1)}#psycho .chip.swp b{color:var(--s0)}#psycho .chip.tau b{color:var(--crit)}
+#psycho .ps-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:.6rem 1rem;align-items:stretch}
+@media(max-width:620px){#psycho .ps-grid{grid-template-columns:1fr}}
+#psycho svg{display:block;width:100%;height:auto;overflow:visible}
+#psycho .panel{border:1px solid var(--grid);border-radius:11px;background:linear-gradient(#fffefb,#fdfaf3);padding:.35rem .45rem .2rem}
+#psycho .panel-h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:.1rem 0 .15rem .15rem}
+#psycho .ps-ctrl{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem .9rem;margin-top:.85rem;padding-top:.75rem;border-top:1px solid var(--grid)}
+#psycho .sl{display:flex;align-items:center;gap:.45rem;font-size:12px;color:var(--muted)}
+#psycho .sl input[type=range]{width:104px;accent-color:var(--crit);cursor:pointer}
+#psycho .sl b{font-variant-numeric:tabular-nums;color:var(--ink);min-width:2.6em}
+#psycho .hint{font-size:10.5px;color:var(--muted);font-style:italic;margin:.55rem 0 0 .15rem}
+</style>
+
+<script>
+(function(){
+var Z=[-1.5341,-0.8871,-0.4888,-0.1573,0.1573,0.4888,0.8871,1.5341];
+var H=[-1,.62,-.35,.9,-.72,.25,-.5,1,.85,-.9,.4,-.15,.7,-.6,.1,-.8];
+var N=Z.length, NS=241, XMIN=-6, XMAX=6;
+function ncdf(z){var t=1/(1+.2316419*Math.abs(z)),d=.3989422804014327*Math.exp(-z*z/2),
+ p=d*t*(.319381530+t*(-.356563782+t*(1.781477937+t*(-1.821255978+t*1.330274429))));return z>0?1-p:p;}
+function q(id){return document.getElementById(id);}
+function items(dp,s,het){var a=[];for(var k=0;k<2;k++)for(var i=0;i<N;i++){
+ var j=k*N+i;a.push({cls:k,g:(k?dp/2:-dp/2)+s*Z[i],b:Math.exp(het*H[j])});}return a;}
+function draw(){
+ var dp=+q('psDp').value,s=+q('psS').value,sig=+q('psSig').value,het=+q('psHet').value,x=+q('psX').value;
+ q('psDpV').textContent=dp.toFixed(2);q('psSV').textContent=s.toFixed(2);
+ q('psSigV').textContent=sig.toFixed(2);q('psHetV').textContent=het.toFixed(2);q('psXV').textContent=x.toFixed(2);
+ var it=items(dp,s,het);
+ var P=function(o,xx){return ncdf((o.g+o.b*xx)/sig);};
+ var xs=[],tpr=[],fpr=[];
+ for(var t=0;t<NS;t++){var xx=XMIN+(XMAX-XMIN)*t/(NS-1);xs.push(xx);
+  var a=0,b=0;for(var i=0;i<it.length;i++){var v=P(it[i],xx);if(it[i].cls)a+=v;else b+=v;}
+  tpr.push(a/N);fpr.push(b/N);}
+ var auc=0;for(var t=1;t<NS;t++)auc+=(tpr[t]+tpr[t-1])/2*(fpr[t]-fpr[t-1]);
+ var pos=it.filter(function(o){return o.cls;}),neg=it.filter(function(o){return !o.cls;}),c=0;
+ for(var i=0;i<pos.length;i++)for(var j=0;j<neg.length;j++)c+=pos[i].g>neg[j].g?1:(pos[i].g===neg[j].g?.5:0);
+ var aucLat=c/(pos.length*neg.length);
+ var lo=-1.5,hi=1.5,con=0,dis=0;
+ for(var i=0;i<it.length;i++)for(var j=i+1;j<it.length;j++){
+  var a1=(it[i].g+it[i].b*lo)-(it[j].g+it[j].b*lo),a2=(it[i].g+it[i].b*hi)-(it[j].g+it[j].b*hi);
+  if(a1*a2>0)con++;else if(a1*a2<0)dis++;}
+ var tau=(con+dis)?(con-dis)/(con+dis):1;
+ q('psAucLat').textContent=aucLat.toFixed(3);
+ q('psAucSwp').textContent=auc.toFixed(3);
+ q('psTau').textContent=tau.toFixed(3);
+ var L=48,R=430,T=16,B=204,sx=function(v){return L+(v-XMIN)/(XMAX-XMIN)*(R-L);},
+     sy=function(v){return B-v*(B-T);},e='';
+ e+='<line x1="'+L+'" y1="'+B+'" x2="'+R+'" y2="'+B+'" stroke="rgba(31,24,18,.35)"/>';
+ e+='<line x1="'+L+'" y1="'+T+'" x2="'+L+'" y2="'+B+'" stroke="rgba(31,24,18,.35)"/>';
+ [0,.5,1].forEach(function(v){e+='<line x1="'+L+'" y1="'+sy(v)+'" x2="'+R+'" y2="'+sy(v)+'" stroke="rgba(31,24,18,.08)"/>'+
+  '<text x="'+(L-6)+'" y="'+(sy(v)+3.5)+'" font-size="9" fill="#6f6256" text-anchor="end">'+v.toFixed(1)+'</text>';});
+ for(var i=0;i<it.length;i++){var d='';
+  for(var t=0;t<NS;t+=2){d+=(t?'L':'M')+sx(xs[t]).toFixed(1)+' '+sy(P(it[i],xs[t])).toFixed(1);}
+  e+='<path d="'+d+'" fill="none" stroke="'+(it[i].cls?'#1a5b59':'#9c4a26')+'" stroke-width="1.1" opacity=".62"/>';}
+ e+='<line x1="'+sx(x)+'" y1="'+T+'" x2="'+sx(x)+'" y2="'+B+'" stroke="#7c3aed" stroke-width="1.6"/>';
+ e+='<text x="'+R+'" y="'+(B+16)+'" font-size="9.5" fill="#6f6256" text-anchor="end">stimulus x   (criterion τ = −c(x))</text>';
+ e+='<text x="'+L+'" y="'+(T-4)+'" font-size="9.5" fill="#1a5b59">s₁ items</text>';
+ e+='<text x="'+(L+54)+'" y="'+(T-4)+'" font-size="9.5" fill="#9c4a26">s₀ items</text>';
+ q('psCurves').innerHTML=e;
+ var l=44,r=234,t0=16,b0=204,rx=function(v){return l+v*(r-l);},ry=function(v){return b0-v*(b0-t0);},f='';
+ f+='<line x1="'+l+'" y1="'+b0+'" x2="'+r+'" y2="'+b0+'" stroke="rgba(31,24,18,.35)"/>';
+ f+='<line x1="'+l+'" y1="'+t0+'" x2="'+l+'" y2="'+b0+'" stroke="rgba(31,24,18,.35)"/>';
+ f+='<line x1="'+l+'" y1="'+b0+'" x2="'+r+'" y2="'+t0+'" stroke="rgba(31,24,18,.28)" stroke-dasharray="4 3"/>';
+ var d2='';for(var t=0;t<NS;t++){d2+=(t?'L':'M')+rx(fpr[t]).toFixed(1)+' '+ry(tpr[t]).toFixed(1);}
+ f+='<path d="'+d2+'" fill="none" stroke="#7c3aed" stroke-width="1.9"/>';
+ var k=Math.round((x-XMIN)/(XMAX-XMIN)*(NS-1));
+ f+='<circle cx="'+rx(fpr[k])+'" cy="'+ry(tpr[k])+'" r="4.2" fill="#7c3aed"/>';
+ f+='<text x="'+((l+r)/2)+'" y="'+(b0+16)+'" font-size="9.5" fill="#6f6256" text-anchor="middle">FPR</text>';
+ f+='<text x="'+(l-9)+'" y="'+((t0+b0)/2)+'" font-size="9.5" fill="#6f6256" text-anchor="middle" transform="rotate(-90 '+(l-9)+' '+((t0+b0)/2)+')">TPR</text>';
+ q('psRoc').innerHTML=f;
+}
+['psDp','psS','psSig','psHet','psX'].forEach(function(id){q(id).addEventListener('input',draw);});
+draw();
+})();
+</script>
+
+Two readings of the widget are worth keeping apart. With heterogeneity at zero the swept curve
+*is* an ROC, and the only gap between the two AUC numbers is the $\sigma$ attenuation derived
+above: push decision noise up and the swept value slides toward $\tfrac12$ while the latent
+value does not move at all. With heterogeneity raised the curves cross, $\tau$ falls, and the
+swept number stops estimating anything about the latent, however smooth the traced curve
+continues to look. A smooth ROC-shaped curve is not by itself evidence that an ROC is what you
+have.
+
 ---
 
 *Notation and the criterion-sweep construction after Maneesh Sahani, *Theoretical
