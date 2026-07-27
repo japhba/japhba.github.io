@@ -375,37 +375,54 @@ $$
 #confmat .fr .den{padding:.12em .3em 0;border-top:1.3px solid rgba(31,24,18,.55)}
 #confmat .idn{font-size:10px;color:var(--muted);line-height:1.35}
 #confmat .colmet{background:rgba(31,24,18,.06);color:var(--muted);font-size:10.5px;text-align:right;vertical-align:middle;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+#confmat .ctl{display:flex;flex-wrap:wrap;gap:.5rem 1.4rem;align-items:center;margin:.2rem 0 .1rem;font-size:11.5px;color:var(--muted)}
+#confmat .ctl label{display:flex;align-items:center;gap:.4rem}
+#confmat .ctl input[type=range]{width:118px}
+#confmat .ctl output{font-weight:700;color:#2b2018;min-width:2.2em;text-align:right;font-variant-numeric:tabular-nums}
+#confmat .val{display:inline-block;margin-left:.35rem;font-weight:700;color:#7c3aed;font-variant-numeric:tabular-nums}
+#confmat .cnt{font-weight:700;color:#2b2018;font-variant-numeric:tabular-nums}
 #confmat .cap{font-size:10.5px;color:var(--muted);font-style:italic;margin:.55rem 0 0 .15rem}
 </style>
 <div id="confmat">
+<div class="ctl">
+  <label>Actual positives <span class="v" style="color:#1a5b59">P</span>
+    <input type="range" id="c-split" min="0" max="10" step="1" value="5">
+    <output id="o-split">50</output></label>
+  <label>Selected <span class="v" style="color:#6d3fd4">PP</span> — size
+    <input type="range" id="c-r" min="10" max="130" step="1" value="67">
+    <output id="o-r">33</output></label>
+  <label>Selection centre
+    <input type="range" id="c-cx" min="30" max="300" step="1" value="120">
+    <output id="o-cx">&nbsp;</output></label>
+</div>
 <svg id="prfig" viewBox="0 0 610 344" role="img" aria-label="Precision and recall over a set of elements">
   <rect x="20" y="48" width="290" height="232" fill="none" stroke="#4f463c" stroke-width="1.6" rx="6"/>
-  <rect x="20" y="48" width="145" height="232" fill="#1a5b59" opacity=".07"/>
-  <circle cx="165" cy="164" r="82" fill="#6d3fd4" opacity=".07"/>
-  <circle cx="38.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="82.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="102.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="123.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="143.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="164.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="184.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="204.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="225.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="245.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="38.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="82.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="102.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="123.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="143.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="164.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="184.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="204.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="225.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="245.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="59.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="82.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="102.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="123.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="143.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="164.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="184.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="204.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="225.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="245.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="80.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="101.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="101.0" cy="82.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="101.0" cy="102.8" r="3.6" fill="#57908d" opacity=".45"/><circle cx="101.0" cy="123.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="101.0" cy="143.6" r="3.6" fill="#1f6765" opacity="1"/><circle cx="101.0" cy="164.0" r="3.6" fill="#1f6765" opacity="1"/><circle cx="101.0" cy="184.4" r="3.6" fill="#1f6765" opacity="1"/><circle cx="101.0" cy="204.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="101.0" cy="225.2" r="3.6" fill="#57908d" opacity=".45"/><circle cx="101.0" cy="245.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="101.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="122.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="122.0" cy="82.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="122.0" cy="102.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="123.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="143.6" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="164.0" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="184.4" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="204.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="225.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="122.0" cy="245.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="122.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="143.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="143.0" cy="82.4" r="3.6" fill="#57908d" opacity=".45"/><circle cx="143.0" cy="102.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="123.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="143.6" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="164.0" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="184.4" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="204.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="225.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="143.0" cy="245.6" r="3.6" fill="#57908d" opacity=".45"/><circle cx="143.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="164.0" cy="62.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="164.0" cy="82.4" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="102.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="123.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="143.6" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="164.0" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="184.4" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="204.8" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="225.2" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="245.6" r="3.6" fill="#1f6765" opacity="1"/><circle cx="164.0" cy="266.0" r="3.6" fill="#57908d" opacity=".45"/><circle cx="185.0" cy="62.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="185.0" cy="82.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="185.0" cy="102.8" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="123.2" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="143.6" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="164.0" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="184.4" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="204.8" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="225.2" r="3.6" fill="#b4532a" opacity="1"/><circle cx="185.0" cy="245.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="185.0" cy="266.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="206.0" cy="62.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="206.0" cy="82.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="206.0" cy="102.8" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="123.2" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="143.6" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="164.0" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="184.4" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="204.8" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="225.2" r="3.6" fill="#b4532a" opacity="1"/><circle cx="206.0" cy="245.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="206.0" cy="266.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="227.0" cy="62.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="227.0" cy="82.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="227.0" cy="102.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="227.0" cy="123.2" r="3.6" fill="#b4532a" opacity="1"/><circle cx="227.0" cy="143.6" r="3.6" fill="#b4532a" opacity="1"/><circle cx="227.0" cy="164.0" r="3.6" fill="#b4532a" opacity="1"/><circle cx="227.0" cy="184.4" r="3.6" fill="#b4532a" opacity="1"/><circle cx="227.0" cy="204.8" r="3.6" fill="#b4532a" opacity="1"/><circle cx="227.0" cy="225.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="227.0" cy="245.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="227.0" cy="266.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="62.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="82.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="102.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="123.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="143.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="164.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="184.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="204.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="225.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="245.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="248.0" cy="266.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="62.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="82.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="102.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="123.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="143.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="164.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="184.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="204.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="225.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="245.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="269.0" cy="266.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="62.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="82.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="102.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="123.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="143.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="164.0" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="184.4" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="204.8" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="225.2" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="245.6" r="3.6" fill="#c08356" opacity=".45"/><circle cx="290.0" cy="266.0" r="3.6" fill="#c08356" opacity=".45"/>
-  <circle cx="165" cy="164" r="82" fill="none" stroke="#6d3fd4" stroke-width="2"/>
-  <line x1="165" y1="48" x2="165" y2="280" stroke="#1a5b59" stroke-width="1.6" stroke-dasharray="5 4"/>
-  <text x="22" y="22" font-size="11.5" fill="#4f463c" font-weight="700">whole population  tot = 143</text>
-  <text x="22" y="38" font-size="11.5" fill="#1a5b59" font-weight="600">← relevant, actual P = 77</text>
-  <text x="310" y="38" font-size="11.5" fill="#9c4a26" text-anchor="end" font-weight="600">actual N = 66 →</text>
-  <text x="165" y="298" font-size="11.5" fill="#6d3fd4" text-anchor="middle" font-weight="600">circle = selected, predicted PP = 47   (outside: PN = 96)</text>
-  <text x="165" y="313" font-size="10.5" fill="#4f463c" text-anchor="middle">P + N = PP + PN = tot = 143</text>
-  <text x="122" y="150" font-size="15" font-weight="700" fill="#1f6765">TP</text><text x="122" y="165" font-size="10" fill="#6f6256">28</text>
-  <text x="203" y="150" font-size="15" font-weight="700" fill="#b4532a">FP</text><text x="203" y="165" font-size="10" fill="#6f6256">19</text>
-  <text x="50" y="86" font-size="15" font-weight="700" fill="#57908d">FN</text><text x="50" y="101" font-size="10" fill="#6f6256">49</text>
-  <text x="270" y="86" font-size="15" font-weight="700" fill="#c08356">TN</text><text x="270" y="101" font-size="10" fill="#6f6256">47</text>
-  <text x="372" y="70" font-size="12" font-weight="700" fill="#2b2018">Precision — of everything SELECTED,</text>
+  <rect id="pshade" x="20" y="48" width="112" height="232" fill="#1a5b59" opacity=".07"/>
+  <circle id="cfill" cx="120.5" cy="134" r="67" fill="#6d3fd4" opacity=".07"/>
+  <g id="dots"></g>
+  <line id="splitline" x1="132.5" y1="48" x2="132.5" y2="280" stroke="#1a5b59" stroke-width="1.6" stroke-dasharray="5 4"/>
+  <circle id="cring" cx="120.5" cy="134" r="67" fill="none" stroke="#6d3fd4" stroke-width="2"/>
+  <text x="22" y="22" font-size="11.5" fill="#4f463c" font-weight="700">whole population  tot = 100</text>
+  <text id="lblP" x="22" y="38" font-size="11.5" fill="#1a5b59" font-weight="600">&#8592; relevant, actual P = 50</text>
+  <text id="lblN" x="310" y="38" font-size="11.5" fill="#9c4a26" text-anchor="end" font-weight="600">actual N = 50 &#8594;</text>
+  <text id="lblPP" x="165" y="298" font-size="11.5" fill="#6d3fd4" text-anchor="middle" font-weight="600">circle = selected, predicted PP = 33   (outside: PN = 67)</text>
+  <text x="165" y="313" font-size="10.5" fill="#4f463c" text-anchor="middle">P + N = PP + PN = tot = 100</text>
+  <text x="122" y="150" font-size="15" font-weight="700" fill="#1f6765">TP</text><text id="nTP" x="122" y="165" font-size="10" fill="#6f6256">20</text>
+  <text x="203" y="150" font-size="15" font-weight="700" fill="#b4532a">FP</text><text id="nFP" x="203" y="165" font-size="10" fill="#6f6256">13</text>
+  <text x="50" y="86" font-size="15" font-weight="700" fill="#57908d">FN</text><text id="nFN" x="50" y="101" font-size="10" fill="#6f6256">30</text>
+  <text x="270" y="86" font-size="15" font-weight="700" fill="#c08356">TN</text><text id="nTN" x="270" y="101" font-size="10" fill="#6f6256">37</text>
+  <text x="372" y="70" font-size="12" font-weight="700" fill="#2b2018">Precision &#8212; of everything SELECTED,</text>
   <text x="372" y="86" font-size="12" font-weight="700" fill="#2b2018">how much was relevant?</text>
-  <rect x="372" y="96" width="128.7" height="26" fill="#1f6765" rx="3"/><rect x="500.7" y="96" width="87.3" height="26" fill="#b4532a" rx="3"/><text x="436.3" y="113" font-size="11" fill="#fff" text-anchor="middle">TP 28</text><text x="544.3" y="113" font-size="11" fill="#fff" text-anchor="middle">FP 19</text>
-  <text x="372" y="144" font-size="12.5" fill="#2b2018" font-weight="700">28/47 = 0.60</text>
-  <text x="372" y="188" font-size="12" font-weight="700" fill="#2b2018">Recall — of everything RELEVANT,</text>
+  <rect id="pbar1" x="372" y="96" width="130" height="26" fill="#1f6765" rx="3"/><rect id="pbar2" x="502" y="96" width="86" height="26" fill="#b4532a" rx="3"/>
+  <text id="pval" x="372" y="144" font-size="12.5" fill="#2b2018" font-weight="700">20/33 = 0.61</text>
+  <text x="372" y="188" font-size="12" font-weight="700" fill="#2b2018">Recall &#8212; of everything RELEVANT,</text>
   <text x="372" y="204" font-size="12" font-weight="700" fill="#2b2018">how much was selected?</text>
-  <rect x="372" y="214" width="78.5" height="26" fill="#1f6765" rx="3"/><rect x="450.5" y="214" width="137.5" height="26" fill="#57908d" rx="3"/><text x="411.3" y="231" font-size="11" fill="#fff" text-anchor="middle">TP 28</text><text x="519.3" y="231" font-size="11" fill="#fff" text-anchor="middle">FN 49</text>
-  <text x="372" y="262" font-size="12.5" fill="#2b2018" font-weight="700">28/77 = 0.36</text>
+  <rect id="rbar1" x="372" y="214" width="86" height="26" fill="#1f6765" rx="3"/><rect id="rbar2" x="458" y="214" width="130" height="26" fill="#57908d" rx="3"/>
+  <text id="rval" x="372" y="262" font-size="12.5" fill="#2b2018" font-weight="700">20/50 = 0.40</text>
 </svg>
 <table class="cm">
 <thead>
-<tr><td class="corner" colspan="2" rowspan="2"><span class="totlab">whole population</span><br><span class="v" style="color:#4f463c">tot</span><span class="totn"> = 143</span><br><span class="totid"><span class="v" style="color:#1a5b59">P</span> + <span class="v" style="color:#9c4a26">N</span> = <span class="v" style="color:#6d3fd4">PP</span> + <span class="v" style="color:#9b7fd9">PN</span></span></td>
+<tr><td class="corner" colspan="2" rowspan="2"><span class="totlab">whole population</span><br><span class="v" style="color:#4f463c">tot</span><span class="totn"> = 100</span><br><span class="totid"><span class="v" style="color:#1a5b59">P</span> + <span class="v" style="color:#9c4a26">N</span> = <span class="v" style="color:#6d3fd4">PP</span> + <span class="v" style="color:#9b7fd9">PN</span></span></td>
 <th class="actual" colspan="2">Actual condition</th>
 <th class="actual" rowspan="2">row-normalised<br><span class="sm">divided by a row total</span></th></tr>
 <tr><th class="p">Positive <span class="v" style="color:#1a5b59">P</span></th><th class="n">Negative <span class="v" style="color:#9c4a26">N</span></th></tr>
@@ -444,7 +461,94 @@ $$
 </td></tr>
 </tbody>
 </table>
-<div class="cap">Every derived metric is highlighted; the three the rest of this page leans on — precision, recall, FPR — carry the stronger outline. Each fraction is followed by the same quantity over its named marginal, then by the identity naming it. Layout after <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia: Precision and recall</a>; the figure redraws Precisionrecall.svg with counts read off the dots actually plotted.</div>
+<div class="cap">Every derived metric is highlighted; the three the rest of this page leans on — precision, recall, FPR — carry the stronger outline. Each fraction is followed by the same quantity over its named marginal, then by the identity naming it. Layout after <a href="https://en.wikipedia.org/wiki/Precision_and_recall">Wikipedia: Precision and recall</a>; the figure redraws Precisionrecall.svg with counts read off the dots actually plotted.
+<script>
+(function(){
+  var box=document.getElementById('confmat'); if(!box) return;
+  var COLS=[],ROWS=[],i;
+  for(i=0;i<10;i++){COLS.push(38+21*i);ROWS.push(62+20.4*i);}
+  var CY=134, COL={TP:'#1f6765',FN:'#57908d',FP:'#b4532a',TN:'#c08356'};
+  var g=document.getElementById('dots'), NS='http://www.w3.org/2000/svg', nodes=[];
+  COLS.forEach(function(x){ROWS.forEach(function(y){
+    var c=document.createElementNS(NS,'circle');
+    c.setAttribute('cx',x.toFixed(1));c.setAttribute('cy',y.toFixed(1));c.setAttribute('r','3.6');
+    g.appendChild(c); nodes.push({x:x,y:y,el:c});
+  });});
+  // A metric is (label -> function of the four cells). Anything not listed is left alone,
+  // so adding a row to the table cannot silently produce a wrong number.
+  var M={
+    'Precision = PPV':function(m){return m.TP/(m.TP+m.FP);},
+    'FDR':function(m){return m.FP/(m.TP+m.FP);},
+    'FOR':function(m){return m.FN/(m.FN+m.TN);},
+    'NPV':function(m){return m.TN/(m.FN+m.TN);},
+    'TPR = Recall':function(m){return m.TP/m.P;},
+    'Recall = TPR':function(m){return m.TP/m.P;},
+    'Recall':function(m){return m.TP/m.P;},
+    'TPR':function(m){return m.TP/m.P;},
+    'FNR':function(m){return m.FN/m.P;},
+    'FPR':function(m){return m.FP/m.N;},
+    'TNR':function(m){return m.TN/m.N;},
+    'Specificity = TNR':function(m){return m.TN/m.N;},
+    'Prevalence':function(m){return m.P/m.tot;},
+    'Accuracy':function(m){return (m.TP+m.TN)/m.tot;},
+    'F₁':function(m){return 2*m.TP/(2*m.TP+m.FP+m.FN);},
+    "Youden's J":function(m){return m.TP/m.P-m.FP/m.N;},
+    'Markedness':function(m){return m.TP/(m.TP+m.FP)+m.TN/(m.FN+m.TN)-1;},
+    'MCC':function(m){var d=Math.sqrt((m.TP+m.FP)*(m.TP+m.FN)*(m.TN+m.FP)*(m.TN+m.FN));
+                      return d?((m.TP*m.TN-m.FP*m.FN)/d):NaN;}
+  };
+  var slots=[];
+  Array.prototype.forEach.call(box.querySelectorAll('.m'),function(d){
+    var b=d.querySelector('b'); if(!b) return;
+    var key=b.textContent.trim(), fn=M[key]; if(!fn) return;
+    var sp=document.createElement('span'); sp.className='val'; b.appendChild(sp);
+    slots.push({fn:fn,el:sp});
+  });
+  // Numeric readout inside each of the four cells, next to its symbol.
+  var cellIds={tp:'TP',fp:'FP',fn:'FN',tn:'TN'}, cellSpans={};
+  Object.keys(cellIds).forEach(function(cls){
+    var td=box.querySelector('td.cell.'+cls); if(!td) return;
+    var sp=document.createElement('span'); sp.className='cnt'; sp.style.marginLeft='.35rem';
+    var b=td.querySelector('b'); if(b) b.appendChild(sp); cellSpans[cellIds[cls]]=sp;
+  });
+  var totn=box.querySelector('.totn');
+  var el=function(id){return document.getElementById(id);};
+  function draw(){
+    var splitIdx=+el('c-split').value, r=+el('c-r').value, cx=+el('c-cx').value;
+    var lineX = splitIdx===0 ? 27.5 : (splitIdx===10 ? 300.5 : (COLS[splitIdx-1]+COLS[splitIdx])/2);
+    var m={TP:0,FP:0,FN:0,TN:0};
+    nodes.forEach(function(n){
+      var inside=(n.x-cx)*(n.x-cx)+(n.y-CY)*(n.y-CY)<=r*r, left=n.x<lineX;
+      var k=left?(inside?'TP':'FN'):(inside?'FP':'TN');
+      m[k]++; n.el.setAttribute('fill',COL[k]); n.el.setAttribute('opacity',inside?'1':'.45');
+    });
+    m.P=m.TP+m.FN; m.N=m.FP+m.TN; m.PP=m.TP+m.FP; m.PN=m.FN+m.TN; m.tot=100;
+    el('splitline').setAttribute('x1',lineX); el('splitline').setAttribute('x2',lineX);
+    el('pshade').setAttribute('width',Math.max(0,lineX-20));
+    ['cfill','cring'].forEach(function(id){el(id).setAttribute('cx',cx);el(id).setAttribute('r',r);});
+    el('o-split').textContent=m.P; el('o-r').textContent=m.PP; el('o-cx').textContent='';
+    el('lblP').textContent='← relevant, actual P = '+m.P;
+    el('lblN').textContent='actual N = '+m.N+' →';
+    el('lblPP').textContent='circle = selected, predicted PP = '+m.PP+'   (outside: PN = '+m.PN+')';
+    ['TP','FP','FN','TN'].forEach(function(k){
+      el('n'+k).textContent=m[k];
+      if(cellSpans[k]) cellSpans[k].textContent='= '+m[k];
+    });
+    if(totn) totn.textContent=' = 100';
+    var W=216, pf=m.PP?m.TP/m.PP:0, rf=m.P?m.TP/m.P:0;
+    el('pbar1').setAttribute('width',(W*pf).toFixed(1));
+    el('pbar2').setAttribute('x',(372+W*pf).toFixed(1)); el('pbar2').setAttribute('width',(W*(1-pf)).toFixed(1));
+    el('rbar1').setAttribute('width',(W*rf).toFixed(1));
+    el('rbar2').setAttribute('x',(372+W*rf).toFixed(1)); el('rbar2').setAttribute('width',(W*(1-rf)).toFixed(1));
+    el('pval').textContent=m.TP+'/'+m.PP+' = '+(m.PP?pf.toFixed(2):'—');
+    el('rval').textContent=m.TP+'/'+m.P+' = '+(m.P?rf.toFixed(2):'—');
+    slots.forEach(function(s){var v=s.fn(m); s.el.textContent=isFinite(v)?('= '+v.toFixed(2)):'= —';});
+  }
+  ['c-split','c-r','c-cx'].forEach(function(id){el(id).addEventListener('input',draw);});
+  draw();
+})();
+</script>
+</div>
 
 </div>
 
@@ -471,6 +575,53 @@ $\textcolor{#4f463c}{\mathrm{tot}}$ fixed, and precision falls while recall, FPR
 exactly where they were. That is why AUC is a property of the classifier alone, and why a
 precision-recall curve, often the more useful thing to look at when positives are rare, is not
 comparable across datasets with different base rates.
+
+### When accuracy *is* the AUC
+
+Accuracy and AUC usually measure different things: accuracy is read off a single operating
+point, AUC integrates over all of them. But there are two situations where the two coincide
+exactly, and they are worth separating because only one of them is a coincidence.
+
+**1. A hard binary classifier, with balanced classes.** Suppose the score takes only two
+values, so there is no threshold left to sweep. Its ROC is not a curve but a single interior
+point $(\mathrm{FPR}, \mathrm{TPR})$, joined to $(0,0)$ and $(1,1)$ by straight chords. The
+area under that polygon is
+
+$$
+\mathrm{AUC}\;=\;\tfrac{1}{2}\bigl(\mathrm{TPR}+\mathrm{TNR}\bigr)\;=\;\text{balanced accuracy}.
+$$
+
+Balanced accuracy is accuracy weighted so each class contributes half. When
+$\textcolor{#1a5b59}{\mathrm{P}} = \textcolor{#9c4a26}{\mathrm{N}}$ that reweighting does
+nothing, so plain accuracy already equals it, and
+
+$$
+\text{accuracy}\;=\;\frac{\textcolor{#1f6765}{\mathrm{TP}}+\textcolor{#c08356}{\mathrm{TN}}}{\textcolor{#4f463c}{\mathrm{tot}}}\;=\;\mathrm{AUC}.
+$$
+
+Both conditions are needed. Drop the binary scores and AUC exceeds balanced accuracy, because
+sweeping a threshold can only add area. Drop the balance and accuracy drifts toward whichever
+class is larger while AUC does not move at all — the same prevalence-independence that put
+recall and FPR on the ROC axes in the first place.
+
+**2. Two-alternative forced choice.** Here the equality is not a coincidence but a restatement.
+By the Mann–Whitney identity,
+
+$$
+\mathrm{AUC}\;=\;\Pr\bigl(s(x^{+}) > s(x^{-})\bigr),
+$$
+
+the probability that a randomly drawn positive outscores a randomly drawn negative. If your
+task *is* to show a judge one positive and one negative and ask which is which, then the
+fraction of trials it gets right is a direct estimate of that probability. The accuracy you
+measure is the AUC — not approximately, but definitionally, with chance at $0.5$ rather than
+at $0$.
+
+This is why a paired protocol needs no threshold and no calibration: pairing supplies the
+comparison that a threshold would otherwise have to stand in for. It is also why such an
+accuracy is not comparable to an unpaired one. A method scoring $0.44$ in a forced choice is
+*below* chance, while $0.44$ on a task with a floor at $0$ is a mediocre positive. Same number,
+opposite sign.
 
 Two entries connect back to what came earlier. **Youden's J**, $\mathrm{TPR}-\mathrm{FPR}$, is
 the vertical distance from the ROC curve to the diagonal, so maximising it picks the operating
