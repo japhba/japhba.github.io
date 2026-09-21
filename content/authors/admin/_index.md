@@ -30,7 +30,7 @@ profiles:
   - icon: academicons/google-scholar
     url: https://scholar.google.com/citations?user=t3i5WEMAAAAJ&hl=en
   - icon: academicons/cv
-    url: uploads/CV/CV_Jan_BAUER.pdf
+    url: uploads/cv/cv_jan_bauer.pdf
 
 #     summary: |
 #       Thesis on _Why LLMs are awesome_. Supervised by [Prof Joe Smith](https://example.com). Presented papers at 5 IEEE conferences with the contributions being published in 2 Springer journals.
