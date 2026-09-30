@@ -42,7 +42,7 @@ steps right:
 $$\text{depth} = O\big((L+T)\log D\big).$$
 
 In code, take causal *linear* attention (no softmax),
-$\mathrm{Att}(\boldsymbol h)_t = \sum_{s\le t} (\boldsymbol q_t \cdot \boldsymbol k_s)\, \boldsymbol v_s$:
+$\mathrm{Att}(\boldsymbol h)_t = \sum_{t'\le t} (\boldsymbol q_t \cdot \boldsymbol k_{t'})\, \boldsymbol v_{t'}$:
 
 ```python
 T, D = 8, 16                               # positions, width
