@@ -6,12 +6,14 @@ summary: Opaque serial depth is the longest computation a model can run without 
 date: 2026-06-08
 ---
 
-Transformers are *wide but shallow*
-([Rohin Shah](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/)).
-They do lots of parallel work per forward pass, but only a few sequential steps.
-[Brown-Cohen, Lindner & Shah (2026)](https://arxiv.org/abs/2603.09786) formalise this as
-**opaque serial depth**: the longest computation a model can do without interpretable
-intermediate steps.
+On the [80,000 Hours podcast](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/),
+Rohin Shah describes today's transformers as **wide but shallow**. A single forward pass
+does an enormous amount of work in parallel, but only a handful of steps in sequence.
+Reasoning that needs a longer chain has to spill into the chain of thought, where it can be
+read. That is a big part of why he is cautiously optimistic about chain-of-thought
+monitoring. In [a paper with Jonah Brown-Cohen and David Lindner](https://arxiv.org/abs/2603.09786),
+he makes the intuition precise as **opaque serial depth**: the longest computation a model
+can do without interpretable intermediate steps.
 
 **Definition.** Depth is *circuit depth*, the longest path through a circuit of binary
 associative ops and piecewise-analytic scalar functions. It is minimised over
@@ -38,13 +40,9 @@ steps right:
 
 $$\text{depth} = O\big((L+T)\log D\big).$$
 
-That is linear in context, so long reasoning can stay hidden in the activations.
-
-**Other results.** Gemma 3 bounds run from about 4.5k (1B) to 11.7k (27B). Continuous
-chain of thought gives $O(L\,T_{\text{cot}}(\log T+\log D))$, and black-box memory is
-unbounded. A toy MoE came out below dense Gemma 3 12B, which the paper reads as
-*suggestive* evidence that MoE is shallower. It all hinges on which nodes you call
-interpretable, and that is a judgment call.
+That is linear in context, so long reasoning can stay hidden in the activations. This is
+why recurrence matters for safety: it would take away the guarantee that deep reasoning
+shows up in the output.
 
 ---
 
