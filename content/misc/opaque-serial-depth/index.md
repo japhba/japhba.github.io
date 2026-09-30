@@ -41,7 +41,21 @@ steps right:
 
 $$\text{depth} = O\big((L+T)\log D\big).$$
 
-In code, the only difference is where a layer reads from:
+In code, take causal *linear* attention (no softmax),
+$\mathrm{Att}(h)_t = \sum_{s\le t} (q_t \cdot k_s)\, v_s$:
+
+```python
+T, D = 8, 16                               # positions, width
+W_q, W_k, W_v = (np.random.randn(D, D) / D**0.5 for _ in range(3))  # each (D, D)
+
+def attn(h):                               # h: (t, D) -> (t, D)
+    q, k, v = h @ W_q, h @ W_k, h @ W_v    # each (t, D)
+    return np.tril(q @ k.T) @ v            # (t, t) causal scores @ (t, D) -> (t, D)
+
+h0 = np.random.randn(T, D)                 # (T, D) token embeddings
+```
+
+The only difference between the two is where a layer reads from:
 
 <div style="display:flex;gap:1.25rem;flex-wrap:wrap;margin:1.25rem 0">
 <div style="flex:1 1 300px;min-width:0">
@@ -49,9 +63,9 @@ In code, the only difference is where a layer reads from:
 **(a) attention only**
 
 ```python
-h1 = attn(h0)   # reads finished h0
-h2 = attn(h1)   # reads finished h1
-h3 = attn(h2)   # all t in parallel
+h1 = attn(h0)  # (T, D) <- finished h0
+h2 = attn(h1)  # (T, D) <- finished h1
+h3 = attn(h2)  # (T, D), all t parallel
 # depth ~ L
 ```
 
@@ -61,10 +75,10 @@ h3 = attn(h2)   # all t in parallel
 **(b) + horizontal attention**
 
 ```python
-h1 = attn(h0)
-for t in range(T):   # in place: reads
-    h1[t] = attn(h1[:t+1])[-1]  # updated h1[<t]
-# ... per layer; depth ~ L + T
+h1 = attn(h0)                   # (T, D)
+for t in range(T):              # serial in t
+    h1[t] = attn(h1[:t+1])[-1]  # (t+1, D) -> (D,)
+# repeat per layer; depth ~ L + T
 ```
 
 </div>
