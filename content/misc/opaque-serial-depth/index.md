@@ -30,15 +30,45 @@ costing $O(\log T + \log D)$:
 $$\text{depth} = O\big(L(\log T + \log D)\big).$$
 
 So a longer context barely helps. The only edge back down to layer 0 runs through a
-sampled token. Hence **any computation in (a) whose serial depth exceeds $\sim L$ must be
-exposed in the emitted tokens (though it might be obfuscated)**. That output may be compressed or even
-steganographic, but it travels through a channel we can see.
+sampled token. Hence **any computation in (a) that needs more serial depth than one
+forward pass provides ($\sim L$ layers) must be exposed in the emitted tokens (though it
+might be obfuscated)**. Those tokens may be compressed or steganographic, but they travel
+through a channel we can see.
 
 **Recurrence (b).** Let position $t$ read position $t-1$ *within* a layer. The paper uses
 RNN blocks; panel (b) uses same-layer attention. Now a path takes $L$ steps up *and* $T$
 steps right:
 
 $$\text{depth} = O\big((L+T)\log D\big).$$
+
+In code, the only difference is where a layer reads from:
+
+<div style="display:flex;gap:1.25rem;flex-wrap:wrap;margin:1.25rem 0">
+<div style="flex:1 1 300px;min-width:0">
+
+**(a) attention only**
+
+```python
+h1 = attn(h0)   # reads finished h0
+h2 = attn(h1)   # reads finished h1
+h3 = attn(h2)   # all t in parallel
+# depth ~ L
+```
+
+</div>
+<div style="flex:1 1 300px;min-width:0">
+
+**(b) + horizontal attention**
+
+```python
+h1 = attn(h0)
+for t in range(T):   # in place: reads
+    h1[t] = attn(h1[:t+1])[-1]  # updated h1[<t]
+# ... per layer; depth ~ L + T
+```
+
+</div>
+</div>
 
 That is linear in context, so long reasoning can stay hidden in the activations. This is
 why recurrence matters for safety: it would take away the guarantee that deep reasoning
