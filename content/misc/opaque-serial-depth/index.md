@@ -6,6 +6,11 @@ summary: Opaque serial depth is the longest computation a model can run without 
 date: 2026-06-08
 ---
 
+> **TL;DR.** A transformer's opaque serial depth scales with its number of layers, $\sim L$.
+> Any longer serial computation has to go through the tokens it writes. For illustration, I
+> briefly discuss a subtly different, *hypothetical* kind of attention that reads the layer
+> it is writing. That variant would have greater opaque serial depth, $\sim L+T$.
+
 On the [80,000 Hours podcast](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/),
 Rohin Shah describes today's transformers as **wide but shallow**. A single forward pass
 does an enormous amount of work in parallel, but only a handful of steps in sequence.
