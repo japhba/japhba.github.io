@@ -52,7 +52,19 @@ $$
 $$
 
 It is linear in depth and only *logarithmic* in context length, so a longer context buys
-very little extra serial computation. For Gemma 3, the paper's hand-computed upper bounds
+very little extra serial computation.
+
+This is what forces the computation into the open. Say a task needs a chain of dependent
+steps longer than one forward pass can hold, roughly more than $L$ layers' worth. Within a
+single pass there is no way to continue it, because every opaque path runs out when it
+reaches the top layer. The only edge in the grid that leads back to the bottom goes through
+the output: sample a token, append it, and read it again at layer 0 in the next pass. So
+**in the left architecture, any computation whose serial depth exceeds $\sim L$ must pass
+through emitted tokens: part of the intermediate state has to be exposed in the output,
+in some form.** "In some form" matters. The tokens can be paraphrased, compressed or even
+steganographic, so being exposed doesn't guarantee being readable. What the argument does
+guarantee is that the state has to travel through a channel we can see. There is no hidden
+back-channel to carry it instead. For Gemma 3, the paper's hand-computed upper bounds
 at maximum context range from about 4,500 (1B) to 11,700 (27B) circuit steps. Their
 automated JAX calculator lands about 28% above those numbers.
 
