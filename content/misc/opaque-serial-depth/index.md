@@ -31,7 +31,7 @@ $$\text{depth} = O\big(L(\log T + \log D)\big).$$
 
 So a longer context barely helps. The only edge back down to layer 0 runs through a
 sampled token. Hence **any computation in (a) whose serial depth exceeds $\sim L$ must be
-exposed in the emitted tokens, in some form**. That output may be compressed or even
+exposed in the emitted tokens (though it might be obfuscated)**. That output may be compressed or even
 steganographic, but it travels through a channel we can see.
 
 **Recurrence (b).** Let position $t$ read position $t-1$ *within* a layer. The paper uses
