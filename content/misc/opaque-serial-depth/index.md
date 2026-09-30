@@ -23,7 +23,7 @@ between them count.
 
 ![Residual stream grid, layers up, positions across. (a) Standard attention: every edge goes up a layer, so the longest opaque path is bounded by L. (b) Same-layer attention lets the path step right too, zig-zagging to about L+T.](opaque_serial_depth.png)
 
-**Transformer (a).** An opaque path through the residual stream $h^\ell_t$ can only go up
+**Transformer (a).** An opaque path through the residual stream $\boldsymbol h^\ell_t$ can only go up
 or right. Every attention edge also climbs a layer, so a path has at most $L$ steps, each
 costing $O(\log T + \log D)$:
 
@@ -42,7 +42,7 @@ steps right:
 $$\text{depth} = O\big((L+T)\log D\big).$$
 
 In code, take causal *linear* attention (no softmax),
-$\mathrm{Att}(h)_t = \sum_{s\le t} (q_t \cdot k_s)\, v_s$:
+$\mathrm{Att}(\boldsymbol h)_t = \sum_{s\le t} (\boldsymbol q_t \cdot \boldsymbol k_s)\, \boldsymbol v_s$:
 
 ```python
 T, D = 8, 16                               # positions, width
