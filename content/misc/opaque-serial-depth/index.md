@@ -2,7 +2,7 @@
 title: Opaque serial depth
 draft: false
 subtitle: How much can a transformer reason without saying anything?
-summary: Opaque serial depth is the longest computation a model can run without passing through an interpretable step like a chain-of-thought token. A transformer's is O(L(log T + log D)): linear in layers, only logarithmic in context. With recurrence along the sequence it becomes O((L + T) log D). Notes on Brown-Cohen, Lindner & Shah (2026).
+summary: "Opaque serial depth is the longest computation a model can run without passing through an interpretable step like a chain-of-thought token. A transformer's is O(L(log T + log D)): linear in layers, only logarithmic in context. With recurrence along the sequence it becomes O((L + T) log D). Notes on Brown-Cohen, Lindner & Shah (2026)."
 date: 2026-06-08
 ---
 
