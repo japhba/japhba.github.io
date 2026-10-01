@@ -9,7 +9,7 @@ date: 2026-06-08
 > **TL;DR.** A transformer's opaque serial depth scales with its number of layers, $\sim L$ (up to log factors).
 > Any longer serial computation has to go through the tokens it writes. For illustration, I
 > briefly discuss a subtly different, *hypothetical* kind of attention that reads the layer
-> it is writing. That variant would have greater opaque serial depth, $\sim \textcolor{#e07b00}{L+T}$.
+> it is writing. That variant would have greater opaque serial depth, $\sim L+T$.
 
 On the [80,000 Hours podcast](https://80000hours.org/podcast/episodes/rohin-shah-google-deepmind-agi-safety/),
 Rohin Shah describes today's transformers as **wide but shallow**. A single forward pass
@@ -31,9 +31,9 @@ between them count.
 
 **Transformer (a).** An opaque path through the residual stream $\boldsymbol h^\ell_t$ can only go up
 or right. Every attention edge also climbs a layer, so a path has at most $L$ steps, each
-costing $O(\log T + \log D)$:
+costing $\textcolor{gray}{O(\log T + \log D)}$:
 
-$$\text{depth} = O\big(L(\log T + \log D)\big).$$
+$$\text{depth} = O\big(L\,\textcolor{gray}{(\log T + \log D)}\big).$$
 
 So a longer context barely helps. The only edge back down to layer 0 runs through a
 sampled token. Hence **any computation in (a) that needs more serial depth than one
@@ -42,13 +42,13 @@ might be obfuscated)**. Those tokens may be compressed or steganographic, but th
 through a channel we can see.
 
 **Recurrence (b).** Let position $t$ read earlier positions *within* its own layer. Now a
-path can take $L$ steps up *and* $T$ steps right, $\sim \textcolor{#e07b00}{L+T}$ steps in total. The paper
-analyses RNN blocks, where each right step reads only $t-1$ and costs $O(\log D)$:
+path can take $L$ steps up *and* $T$ steps right, $\sim L+T$ steps in total. The paper
+analyses RNN blocks, where each right step reads only $t-1$ and costs $\textcolor{gray}{O(\log D)}$:
 
-$$\text{depth}_{\text{RNN}} = O\big((\textcolor{#e07b00}{L+T})\log D\big).$$
+$$\text{depth}_{\text{RNN}} = O\big((L+T)\,\textcolor{gray}{\log D}\big).$$
 
 Panel (b) and the code below use a hypothetical same-layer *attention* instead. Each of its
-steps still sums over up to $T$ positions, so its depth is $O\big((\textcolor{#e07b00}{L+T})(\log T+\log D)\big)$.
+steps still sums over up to $T$ positions, so its depth is $O\big((L+T)\,\textcolor{gray}{(\log T+\log D)}\big)$.
 Either way, $T$ now enters linearly.
 
 In code, take causal *linear* attention (no softmax),
