@@ -243,7 +243,7 @@ function hoverHTML(d){
   const op=d.open?(d.openness||"Open weights"):"Proprietary";
   const L=[`<b>${d.name}</b>`,`${d.creator||"Other"} · ${op}`,`Intelligence Index: <b>${(+d.ii).toFixed(1)}</b>${est}`];
   if(d.ii_src) L.push(`<span style="color:var(--muted)">Converted from Epoch ECI (linear fit, n=${d.ii_fit.n}, R²=${d.ii_fit.r2})</span>`);
-  if(d.cost!=null)  L.push(`Cost to run AAII: <b>${fmtUSD(d.cost)}</b>`);
+  if(d.cost!=null)  L.push(`Cost to run AAII: <b>${fmtUSD(d.cost)}</b>`+(d.cost_est?` <i>(est. from price, ±2.4×)</i>`:''));
   if(d.price!=null) L.push(`Price: <b>${fmtUSD(d.price)}/M</b>`+(d.price_in!=null?` <span style="color:var(--muted)">(in ${fmtUSD(d.price_in)} / out ${fmtUSD(d.price_out)})</span>`:''));
   if(d.speed!=null) L.push(`Output speed: <b>${(+d.speed).toFixed(0)} tok/s</b>`);
   if(d.ttft!=null)  L.push(`Latency (TTFT): <b>${d.ttft}s</b>`);

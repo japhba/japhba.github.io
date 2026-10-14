@@ -207,6 +207,54 @@ async function openRouterInfo(models) {
   console.log(`openrouter: ${hits}/${models.length} converted models matched`);
 }
 
+// Cost to run the Intelligence Index for models AA does not price. Fit
+// log(cost) on log(blended price) and intelligence over AA's own models, then
+// apply it to converted models that have an OpenRouter price. Estimates are
+// flagged cost_est; typical error is about 2.4x either way.
+function fitCost(aaModels) {
+  const rows = aaModels.filter((m) => m.cost != null && m.price != null && m.ii != null && !m.ii_src);
+  const X = rows.map((m) => [1, Math.log(m.price), m.ii]), y = rows.map((m) => Math.log(m.cost));
+  const k = 3, n = X.length;
+  const A = Array.from({ length: k }, () => Array(k).fill(0)), B = Array(k).fill(0);
+  for (let i = 0; i < n; i++)
+    for (let p = 0; p < k; p++) {
+      B[p] += X[i][p] * y[i];
+      for (let q = 0; q < k; q++) A[p][q] += X[i][p] * X[i][q];
+    }
+  // Gauss-Jordan elimination on the normal equations
+  for (let i = 0; i < k; i++) {
+    const piv = A[i][i];
+    for (let j = i; j < k; j++) A[i][j] /= piv;
+    B[i] /= piv;
+    for (let r = 0; r < k; r++)
+      if (r !== i) {
+        const f = A[r][i];
+        for (let j = i; j < k; j++) A[r][j] -= f * A[i][j];
+        B[r] -= f * B[i];
+      }
+  }
+  const beta = B;
+  const pred = X.map((x) => x[0] * beta[0] + x[1] * beta[1] + x[2] * beta[2]);
+  const my = y.reduce((a, b) => a + b, 0) / n;
+  const sst = y.reduce((s, v) => s + (v - my) ** 2, 0);
+  const sse = y.reduce((s, v, i) => s + (v - pred[i]) ** 2, 0);
+  return { beta, n, r2: +(1 - sse / sst).toFixed(3) };
+}
+
+function estimateCost(converted, aaModels) {
+  const fit = fitCost(aaModels);
+  let n = 0;
+  for (const m of converted) {
+    if (m.cost != null || m.price == null || m.ii == null) continue;
+    const [b0, b1, b2] = fit.beta;
+    m.cost = Math.round(Math.exp(b0 + b1 * Math.log(m.price) + b2 * m.ii) * 100) / 100;
+    m.cost_est = true;
+    m.cost_fit = { n: fit.n, r2: fit.r2 };
+    n++;
+  }
+  console.log(`cost fit: n=${fit.n}, r2=${fit.r2}, estimated=${n}`);
+}
+
 function extractFlight(html) {
   const re = /self\.__next_f\.push\(\[\d+,\s*("(?:[^"\\]|\\.)*")\]\)/g;
   let out = "";
@@ -375,6 +423,7 @@ async function main() {
   } catch (e) {
     console.log("openrouter lookup skipped:", e.message || e);
   }
+  if (converted.length) estimateCost(converted, all);
   all.push(...converted);
 
   // Same plottability gate as the old function: needs intelligence plus at least
