@@ -89,6 +89,124 @@ function trim(m) {
   };
 }
 
+// --- Epoch AI Capabilities Index (ECI) -> AA intelligence conversion --------
+// Epoch scores many models AA does not track. We fit a linear map from ECI to
+// AA's index on the models both sources score, then convert the Epoch-only
+// models. Converted rows are flagged (ii_est + ii_src) so the page can say so.
+const EPOCH_ECI = "https://epoch.ai/data/eci_scores.csv";
+const OPENROUTER = "https://openrouter.ai/api/v1/models";
+const MIN_FIT_N = 30;
+
+const normName = (s) => (s || "").toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z0-9]/g, "");
+
+// Minimal CSV reader that honours double-quoted fields.
+function parseCsv(text) {
+  const rows = [];
+  let row = [], field = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') q = false;
+      else field += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(field); field = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(field); field = "";
+      if (row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+    } else field += c;
+  }
+  if (field !== "" || row.length) { row.push(field); rows.push(row); }
+  return rows;
+}
+
+function fitLinear(xs, ys) {
+  const n = xs.length, mx = xs.reduce((a, b) => a + b, 0) / n, my = ys.reduce((a, b) => a + b, 0) / n;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i < n; i++) {
+    sxy += (xs[i] - mx) * (ys[i] - my); sxx += (xs[i] - mx) ** 2; syy += (ys[i] - my) ** 2;
+  }
+  const b = sxy / sxx, a = my - b * mx;
+  return { a, b, r2: (sxy * sxy) / (sxx * syy), n };
+}
+
+// Epoch rows with no AA counterpart, converted to AA-scale intelligence.
+async function epochConverted(aaModels) {
+  const res = await fetch(EPOCH_ECI, { headers: { "User-Agent": UA } });
+  if (!res.ok) throw new Error("epoch " + res.status);
+  const [head, ...body] = parseCsv(await res.text());
+  const col = (name) => head.indexOf(name);
+  const iName = col("Display name"), iEci = col("eci"), iOrg = col("Organization"),
+    iDate = col("date"), iGroup = col("Accessibility group");
+
+  // one Epoch row per base model; keep the highest score if a name repeats
+  const eci = new Map();
+  for (const f of body) {
+    const score = parseFloat(f[iEci]), key = normName(f[iName]);
+    if (!key || isNaN(score)) continue;
+    if (!eci.has(key) || score > eci.get(key).score) eci.set(key, { row: f, score });
+  }
+  // AA: best-effort variant per base model (Epoch scores the strongest setting)
+  const best = new Map(), aaKeys = new Set();
+  for (const m of aaModels) {
+    const k = normName(m.name); aaKeys.add(k);
+    if (m.ii != null && (!best.has(k) || m.ii > best.get(k).ii)) best.set(k, m);
+  }
+  const xs = [], ys = [];
+  for (const [k, e] of eci) { const m = best.get(k); if (m) { xs.push(e.score); ys.push(m.ii); } }
+  if (xs.length < MIN_FIT_N) throw new Error(`only ${xs.length} overlapping models for the fit`);
+  const fit = fitLinear(xs, ys);
+  const fitInfo = { n: fit.n, r2: +fit.r2.toFixed(3) };
+
+  const out = [];
+  for (const [k, e] of eci) {
+    if (aaKeys.has(k)) continue;
+    const f = e.row, ii = fit.a + fit.b * e.score;
+    out.push({
+      slug: "epoch-" + k, name: f[iName], creator: f[iOrg] || null,
+      params: null, active: null, ii: Math.round(ii * 100) / 100, ii_est: true,
+      ii_src: "epoch-eci", ii_fit: fitInfo,
+      open: f[iGroup] === "Open weights", openness: null, reasoning: false,
+      release: f[iDate] || null, gpqa: null, aime25: null, hle: null, mmlu_pro: null,
+      coding: null, agentic: null, license: null, url: null, speed: null, ttft: null,
+      price: null, price_in: null, price_out: null, cost: null, context: null, lcr: null,
+    });
+  }
+  console.log(`epoch fit: n=${fit.n}, r2=${fitInfo.r2}, converted=${out.length}`);
+  return out;
+}
+
+// Context window and per-token price for converted models, from OpenRouter's
+// public list (keys: normalised display name, and the id's model part).
+async function openRouterInfo(models) {
+  const res = await fetch(OPENROUTER, { headers: { "User-Agent": UA } });
+  if (!res.ok) throw new Error("openrouter " + res.status);
+  const byKey = new Map();
+  for (const m of (await res.json()).data || []) {
+    if (m.id.includes(":")) continue;             // skip :batch / :free variants
+    const p = m.pricing || {}, pin = parseFloat(p.prompt) * 1e6, pout = parseFloat(p.completion) * 1e6;
+    const info = {
+      context: num(m.context_length),
+      price_in: pin > 0 ? Math.round(pin * 1e4) / 1e4 : null,
+      price_out: pout > 0 ? Math.round(pout * 1e4) / 1e4 : null,
+      price: pin > 0 && pout > 0 ? Math.round(((3 * pin + pout) / 4) * 1e4) / 1e4 : null,
+    };
+    const after = (m.name || "").includes(":") ? m.name.split(":").slice(1).join(":") : m.name;
+    for (const key of [normName(after), normName(m.id.split("/").pop())]) {
+      if (key && !byKey.has(key)) byKey.set(key, info);
+    }
+  }
+  let hits = 0;
+  for (const m of models) {
+    const info = byKey.get(normName(m.name));
+    if (!info) continue;
+    Object.assign(m, info); hits++;
+  }
+  console.log(`openrouter: ${hits}/${models.length} converted models matched`);
+}
+
 function extractFlight(html) {
   const re = /self\.__next_f\.push\(\[\d+,\s*("(?:[^"\\]|\\.)*")\]\)/g;
   let out = "";
@@ -243,6 +361,21 @@ async function main() {
   }
 
   const all = [...bySlug.values()];
+
+  // Epoch-only models get an intelligence score by conversion; each step is
+  // best-effort so a failed fetch leaves the AA snapshot unchanged.
+  let converted = [];
+  try {
+    converted = await epochConverted(all);
+  } catch (e) {
+    console.log("epoch conversion skipped:", e.message || e);
+  }
+  try {
+    await openRouterInfo(converted);
+  } catch (e) {
+    console.log("openrouter lookup skipped:", e.message || e);
+  }
+  all.push(...converted);
 
   // Same plottability gate as the old function: needs intelligence plus at least
   // one quantitative axis. Each chart filters further client-side.
