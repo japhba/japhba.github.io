@@ -41,6 +41,19 @@
   .dis{opacity:.4}
   #stage{position:relative;width:100vw;height:calc(100vh - 122px)}
   #plot2d,#plot3d{position:absolute;inset:0}
+  #panels{position:absolute;inset:0;display:none;flex-direction:column;gap:6px;padding:6px}
+  #pchips{display:flex;flex-wrap:wrap;gap:6px;font-size:11.5px}
+  .chip{display:flex;gap:6px;align-items:center;cursor:pointer;user-select:none;white-space:nowrap;
+    border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+  .chip.off{opacity:.35}
+  .chip .sw{width:10px;height:10px;border-radius:50%;flex:none;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+  #pgrid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:6px}
+  .pane{position:relative;min-width:0;min-height:0;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .pane.empty::after{content:attr(data-msg);position:absolute;inset:0;display:flex;align-items:center;
+    justify-content:center;color:var(--muted);font-size:13px}
+  @media (max-width:760px){
+    #pgrid{grid-template-columns:1fr;grid-template-rows:none;grid-auto-rows:minmax(300px,auto);overflow:auto}
+  }
   #plot3d{display:none;touch-action:none}
   #plot3d canvas{display:block}
   #hint{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:var(--muted);font-size:15px;pointer-events:none}
@@ -64,10 +77,17 @@
   <a class="back" href="{{ "/misc/" | relLangURL }}">&larr; Misc</a>
   <h1>Intelligence&nbsp;vs&nbsp;Cost,&nbsp;Speed&nbsp;&amp;&nbsp;Price</h1>
   <span class="status" id="status">loading…</span>
-  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), <b>output&nbsp;speed</b>, <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), latency, size, <b>context&nbsp;window</b>, <b>long&#8209;context&nbsp;reasoning</b> (AA&#8209;LCR, the successor to needle&#8209;in&#8209;a&#8209;haystack) or <b>Agentic&nbsp;Index</b> (AA's composite score over tool&#8209;use and multi&#8209;step agentic tasks, e.g.&nbsp;τ&#8209;bench and Terminal&#8209;Bench). One axis &rarr; 2-D scatter; two axes &rarr; a WebGL 3-D scatter you can drag to orbit (scroll to zoom). The vertical (up) axis is Intelligence by default but can be set to any metric &mdash; e.g.&nbsp;context&nbsp;window &mdash; via the <b>Vertical</b> selector. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
+  <span class="sub">Artificial&nbsp;Analysis Intelligence&nbsp;Index against any one or two of: <b>cost</b> (USD to run the whole Intelligence&nbsp;Index eval), <b>output&nbsp;speed</b>, <b>price</b> (blended&nbsp;$/1M&nbsp;tokens), latency, size, <b>context&nbsp;window</b>, <b>long&#8209;context&nbsp;reasoning</b> (AA&#8209;LCR, the successor to needle&#8209;in&#8209;a&#8209;haystack) or <b>Agentic&nbsp;Index</b> (AA's composite score over tool&#8209;use and multi&#8209;step agentic tasks, e.g.&nbsp;τ&#8209;bench and Terminal&#8209;Bench). By default four panels show Intelligence against cost, params, speed and context; the <b>Explorer</b> view picks any combination. One axis &rarr; 2-D scatter; two axes &rarr; a WebGL 3-D scatter you can drag to orbit (scroll to zoom). The vertical (up) axis is Intelligence by default but can be set to any metric &mdash; e.g.&nbsp;context&nbsp;window &mdash; via the <b>Vertical</b> selector. Source: <a href="https://artificialanalysis.ai/models" target="_blank" rel="noopener">artificialanalysis.ai</a>.</span>
 </header>
 <div class="controls">
   <div class="group">
+    <span class="tag">View</span>
+    <select id="view" title="Panels: intelligence against four metrics. Explorer: choose the axes yourself">
+      <option value="panels" selected>Panels</option>
+      <option value="explore">Explorer</option>
+    </select>
+  </div>
+  <div class="group explore-only">
     <span class="tag">Axes</span>
     <label class="axis"><input type="checkbox" class="ax" value="cost" checked/><span>Cost&nbsp;($&nbsp;to&nbsp;run&nbsp;AAII)</span></label>
     <label class="axis"><input type="checkbox" class="ax" value="speed" checked/><span>Speed&nbsp;(tok/s)</span></label>
@@ -78,7 +98,7 @@
     <label class="axis"><input type="checkbox" class="ax" value="lcr"/><span>AA&#8209;LCR&nbsp;(%)</span></label>
     <label class="axis"><input type="checkbox" class="ax" value="agentic"/><span>Agentic&nbsp;Index</span></label>
   </div>
-  <div class="group">
+  <div class="group explore-only">
     <span class="tag">Vertical</span>
     <select id="vaxis" title="Which metric is the vertical (up) axis">
       <option value="ii" selected>Intelligence</option>
@@ -111,6 +131,10 @@
     <div id="tip"></div>
     <div id="legend"></div>
     <div id="orient"></div>
+  </div>
+  <div id="panels">
+    <div id="pchips"></div>
+    <div id="pgrid"></div>
   </div>
   <div id="hint">Tick one or two axes above to plot.</div>
 </div>
@@ -243,13 +267,14 @@ function axisSpec2d(k,log){
   if(useLog&&a.ticks){ s.tickvals=a.ticks.map(t=>t[0]); s.ticktext=a.ticks.map(t=>t[1]); }
   return s;
 }
-function build2d(xk,vk){
+// Draws one scatter into `el`. `compact` is the small-multiple style used by the
+// panels view: no legend, a title, smaller markers. Returns the number of models plotted.
+function scatter2d(el,xk,vk,compact){
   const log=$('logax').checked, dimOld=$('dimold').checked, showLabels=$('labels').checked;
   const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
   const q=$('search').value.trim().toLowerCase();
   let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&!hidden.has(d.creator||'Other')&&d[xk]!=null&&d[vk]!=null);
-  $('count').textContent=`${rows.length} models · 2-D`;
-  if(!rows.length){ Plotly.purge(p2); plotlyLive=false; return; }
+  if(!rows.length){ Plotly.purge(el); return 0; }
   const traces=[];
   for(const c of creators){
     const r=rows.filter(d=>(d.creator||"Other")===c); if(!r.length) continue;
@@ -257,7 +282,7 @@ function build2d(xk,vk){
       x:r.map(d=>d[xk]), y:r.map(d=>d[vk]), text:r.map(d=>d.name),
       textposition:'top center', textfont:{size:9,color:'#9aa6b2'},
       hovertemplate:r.map(d=>hoverHTML(d)+'<extra></extra>'),
-      marker:{ size:r.map(d=> q?(matchHit(d,q,c)?13:7):10), color:colorOf[c],
+      marker:{ size:r.map(d=> q?(matchHit(d,q,c)?13:7):(compact?7:10)), color:colorOf[c],
         symbol:r.map(d=>d.open?'circle':'diamond'),
         line:{width:r.map(d=>q&&matchHit(d,q,c)?2:0.6),color:r.map(d=>q&&matchHit(d,q,c)?'#fff':'rgba(0,0,0,.45)')},
         opacity:r.map(d=>{ let o=d.ii_est?0.55:0.95;
@@ -279,9 +304,42 @@ function build2d(xk,vk){
     xaxis:xa,yaxis:ya, uirevision:xk+'|'+vk,
     legend:{font:{size:11},bgcolor:'rgba(22,27,34,.6)',bordercolor:'#30363d',borderwidth:1,
       itemsizing:'constant',orientation:'v',x:1.005,y:1,xanchor:'left'},showlegend:true};
-  Plotly.react(p2,traces,layout,{responsive:true,displaylogo:false,
+  if(compact){
+    layout.margin={l:52,r:12,t:30,b:44}; layout.showlegend=false;
+    layout.title={text:`${AX[vk].short} vs ${AX[xk].short} · ${rows.length}`,x:0.01,xanchor:'left',font:{size:12}};
+  }
+  Plotly.react(el,traces,layout,{responsive:true,displaylogo:false,
     modeBarButtonsToRemove:['lasso2d','select2d'],scrollZoom:true});
-  plotlyLive=true;
+  return rows.length;
+}
+function build2d(xk,vk){
+  const n=scatter2d(p2,xk,vk,false);
+  $('count').textContent=`${n} models · 2-D`;
+  plotlyLive=n>0;
+}
+
+/* ============================ panels (default view) ============================ */
+// Small multiples: intelligence on the vertical axis against each of these.
+const PANELS=['cost','params','speed','context'];
+function buildPanels(){
+  const grid=$('pgrid');
+  if(!grid.childElementCount) grid.innerHTML=PANELS.map(k=>`<div class="pane" id="pane-${k}"></div>`).join('');
+  let total=0;
+  for(const xk of PANELS){
+    const el=$('pane-'+xk), n=scatter2d(el,xk,'ii',true);
+    total+=n;
+    el.classList.toggle('empty',!n);
+    el.dataset.msg=`No models with ${AX[xk].short} data`;
+  }
+  $('count').textContent=`${PANELS.length} panels · ${total} points`;
+}
+// Creator chips for the panels view; same click-to-hide state as the 3-D legend.
+function buildChips(){
+  const chips=$('pchips');
+  chips.innerHTML=[...new Set(DATA.map(d=>d.creator||'Other'))].sort().map(c=>
+    `<span class="chip ${hidden.has(c)?'off':''}" data-c="${c.replace(/"/g,'&quot;')}"><span class="sw" style="background:${colorOf[c]||'#8ab4f8'}"></span>${c}</span>`).join('');
+  chips.querySelectorAll('.chip').forEach(el=>el.onclick=()=>{
+    const c=el.dataset.c; if(hidden.has(c)) hidden.delete(c); else hidden.add(c); build(); });
 }
 
 /* ============================ 3-D (Three.js) ============================ */
@@ -595,7 +653,18 @@ function onMove(ev){
 
 /* ============================ router ============================ */
 let mode=null;
+let view=$('view').value;   // 'panels' (default) or 'explore'
+// The Axes and Vertical pickers only make sense for the explorer.
+function syncView(){ const ex=view==='explore';
+  document.querySelectorAll('.explore-only').forEach(el=>el.style.display=ex?'':'none'); }
 function build(){
+  if(view==='panels'){
+    mode='panels'; if(raf){ cancelAnimationFrame(raf); raf=0; }
+    $('hint').style.display='none'; p2.style.display='none'; p3.style.display='none';
+    legend.style.display='none'; orient.style.display='none'; tip.style.display='none';
+    $('panels').style.display='flex'; buildChips(); buildPanels(); return;
+  }
+  $('panels').style.display='none';
   const vk=vAxis();
   const axes=selectedAxes();   // floor axes, already excluding the vertical
   const m = axes.length>=2 ? '3d' : (axes.length===1 ? '2d' : 'none');
@@ -619,8 +688,10 @@ $('vaxis').addEventListener('change',()=>{ axSig=''; if(gAxes)gAxes.userData.fra
 $('falpha').addEventListener('input',()=>{ const v=parseFloat($('falpha').value);
   FILL.opacity=v; WIRE.opacity=Math.min(0.7,0.18+v*2); });  // live; the render loop picks it up
 let t; $('search').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(build,140);});
+$('view').addEventListener('change',()=>{ view=$('view').value; syncView(); build(); });
 $('reset').addEventListener('click',e=>{e.preventDefault(); $('search').value=''; hidden.clear();
   if(mode==='3d'){ resetCam(); } else if(mode==='2d'){ Plotly.relayout(p2,{'xaxis.autorange':true,'yaxis.autorange':true}); }
+  else if(mode==='panels'){ PANELS.forEach(k=>{ const el=$('pane-'+k); if(el.data) Plotly.relayout(el,{'xaxis.autorange':true,'yaxis.autorange':true}); }); }
   build();});
 window.addEventListener('resize',()=>{ if(mode==='2d')Plotly.Plots.resize(p2); else resize3(); });
 
@@ -629,6 +700,7 @@ function render(){ assignColors(); build(); }
 
 setStatus('snap','snapshot');
 syncVerticalUI();
+syncView();
 render();
 fetch(API,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(j=>{
   if(j&&Array.isArray(j.models)){
