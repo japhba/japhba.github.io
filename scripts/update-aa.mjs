@@ -18,7 +18,15 @@ const SRC = "https://artificialanalysis.ai/models";
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36";
 
-const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "data");
+// How many catalog slugs to try for the long tail, and the number of extra
+// models at which a probe counts as good enough to stop early.
+const PROBE_LIMIT = 5;
+const LONG_TAIL_GOOD = 100;
+// Reasoning-effort variants (e.g. "claude-opus-5-5-xhigh") serve only the
+// headline set, so they are never useful long-tail probes.
+const EFFORT_VARIANT = /-(minimal|low|medium|high|xhigh|max)$/;
+
+const DATA_DIR =join(dirname(fileURLToPath(import.meta.url)), "..", "data");
 
 const num = (x) => (typeof x === "number" && isFinite(x) ? x : null);
 const posnum = (x) => {
@@ -206,18 +214,31 @@ async function main() {
   // (any slug not already in the headline set) recovers the long tail; more
   // fetches turn up nothing new. Best-effort: fall back to headline-only if
   // it fails.
+  // Not every model page carries the shared table: variant pages such as
+  // "...-xhigh" embed only the headline set. So probe a few candidate slugs and
+  // keep the page that yields the most models, stopping once one adds a lot.
   const catalog = parseCatalog(flight);
-  const extraSlug = catalog
-    .map((m) => m.slug)
-    .find((s) => s && !bySlug.has(s));
+  const candidates = [
+    ...new Set(
+      catalog
+        .map((m) => m.slug)
+        .filter((s) => s && !bySlug.has(s) && !EFFORT_VARIANT.test(s))
+    ),
+  ].slice(0, PROBE_LIMIT);
   let longTail = 0;
-  if (extraSlug) {
+  for (const slug of candidates) {
     try {
-      const f = await fetchFlight(`${SRC}/${extraSlug}`);
-      for (const m of parseModels(f)) bySlug.set(m.slug, m);
-      longTail = bySlug.size - headline.length;
-    } catch {
-      /* headline-only fallback */
+      const f = await fetchFlight(`${SRC}/${slug}`);
+      const found = parseModels(f);
+      const added = found.filter((m) => !bySlug.has(m.slug)).length;
+      console.log(`probe ${slug}: ${found.length} models, ${added} new`);
+      if (added > longTail) {
+        for (const m of found) bySlug.set(m.slug, m);
+        longTail = added;
+      }
+      if (longTail >= LONG_TAIL_GOOD) break;
+    } catch (e) {
+      console.log(`probe ${slug} failed: ${e.message || e}`);
     }
   }
 
