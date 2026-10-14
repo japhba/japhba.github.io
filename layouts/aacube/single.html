@@ -352,13 +352,24 @@ function buildPanels(){
   }
   $('count').textContent=`${PANELS.length} panels · ${total} points`;
 }
+// Click toggles one creator. Alt/Option-click shows only that creator; alt-clicking
+// the only visible creator again shows all of them.
+function toggleCreator(c, isolate){
+  if(!isolate){ if(hidden.has(c)) hidden.delete(c); else hidden.add(c); }
+  else {
+    const present=[...new Set(DATA.map(d=>d.creator||'Other'))];
+    const alreadyOnly=!hidden.has(c) && present.every(x=>x===c||hidden.has(x));
+    hidden.clear();
+    if(!alreadyOnly) present.forEach(x=>{ if(x!==c) hidden.add(x); });
+  }
+  build();
+}
 // Creator chips for the panels view; same click-to-hide state as the 3-D legend.
 function buildChips(){
   const chips=$('pchips');
   chips.innerHTML=[...new Set(DATA.map(d=>d.creator||'Other'))].sort().map(c=>
-    `<span class="chip ${hidden.has(c)?'off':''}" data-c="${c.replace(/"/g,'&quot;')}"><span class="sw" style="background:${colorOf[c]||'#8ab4f8'}"></span>${c}</span>`).join('');
-  chips.querySelectorAll('.chip').forEach(el=>el.onclick=()=>{
-    const c=el.dataset.c; if(hidden.has(c)) hidden.delete(c); else hidden.add(c); build(); });
+    `<span class="chip ${hidden.has(c)?'off':''}" title="Click to toggle · Alt-click to show only this" data-c="${c.replace(/"/g,'&quot;')}"><span class="sw" style="background:${colorOf[c]||'#8ab4f8'}"></span>${c}</span>`).join('');
+  chips.querySelectorAll('.chip').forEach(el=>el.onclick=e=>toggleCreator(el.dataset.c, e.altKey));
 }
 
 /* ============================ 3-D (Three.js) ============================ */
@@ -646,11 +657,10 @@ function build3d(xk,yk,vk){
 function buildLegend(rows){
   const present=[...new Set(DATA.map(d=>d.creator||'Other'))].sort();
   legend.innerHTML='<div class="hd">Creators — click to toggle</div>'+
-    present.map(c=>`<div class="li ${hidden.has(c)?'off':''}" data-c="${c.replace(/"/g,'&quot;')}">
+    present.map(c=>`<div class="li ${hidden.has(c)?'off':''}" title="Click to toggle · Alt-click to show only this" data-c="${c.replace(/"/g,'&quot;')}">
       <span class="sw" style="background:${colorOf[c]||'#8ab4f8'}"></span>${c}</div>`).join('');
   legend.style.display='block';
-  legend.querySelectorAll('.li').forEach(el=>el.onclick=()=>{
-    const c=el.getAttribute('data-c'); if(hidden.has(c)) hidden.delete(c); else hidden.add(c); build(); });
+  legend.querySelectorAll('.li').forEach(el=>el.onclick=e=>toggleCreator(el.getAttribute('data-c'), e.altKey));
 }
 
 function onMove(ev){
