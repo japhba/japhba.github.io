@@ -2,52 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Book a meeting with Jan Bauer. Times are shown in your time zone.">
+  <!-- The booking page lives at janbauer.cc/meet; this keeps old links working. -->
   <title>Book a meeting · Jan Bauer</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./styles.css">
-  <script src="./config.js"></script>
-  <script type="module" src="./app.js"></script>
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://janbauer.cc/meet/">
+  <meta http-equiv="refresh" content="0; url=https://janbauer.cc/meet/">
+  <script>location.replace('https://janbauer.cc/meet/' + location.search + location.hash);</script>
 </head>
 <body>
-  <main class="page">
-    <div id="preview-note" class="preview-note" hidden>
-      <span>Preview: sample times only. Nothing is booked.</span>
-      <button id="demo-admin" class="text-button" type="button" hidden>Admin</button>
-    </div>
-    <header class="top">
-      <span class="brand">Jan Bauer</span>
-      <button id="admin-open" class="text-button" type="button">Admin</button>
-    </header>
-    <section id="booking-shell" class="card" aria-label="Book a meeting">
-      <aside class="info">
-        <p class="host">Jan Bauer</p>
-        <h1 class="info-title">Meeting</h1>
-        <p class="panel-copy muted"></p>
-        <div class="field">
-          <span class="field-label" id="duration-label">Duration</span>
-          <div id="duration-options" class="duration-options" role="group" aria-labelledby="duration-label"></div>
-        </div>
-        <div id="meeting-meta" class="meeting-meta"></div>
-      </aside>
-      <div class="content">
-        <div class="step-heading">
-          <span class="step-number" id="step-number" hidden></span>
-          <div>
-            <p class="step-eyebrow muted" id="step-eyebrow"></p>
-            <h2 id="step-title">Select a date and time</h2>
-          </div>
-          <span class="step-count muted" id="step-count"></span>
-        </div>
-        <div id="booking-content"></div>
-      </div>
-    </section>
-    <dialog id="admin-dialog" class="admin-dialog" aria-labelledby="admin-title">
-      <div id="admin-content"></div>
-    </dialog>
-    <div id="toast" class="toast" role="status" hidden></div>
-  </main>
+  <p>This page has moved to <a href="https://janbauer.cc/meet/">janbauer.cc/meet/</a>.</p>
 </body>
 </html>
