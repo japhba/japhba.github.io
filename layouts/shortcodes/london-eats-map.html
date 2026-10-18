@@ -1,6 +1,7 @@
 {{ $id := printf "london-eats-map-%d" (now.UnixNano) }}
 {{ $wrapId := printf "%s-wrap" $id }}
 {{ $legendId := printf "%s-legend" $id }}
+{{ $filterId := printf "%s-filter" $id }}
 {{ $statusId := printf "%s-status" $id }}
 {{ $fullscreen := lower (.Get "fullscreen" | default "false") }}
 {{ $isFullscreen := eq $fullscreen "true" }}
@@ -9,7 +10,6 @@
 {{ $siteMaps := .Site.Params.maps | default dict }}
 {{ $providerParam := .Get "provider" | default (index $pageMap "provider" | default "") }}
 {{ $googleKey := or (.Get "google_key") (index $pageMap "google_api_key") (getenv "HUGO_GOOGLE_MAPS_API_KEY") (index $siteMaps "google_api_key") }}
-{{ $googleMapId := or (.Get "google_map_id") (index $pageMap "google_map_id") (index $siteMaps "google_map_id") }}
 {{ $mapboxToken := or (.Get "mapbox_token") (index $pageMap "mapbox_token") (index $siteMaps "mapbox_token") }}
 {{ $mapboxStyle := or (.Get "mapbox_style") (index $pageMap "mapbox_style") (index $siteMaps "mapbox_style") "mapbox://styles/mapbox/streets-v12" }}
 {{ $datasetResource := .Page.Resources.GetMatch "restaurants.json" }}
@@ -28,10 +28,30 @@
   {{ $kmlList = $kmlList | append (dict "url" .RelPermalink "category" $category "label" $label) }}
 {{ end }}
 
-{{ $config := dict "provider" $providerParam "googleKey" $googleKey "googleMapId" $googleMapId "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle "datasetUrl" $datasetUrl }}
+{{ $config := dict "provider" $providerParam "googleKey" $googleKey "mapboxToken" $mapboxToken "mapboxStyle" $mapboxStyle "datasetUrl" $datasetUrl }}
 <div id="{{ $wrapId }}" class="london-eats-map-wrap{{ if $isFullscreen }} london-eats-fullscreen{{ end }}">
   <div id="{{ $id }}" class="london-eats-map" data-map-id="{{ $id }}">Loading map...</div>
   <div id="{{ $legendId }}" class="london-eats-legend" aria-live="polite"></div>
+  <form id="{{ $filterId }}" class="london-eats-filter" onsubmit="return false">
+    <label class="filter-title" for="{{ $filterId }}-day">Open on</label>
+    <select id="{{ $filterId }}-day">
+      <option value="">Any day</option>
+      <option value="1">Monday</option>
+      <option value="2">Tuesday</option>
+      <option value="3">Wednesday</option>
+      <option value="4">Thursday</option>
+      <option value="5">Friday</option>
+      <option value="6">Saturday</option>
+      <option value="0">Sunday</option>
+    </select>
+    <label class="filter-title" for="{{ $filterId }}-time">Open at</label>
+    <div class="filter-row">
+      <input type="time" id="{{ $filterId }}-time" />
+      <button type="button" id="{{ $filterId }}-clear">Clear</button>
+    </div>
+    <div class="filter-count" aria-live="polite"></div>
+    <div class="filter-note">Places without listed hours are hidden while filtering.</div>
+  </form>
   <div id="{{ $statusId }}" class="london-eats-status" role="status" aria-live="polite"></div>
 </div>
 
@@ -65,7 +85,7 @@
     width: 100%;
     border-radius: 18px;
     overflow: hidden;
-    background: linear-gradient(135deg, #f5f1ea 0%, #efe7da 100%);
+    background: #e8e8e8;
     box-shadow: 0 16px 40px rgba(26, 26, 26, 0.18);
   }
 
@@ -89,6 +109,73 @@
     backdrop-filter: blur(6px);
     max-width: 200px;
     z-index: 2;
+  }
+
+  #{{ $wrapId }} .london-eats-filter {
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    width: 200px;
+    box-sizing: border-box;
+    display: grid;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(15, 15, 15, 0.1);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.85rem;
+    box-shadow: 0 12px 24px rgba(15, 15, 15, 0.16);
+    backdrop-filter: blur(6px);
+    z-index: 2;
+  }
+
+  #{{ $wrapId }} .london-eats-filter .filter-title {
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  #{{ $wrapId }} .london-eats-filter .filter-title:first-child {
+    margin-top: 0;
+  }
+
+  #{{ $wrapId }} .london-eats-filter select,
+  #{{ $wrapId }} .london-eats-filter input[type="time"] {
+    font: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 6px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  #{{ $wrapId }} .london-eats-filter .filter-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  #{{ $wrapId }} .london-eats-filter .filter-row input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #{{ $wrapId }} .london-eats-filter button {
+    font: inherit;
+    padding: 4px 8px;
+    border: 1px solid #bbb;
+    border-radius: 8px;
+    background: #fff;
+    cursor: pointer;
+  }
+
+  #{{ $wrapId }} .london-eats-filter .filter-count {
+    font-weight: 600;
+  }
+
+  #{{ $wrapId }} .london-eats-filter .filter-note {
+    font-size: 0.72rem;
+    color: #555;
+    line-height: 1.3;
   }
 
   #{{ $wrapId }} .legend-title {
@@ -163,6 +250,14 @@
       max-width: 160px;
     }
 
+    #{{ $wrapId }} .london-eats-filter {
+      left: 10px;
+      top: 10px;
+      width: 160px;
+      font-size: 0.78rem;
+      padding: 10px;
+    }
+
     #{{ $wrapId }} .london-eats-status {
       left: 10px;
       bottom: 10px;
@@ -179,6 +274,18 @@
     const mapEl = document.getElementById(mapId);
     const legendEl = document.getElementById(legendId);
     const statusEl = document.getElementById(statusId);
+    const filterDayEl = document.getElementById("{{ $filterId }}-day");
+    const filterTimeEl = document.getElementById("{{ $filterId }}-time");
+    const filterClearEl = document.getElementById("{{ $filterId }}-clear");
+    const filterCountEl = document.querySelector("#{{ $filterId }} .filter-count");
+
+    const GRAYSCALE_STYLE = [
+      { elementType: "all", stylers: [{ saturation: -100 }] },
+      { featureType: "poi", stylers: [{ visibility: "off" }] },
+      { featureType: "transit", stylers: [{ visibility: "off" }] }
+    ];
+
+    const markerEntries = [];
 
     if (!mapEl) return;
 
@@ -523,10 +630,17 @@
           buildPlaceCard(point, place)
         );
 
-        new window.mapboxgl.Marker({ element: content })
+        const marker = new window.mapboxgl.Marker({ element: content })
           .setLngLat([point.lng, point.lat])
           .setPopup(popup)
           .addTo(map);
+
+        markerEntries.push({
+          hours: place && place.opening_hours ? place.opening_hours : null,
+          setVisible: (visible) => {
+            marker.getElement().style.display = visible ? "" : "none";
+          }
+        });
 
         bounds.extend([point.lng, point.lat]);
       });
@@ -537,22 +651,75 @@
 
       renderLegend(usedCategories);
       clearStatus();
+      applyFilter();
+    };
+
+    const toMinutes = (hhmm) =>
+      parseInt(hhmm.slice(0, 2), 10) * 60 + parseInt(hhmm.slice(2, 4), 10);
+    const WEEK = 7 * 24 * 60;
+
+    // Google day numbers: 0 = Sunday ... 6 = Saturday; times are "HHMM".
+    const periodBounds = (period) => {
+      const start = period.open.day * 1440 + toMinutes(period.open.time);
+      let end = period.close
+        ? period.close.day * 1440 + toMinutes(period.close.time)
+        : start + WEEK;
+      if (end <= start) end += WEEK;
+      return { start, end };
+    };
+
+    // day: 0-6 or null (any day); minute: minutes after midnight or null (any time).
+    const isOpenAt = (hours, day, minute) => {
+      if (!hours || !Array.isArray(hours.periods)) return false;
+
+      const days = day === null ? [0, 1, 2, 3, 4, 5, 6] : [day];
+      const windows = days.map((d) =>
+        minute === null
+          ? [d * 1440, (d + 1) * 1440]
+          : [d * 1440 + minute, d * 1440 + minute + 1]
+      );
+
+      return hours.periods.some((period) => {
+        if (!period || !period.open) return false;
+        const { start, end } = periodBounds(period);
+        return windows.some(([wStart, wEnd]) =>
+          [-WEEK, 0, WEEK].some((shift) => start + shift < wEnd && end + shift > wStart)
+        );
+      });
+    };
+
+    const readFilter = () => {
+      const dayValue = filterDayEl ? filterDayEl.value : "";
+      const timeValue = filterTimeEl ? filterTimeEl.value : "";
+      const day = dayValue === "" ? null : Number(dayValue);
+      const minute = timeValue ? toMinutes(timeValue.replace(":", "")) : null;
+      return { day, minute, active: day !== null || minute !== null };
+    };
+
+    const applyFilter = () => {
+      const { day, minute, active } = readFilter();
+      let shown = 0;
+
+      markerEntries.forEach((entry) => {
+        const visible = !active || isOpenAt(entry.hours, day, minute);
+        entry.setVisible(visible);
+        if (visible) shown += 1;
+      });
+
+      if (filterCountEl) {
+        filterCountEl.textContent = active
+          ? `Showing ${shown} of ${markerEntries.length} places`
+          : `${markerEntries.length} places`;
+      }
     };
 
     const initGoogle = ({ points, placeIndex, usedCategories }) => {
-      const mapOptions = {
+      const map = new window.google.maps.Map(mapEl, {
         center: { lat: 51.5074, lng: -0.1278 },
-        zoom: 12
-      };
-
-      if (mapConfig.googleMapId) {
-        mapOptions.mapId = mapConfig.googleMapId;
-      }
-
-      const map = new window.google.maps.Map(mapEl, mapOptions);
+        zoom: 12,
+        styles: GRAYSCALE_STYLE
+      });
       const bounds = new window.google.maps.LatLngBounds();
-      const AdvancedMarker =
-        window.google.maps.marker && window.google.maps.marker.AdvancedMarkerElement;
 
       points.forEach((point) => {
         const place = placeForPoint(point, placeIndex);
@@ -561,29 +728,21 @@
           content: buildPlaceCard(point, place)
         });
 
-        if (AdvancedMarker) {
-          const marker = new AdvancedMarker({
-            map,
-            position: { lat: point.lat, lng: point.lng },
-            content: createMarkerContent(info.emoji, formatRating(place))
-          });
+        const marker = new window.google.maps.Marker({
+          map,
+          position: { lat: point.lat, lng: point.lng },
+          label: info.emoji,
+          title: point.name
+        });
 
-          marker.addListener("gmp-click", () => {
-            infoWindow.open({ anchor: marker, map });
-          });
-        } else {
-          const marker = new window.google.maps.Marker({
-            map,
-            position: { lat: point.lat, lng: point.lng },
-            label: info.emoji,
-            title: point.name
-          });
+        marker.addListener("click", () => {
+          infoWindow.open({ anchor: marker, map });
+        });
 
-          marker.addListener("click", () => {
-            infoWindow.open({ anchor: marker, map });
-          });
-        }
-
+        markerEntries.push({
+          hours: place && place.opening_hours ? place.opening_hours : null,
+          setVisible: (visible) => marker.setVisible(visible)
+        });
         bounds.extend({ lat: point.lat, lng: point.lng });
       });
 
@@ -593,6 +752,7 @@
 
       renderLegend(usedCategories);
       clearStatus();
+      applyFilter();
     };
 
     const loadMapData = async () => {
@@ -650,6 +810,16 @@
         reportStatus(error.message || "Map failed to load.");
       }
     };
+
+    if (filterDayEl) filterDayEl.addEventListener("change", applyFilter);
+    if (filterTimeEl) filterTimeEl.addEventListener("input", applyFilter);
+    if (filterClearEl) {
+      filterClearEl.addEventListener("click", () => {
+        if (filterDayEl) filterDayEl.value = "";
+        if (filterTimeEl) filterTimeEl.value = "";
+        applyFilter();
+      });
+    }
 
     run();
   })();

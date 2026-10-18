@@ -8,6 +8,8 @@ lastmod: '2024-10-22T00:00:00Z'
 
 layout: london-eats
 
+url: /london-eats/
+
 draft: false
 featured: false
 share: false

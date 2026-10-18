@@ -138,7 +138,7 @@ const fetchPlaceDetails = async (placeId, apiKey) => {
   url.searchParams.set("place_id", placeId);
   url.searchParams.set(
     "fields",
-    "place_id,name,formatted_address,rating,user_ratings_total,website,url"
+    "place_id,name,formatted_address,rating,user_ratings_total,website,url,opening_hours"
   );
   url.searchParams.set("language", "en");
   url.searchParams.set("key", apiKey);
@@ -279,6 +279,22 @@ const createCdpClient = async (webSocketUrl) => {
   };
 };
 
+const serializeOpeningHours = (hours) => {
+  if (!hours || !Array.isArray(hours.periods)) return null;
+
+  const periods = hours.periods
+    .filter((period) => period && period.open && typeof period.open.day === "number")
+    .map((period) => ({
+      open: { day: period.open.day, time: String(period.open.time || "0000") },
+      close:
+        period.close && typeof period.close.day === "number"
+          ? { day: period.close.day, time: String(period.close.time || "0000") }
+          : null
+    }));
+
+  return { periods };
+};
+
 const serializePlaceDetails = (place) => {
   if (!place) return null;
 
@@ -290,7 +306,8 @@ const serializePlaceDetails = (place) => {
     user_ratings_total:
       typeof place.user_ratings_total === "number" ? place.user_ratings_total : null,
     website: place.website || "",
-    url: place.url || ""
+    url: place.url || "",
+    opening_hours: serializeOpeningHours(place.opening_hours)
   };
 };
 
@@ -428,7 +445,20 @@ const runBrowserPlaceLookup = async (points, apiKey, baseUrl) => {
           user_ratings_total:
             typeof place.user_ratings_total === "number" ? place.user_ratings_total : null,
           website: place.website || "",
-          url: place.url || ""
+          url: place.url || "",
+          opening_hours: place.opening_hours && Array.isArray(place.opening_hours.periods)
+            ? {
+                periods: place.opening_hours.periods
+                  .filter((period) => period && period.open && typeof period.open.day === "number")
+                  .map((period) => ({
+                    open: { day: period.open.day, time: String(period.open.time || "0000") },
+                    close:
+                      period.close && typeof period.close.day === "number"
+                        ? { day: period.close.day, time: String(period.close.time || "0000") }
+                        : null
+                  }))
+              }
+            : null
         };
       };
 
@@ -474,7 +504,8 @@ const runBrowserPlaceLookup = async (points, apiKey, baseUrl) => {
                 "rating",
                 "user_ratings_total",
                 "website",
-                "url"
+                "url",
+                "opening_hours"
               ]
             },
             (detail, status) => {
