@@ -587,6 +587,54 @@
       return wrapper;
     };
 
+    const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+    const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    const formatClock = (hhmm) => `${hhmm.slice(0, 2)}:${hhmm.slice(2, 4)}`;
+
+    const weeklyHours = (hours) => {
+      if (!hours || !Array.isArray(hours.periods) || !hours.periods.length) return null;
+
+      const byDay = Array.from({ length: 7 }, () => []);
+      let alwaysOpen = false;
+
+      hours.periods.forEach((period) => {
+        if (!period || !period.open) return;
+        if (!period.close) {
+          alwaysOpen = true;
+          return;
+        }
+        const range = `${formatClock(period.open.time)}–${formatClock(period.close.time)}`;
+        byDay[period.open.day].push(range);
+      });
+
+      return DAY_ORDER.map((day) => ({
+        day,
+        text: alwaysOpen ? "Open 24 hours" : byDay[day].length ? byDay[day].join(", ") : "Closed"
+      }));
+    };
+
+    const openStatus = (hours) => {
+      if (!hours || !Array.isArray(hours.periods) || !hours.periods.length) return "";
+      const now = new Date();
+      const open = isOpenAt(hours, now.getDay(), now.getHours() * 60 + now.getMinutes());
+      const color = open ? "#1b7f3b" : "#9b2c2c";
+      return `<span style="color:${color};font-weight:600">${open ? "Open now" : "Closed now"}</span>`;
+    };
+
+    const hoursTable = (hours) => {
+      const rows = weeklyHours(hours);
+      if (!rows) return "";
+      const today = new Date().getDay();
+      const body = rows
+        .map(
+          (row) =>
+            `<tr style="${row.day === today ? "font-weight:700" : ""}"><td style="padding:1px 10px 1px 0">${DAY_NAMES[row.day]}</td><td style="padding:1px 0">${row.text}</td></tr>`
+        )
+        .join("");
+      return `<details style="margin-top:6px"><summary style="cursor:pointer">Opening hours</summary><table style="margin-top:4px;font-size:0.85em;border-collapse:collapse">${body}</table></details>`;
+    };
+
     const buildPlaceCard = (point, place) => {
       const displayName = place && place.name ? place.name : point.name;
       const displayAddress =
@@ -596,19 +644,26 @@
         place && typeof place.user_ratings_total === "number"
           ? ` (${place.user_ratings_total})`
           : "";
+      const category = categoryInfo(point.category).label;
+      const status = openStatus(place && place.opening_hours);
       const website =
         place && place.website
-          ? `<a href="${place.website}" target="_blank" rel="noopener">Website</a>`
+          ? `<a href="${escapeHtml(place.website)}" target="_blank" rel="noopener">Website</a>`
           : "";
       const mapsLink =
         place && place.url
-          ? `<a href="${place.url}" target="_blank" rel="noopener">Open in Maps</a>`
+          ? `<a href="${escapeHtml(place.url)}" target="_blank" rel="noopener">Open in Maps</a>`
           : "";
       const links = [website, mapsLink].filter(Boolean).join(" · ");
+      const hours = place && place.opening_hours ? hoursTable(place.opening_hours) : "";
 
-      return `<div><strong>${escapeHtml(displayName)}</strong>${
-        displayAddress ? `<div>${escapeHtml(displayAddress)}</div>` : ""
-      }${rating ? `<div>Rating: ${rating}${count}</div>` : ""}${links ? `<div>${links}</div>` : ""}</div>`;
+      return `<div style="min-width:200px;line-height:1.4"><strong>${escapeHtml(displayName)}</strong>${
+        category ? `<div style="color:#555">${escapeHtml(category)}</div>` : ""
+      }${displayAddress ? `<div>${escapeHtml(displayAddress)}</div>` : ""}${
+        rating ? `<div>★ ${rating}${count}</div>` : ""
+      }${status ? `<div>${status}</div>` : ""}${hours}${
+        links ? `<div style="margin-top:6px">${links}</div>` : ""
+      }</div>`;
     };
 
     const initMapbox = ({ points, placeIndex, usedCategories }) => {
