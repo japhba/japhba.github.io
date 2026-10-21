@@ -121,7 +121,7 @@
   <label id="lab-falpha">Frontier&nbsp;α <input type="range" id="falpha" min="0" max="0.6" step="0.01" value="0.16"/></label>
   <label id="lab-stems"><input type="checkbox" id="stems" checked/> Stems&nbsp;(3-D)</label>
   <label><input type="checkbox" id="labels"/> Labels</label>
-  <label><input type="checkbox" id="hideest"/> Hide&nbsp;estimated</label>
+  <label><input type="checkbox" id="hideest"/> Fade&nbsp;estimated</label>
   <label><input type="checkbox" id="openonly"/> Open&nbsp;weights&nbsp;only</label>
   <label><input type="checkbox" id="dimold"/> Emphasize&nbsp;recent</label>
   <span class="spacer"></span>
@@ -188,6 +188,11 @@ function assignColors(){
   for(const c of creators){ colorOf[c]=BRAND[c]||PALETTE[pi++%PALETTE.length]; }
 }
 const hidden=new Set();   // creators toggled off via the legend
+// Filters and search fade models to this opacity instead of removing them.
+const FADE=0.12;
+// Predicate for models that pass the filters (legend toggles, open-only, estimated).
+function activeTest(){ const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
+  return d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&!hidden.has(d.creator||'Other'); }
 
 // Plot colours for light and dark. `T` follows the system setting, and the CSS
 // tokens in <style> follow the same media query. Changes re-render on the fly.
@@ -287,29 +292,32 @@ function axisSpec2d(k,log){
   return s;
 }
 // Draws one scatter into `el`. `compact` is the small-multiple style used by the
-// panels view: no legend, a title, smaller markers. Returns the number of models plotted.
+// panels view: no legend, a title, smaller markers. Models that fail the filters or
+// the search are drawn faded. Returns {all: models plotted, n: of those not filtered out}.
 function scatter2d(el,xk,vk,compact){
   const log=$('logax').checked, dimOld=$('dimold').checked, showLabels=$('labels').checked;
-  const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
-  const q=$('search').value.trim().toLowerCase();
-  let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&!hidden.has(d.creator||'Other')&&d[xk]!=null&&d[vk]!=null);
-  if(!rows.length){ Plotly.purge(el); return 0; }
+  const q=$('search').value.trim().toLowerCase(), on=activeTest();
+  const rows=DATA.filter(d=>d[xk]!=null&&d[vk]!=null);
+  if(!rows.length){ Plotly.purge(el); return {all:0,n:0}; }
+  const active=rows.filter(on);
   const traces=[];
   for(const c of creators){
-    const r=rows.filter(d=>(d.creator||"Other")===c); if(!r.length) continue;
+    const hit=d=>on(d)&&(!q||matchHit(d,q,c));
+    const r=rows.filter(d=>(d.creator||"Other")===c).sort((a,b)=>hit(a)-hit(b)); if(!r.length) continue;  // faded drawn underneath
     traces.push({type:'scattergl', mode:showLabels?'markers+text':'markers', name:c,
-      x:r.map(d=>d[xk]), y:r.map(d=>d[vk]), text:r.map(d=>d.name),
+      x:r.map(d=>d[xk]), y:r.map(d=>d[vk]), text:r.map(d=>hit(d)?d.name:''),
       textposition:'top center', textfont:{size:9,color:T.label},
       hovertemplate:r.map(d=>hoverHTML(d)+'<extra></extra>'),
-      marker:{ size:r.map(d=> q?(matchHit(d,q,c)?13:7):(compact?7:10)), color:colorOf[c],
+      marker:{ size:r.map(d=> q&&hit(d)?13:(q||!on(d)?7:(compact?7:10))), color:colorOf[c],
         symbol:r.map(d=>d.open?'circle':'diamond'),
-        line:{width:r.map(d=>q&&matchHit(d,q,c)?2:0.6),color:r.map(d=>q&&matchHit(d,q,c)?T.hiOutline:T.outline)},
-        opacity:r.map(d=>{ let o=d.ii_est?0.55:0.95;
+        line:{width:r.map(d=>q&&hit(d)?2:0.6),color:r.map(d=>q&&hit(d)?T.hiOutline:T.outline)},
+        opacity:r.map(d=>{ if(!hit(d)) return FADE;
+          let o=d.ii_est?0.55:0.95;
           if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) o*=0.4; }
-          if(q) o=matchHit(d,q,c)?1:0.12; return o; }) }});
+          return q?1:o; }) }});
   }
-  if($('frontier').checked&&rows.length){
-    const fr=frontier2d(rows,xk,vk);
+  if($('frontier').checked&&active.length){
+    const fr=frontier2d(active,xk,vk);
     traces.push({type:'scatter',mode:'lines',name:AX[xk].short+'/'+AX[vk].short+' frontier',
       x:fr.map(d=>d[xk]),y:fr.map(d=>d[vk]),
       line:{color:T.frontier,width:1.5,dash:'dot',shape:'hv'},hoverinfo:'skip',showlegend:true});
@@ -325,16 +333,16 @@ function scatter2d(el,xk,vk,compact){
       itemsizing:'constant',orientation:'v',x:1.005,y:1,xanchor:'left'},showlegend:true};
   if(compact){
     layout.margin={l:52,r:12,t:30,b:44}; layout.showlegend=false;
-    layout.title={text:`${AX[vk].short} vs ${AX[xk].short} · ${rows.length}`,x:0.01,xanchor:'left',font:{size:12}};
+    layout.title={text:`${AX[vk].short} vs ${AX[xk].short} · ${active.length}`,x:0.01,xanchor:'left',font:{size:12}};
   }
   Plotly.react(el,traces,layout,{responsive:true,displaylogo:false,
     modeBarButtonsToRemove:['lasso2d','select2d'],scrollZoom:true});
-  return rows.length;
+  return {all:rows.length, n:active.length};
 }
 function build2d(xk,vk){
-  const n=scatter2d(p2,xk,vk,false);
+  const {all,n}=scatter2d(p2,xk,vk,false);
   $('count').textContent=`${n} models · 2-D`;
-  plotlyLive=n>0;
+  plotlyLive=all>0;
 }
 
 /* ============================ panels (default view) ============================ */
@@ -345,9 +353,9 @@ function buildPanels(){
   if(!grid.childElementCount) grid.innerHTML=PANELS.map(k=>`<div class="pane" id="pane-${k}"></div>`).join('');
   let total=0;
   for(const xk of PANELS){
-    const el=$('pane-'+xk), n=scatter2d(el,xk,'ii',true);
+    const el=$('pane-'+xk), {all,n}=scatter2d(el,xk,'ii',true);
     total+=n;
-    el.classList.toggle('empty',!n);
+    el.classList.toggle('empty',!all);
     el.dataset.msg=`No models with ${AX[xk].short} data`;
   }
   $('count').textContent=`${PANELS.length} panels · ${total} points`;
@@ -568,12 +576,13 @@ function build3d(xk,yk,vk){
   FILL.color.set(T.fill); FILL.emissive.set(T.fillEm); WIRE.color.set(T.wire);
   const log=$('logax').checked, dimOld=$('dimold').checked, showStems=$('stems').checked;
   const showFront=$('frontier').checked, showLabels=$('labels').checked;
-  const hideEst=$('hideest').checked, openOnly=$('openonly').checked;
-  const q=$('search').value.trim().toLowerCase();
+  const q=$('search').value.trim().toLowerCase(), on=activeTest();
+  const hit=d=>on(d)&&(!q||matchHit(d,q,d.creator));
 
-  let rows=DATA.filter(d=>!(hideEst&&d.ii_est)&&!(openOnly&&!d.open)&&!hidden.has(d.creator||'Other')
-    &&d[xk]!=null&&d[yk]!=null&&d[vk]!=null);
+  // Faded models go last in the buffer, so their depth writes can't hide highlighted ones.
+  const rows=DATA.filter(d=>d[xk]!=null&&d[yk]!=null&&d[vk]!=null).sort((a,b)=>hit(b)-hit(a));
   if(!rows.length){ disposeGroup(gData); $('count').textContent='0 models'; buildLegend(rows); if(!raf)loop(); return; }
+  const active=rows.filter(on);
 
   const dx=domain(rows,xk), dy=domain(rows,yk), dz=domain(rows,vk);
   const pos=d=>[norm(d[xk],dx)*SPAN, norm(d[vk],dz)*SPAN, norm(d[yk],dy)*SPAN];
@@ -583,8 +592,8 @@ function build3d(xk,yk,vk){
   if(sig!==axSig){ disposeGroup(gAxes); gAxes.add(buildAxes(dx,dy,dz,xk,yk,vk)); axSig=sig; if(!gAxes.userData.framed){resetCam();gAxes.userData.framed=true;} }
 
   disposeGroup(gData);
-  const paretoOn=showFront&&rows.length>2;
-  const pset=paretoOn?new Set(paretoSet(rows,[xk,yk,vk])):new Set();
+  const paretoOn=showFront&&active.length>2;
+  const pset=paretoOn?new Set(paretoSet(active,[xk,yk,vk])):new Set();
 
   // main point cloud
   const N=rows.length, P=new Float32Array(N*3), COL=new Float32Array(N*3), SZ=new Float32Array(N), AL=new Float32Array(N);
@@ -593,13 +602,13 @@ function build3d(xk,yk,vk){
   rows.forEach((d,i)=>{
     const p=pos(d); P[i*3]=p[0];P[i*3+1]=p[1];P[i*3+2]=p[2];
     col.set(colorOf[d.creator||'Other']||'#8ab4f8'); COL[i*3]=col.r;COL[i*3+1]=col.g;COL[i*3+2]=col.b;
-    let s=d.ii_est?1.9:2.4; if(pset.has(d)) s*=1.18; if(q&&matchHit(d,q,d.creator)) s*=1.5;
+    let s=d.ii_est?1.9:2.4; if(pset.has(d)) s*=1.18; if(q&&hit(d)) s*=1.5;
     SZ[i]=s;
     let a=d.ii_est?0.6:0.96;
     if(dimOld&&d.release){ const y=+d.release.slice(0,4); if(y<2025) a*=0.42; }
-    if(q) a=matchHit(d,q,d.creator)?1:0.1;
-    AL[i]=a;
-    if(showStems){ stemArr.push(p[0],0,p[2], p[0],p[1],p[2]); }
+    if(q) a=1;
+    AL[i]=hit(d)?a:FADE;
+    if(showStems&&on(d)){ stemArr.push(p[0],0,p[2], p[0],p[1],p[2]); }
     pickList.push({d, v:new THREE.Vector3(p[0],p[1],p[2])});
   });
   const geo=new THREE.BufferGeometry();
@@ -641,13 +650,13 @@ function build3d(xk,yk,vk){
   // labels: search hits, else Pareto points, else top-N along the vertical axis
   if(showLabels){
     const sV=AX[vk].goodLow?-1:1;
-    let labelRows = q ? rows.filter(d=>matchHit(d,q,d.creator))
-      : paretoOn ? [...pset] : [...rows].sort((a,b)=>sV*(b[vk]-a[vk])).slice(0,12);
+    let labelRows = q ? rows.filter(hit)
+      : paretoOn ? [...pset] : [...active].sort((a,b)=>sV*(b[vk]-a[vk])).slice(0,12);
     labelRows.slice(0,44).forEach(d=>{ const p=pos(d); const s=makeLabel(d.name,T.hi,34,600);
       s.position.set(p[0],p[1]+3.2,p[2]); gData.add(s); });
   }
 
-  $('count').textContent=`${N} models · 3-D`+(paretoOn?` · ${pset.size} on frontier`:'');
+  $('count').textContent=`${active.length} models · 3-D`+(paretoOn?` · ${pset.size} on frontier`:'');
   buildLegend(rows);
   orient.style.display='block';
   orient.innerHTML=`drag = orbit · scroll = zoom · <b>↑</b> ${AX[vk].short} &nbsp; <b>→</b> ${AX[xk].short} &nbsp; <b>↗</b> ${AX[yk].short}`;
