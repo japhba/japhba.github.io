@@ -10,23 +10,16 @@
 // Parse logic is kept in sync with netlify/functions/aa-models.mjs by hand — if
 // you change field extraction in one, mirror it in the other.
 
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const SRC = "https://artificialanalysis.ai/models";
+const LEADERBOARD = "https://artificialanalysis.ai/leaderboards/models";
 const UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36";
 
-// How many catalog slugs to try for the long tail, and the number of extra
-// models at which a probe counts as good enough to stop early.
-const PROBE_LIMIT = 5;
-const LONG_TAIL_GOOD = 100;
-// Reasoning-effort variants (e.g. "claude-opus-5-5-xhigh") serve only the
-// headline set, so they are never useful long-tail probes.
-const EFFORT_VARIANT = /-(minimal|low|medium|high|xhigh|max)$/;
-
-const DATA_DIR =join(dirname(fileURLToPath(import.meta.url)), "..", "data");
+const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "data");
 
 const num = (x) => (typeof x === "number" && isFinite(x) ? x : null);
 const posnum = (x) => {
@@ -35,12 +28,44 @@ const posnum = (x) => {
 };
 
 const PLT_PREF = ["medium", "long", "hundredK", "mediumParallel"];
+// Returns { medianOutputSpeed, medianTimeToFirstAnswerToken }. Until mid-Nov
+// 2026 this lived in performanceByPromptType; it is now m.headline (headline
+// models) or top-level outputSpeed/timeToFirstAnswerToken (leaderboard rows).
 function pickSpeed(m) {
   const r = m.performanceByPromptType;
-  if (!r) return null;
-  for (const k of PLT_PREF) if (r[k]) return r[k];
-  return Object.values(r)[0] || null;
+  if (r) {
+    for (const k of PLT_PREF) if (r[k]) return r[k];
+    return Object.values(r)[0] || null;
+  }
+  const h = m.headline && typeof m.headline === "object" ? m.headline : m;
+  if (num(h.outputSpeed) == null) return null;
+  return {
+    medianOutputSpeed: h.outputSpeed,
+    medianTimeToFirstAnswerToken: num(h.timeToFirstAnswerToken),
+  };
 }
+
+// The /leaderboards/models page embeds a lighter record per model (no slug,
+// params, licence, cost total or most benchmarks). Map it to the same shape;
+// main() fills the gaps from the headline payload and the previous snapshot.
+function trimLeaderboard(l, slug) {
+  const sc = l.scores || {};
+  return trim({
+    ...l,
+    slug,
+    creator: { name: l.modelCreatorName },
+    releaseDate: null,
+    hle: sc["humanitys-last-exam"],
+    lcr: sc["artificial-analysis-long-context-reasoning"],
+    intelligenceIndexCost: null,
+  });
+}
+
+const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// Fields the leaderboard rows lack that do not change once AA has measured a
+// model, so carrying them over from the last snapshot is safe.
+const STATIC_FIELDS = ["params", "active", "openness", "release", "gpqa", "aime25", "mmlu_pro", "coding", "agentic", "license", "cost"];
 
 function trim(m) {
   const cr = m.creator || {};
@@ -269,50 +294,22 @@ function extractFlight(html) {
   return out;
 }
 
-// The /models page also embeds a lightweight catalog (id/slug/name/creator,
-// no stats) covering every model AA tracks, current and deprecated. We use
-// it only to pick one slug outside the ~25-model headline set, whose own
-// page we then fetch to recover the long tail (see main()).
-function parseCatalog(flight) {
-  const key = '"models":[';
-  const i = flight.indexOf(key);
-  if (i === -1) return [];
-  const start = i + key.length - 1; // include the leading '['
-  let depth = 0,
-    inStr = false,
-    esc = false,
-    end = -1;
-  for (let k = start; k < flight.length; k++) {
-    const c = flight[k];
-    if (inStr) {
-      if (esc) esc = false;
-      else if (c === "\\") esc = true;
-      else if (c === '"') inStr = false;
-      continue;
-    }
-    if (c === '"') inStr = true;
-    else if (c === "[") depth++;
-    else if (c === "]") {
-      depth--;
-      if (depth === 0) {
-        end = k + 1;
-        break;
-      }
-    }
-  }
-  if (end === -1) return [];
-  try {
-    return JSON.parse(flight.slice(start, end));
-  } catch {
-    return [];
-  }
+// Leaderboard rows keyed by AA's model id (raw, untrimmed).
+function parseLeaderboard(flight) {
+  const out = new Map();
+  scanObjects(flight, 500, 50000, ['"release":{', '"intelligenceIndex":', '"isOpenWeights":'], (d) => {
+    if (d.id && d.release && d.release.slug && d.intelligenceIndex != null && "isOpenWeights" in d && !out.has(d.id))
+      out.set(d.id, d);
+  });
+  return out;
 }
 
-function parseModels(flight) {
+// Call accept(obj) for every JSON object in the flight text whose source length
+// is within [min, max] and which contains all needles.
+function scanObjects(flight, min, max, needles, accept) {
   const stack = [];
   let inStr = false,
     esc = false;
-  const out = {};
   for (let i = 0; i < flight.length; i++) {
     const ch = flight[i];
     if (inStr) {
@@ -327,38 +324,37 @@ function parseModels(flight) {
       const s = stack.pop();
       if (s == null) continue;
       const len = i - s;
-      if (len > 300000 || len < 3000) continue;
+      if (len > max || len < min) continue;
       const seg = flight.slice(s, i + 1);
-
-      if (
-        seg.indexOf('"slug":"') === -1 ||
-        seg.indexOf('"intelligenceIndex":') === -1 ||
-        seg.indexOf('"parameters":') === -1 ||
-        seg.indexOf('"isOpenWeights":') === -1
-      )
-        continue;
+      if (needles.some((n) => seg.indexOf(n) === -1)) continue;
       let d;
       try {
         d = JSON.parse(seg);
       } catch {
         continue;
       }
-      if (
-        d &&
-        typeof d === "object" &&
-        d.slug &&
-        d.intelligenceIndex != null &&
-        "isOpenWeights" in d
-      ) {
-        const prev = out[d.slug];
-        if (!prev || Object.keys(d).length > prev.__n) {
-          d.__n = Object.keys(d).length;
-          out[d.slug] = d;
-        }
-      }
+      if (d && typeof d === "object") accept(d);
     }
   }
-  return Object.values(out).map((m) => trim(m));
+}
+
+// Headline models, raw (untrimmed), keyed by slug.
+function parseModelsRaw(flight) {
+  const out = {};
+  scanObjects(flight, 3000, 300000, ['"slug":"', '"intelligenceIndex":', '"parameters":', '"isOpenWeights":'], (d) => {
+    if (d.slug && d.intelligenceIndex != null && "isOpenWeights" in d) {
+      const prev = out[d.slug];
+      if (!prev || Object.keys(d).length > prev.__n) {
+        d.__n = Object.keys(d).length;
+        out[d.slug] = d;
+      }
+    }
+  });
+  return Object.values(out);
+}
+
+function parseModels(flight) {
+  return parseModelsRaw(flight).map((m) => trim(m));
 }
 
 async function fetchFlight(url) {
@@ -371,42 +367,74 @@ async function fetchFlight(url) {
 
 async function main() {
   const flight = await fetchFlight(SRC);
-  const headline = parseModels(flight);
+  const headlineRaw = parseModelsRaw(flight);
+  const headline = headlineRaw.map((m) => trim(m));
   const bySlug = new Map(headline.map((m) => [m.slug, m]));
 
-  // Every individual model page (/models/<slug>) embeds not just that model
-  // but the same shared ~300-model leaderboard table used across the site —
-  // verified empirically across several unrelated slugs. So one extra fetch
-  // (any slug not already in the headline set) recovers the long tail; more
-  // fetches turn up nothing new. Best-effort: fall back to headline-only if
-  // it fails.
-  // Not every model page carries the shared table: variant pages such as
-  // "...-xhigh" embed only the headline set. So probe a few candidate slugs and
-  // keep the page that yields the most models, stopping once one adds a lot.
-  const catalog = parseCatalog(flight);
-  const candidates = [
-    ...new Set(
-      catalog
-        .map((m) => m.slug)
-        .filter((s) => s && !bySlug.has(s) && !EFFORT_VARIANT.test(s))
-    ),
-  ].slice(0, PROBE_LIMIT);
+  // The long tail. Until mid-Nov 2026 any /models/<slug> page embedded the
+  // full ~300-model table; now they carry only the headline set, and the full
+  // table lives on /leaderboards/models in a lighter per-model record. Its rows
+  // have no slug, so reuse the previous snapshot's slug for the same model name
+  // (keeps slugs stable) and carry over its static fields (params, licence...).
+  let prev = [];
+  try {
+    prev = JSON.parse(await readFile(join(DATA_DIR, "aa_models.json"), "utf8"));
+  } catch {
+    /* first run */
+  }
+  const prevByName = new Map(prev.filter((m) => !m.ii_src).map((m) => [m.name, m]));
+  const idToSlug = new Map(headlineRaw.map((m) => [m.id, m.slug]));
+  let board = new Map();
+  try {
+    board = parseLeaderboard(await fetchFlight(LEADERBOARD));
+  } catch (e) {
+    console.log(`leaderboard fetch failed: ${e.message || e}`);
+  }
   let longTail = 0;
-  for (const slug of candidates) {
-    try {
-      const f = await fetchFlight(`${SRC}/${slug}`);
-      const found = parseModels(f);
-      const added = found.filter((m) => !bySlug.has(m.slug)).length;
-      console.log(`probe ${slug}: ${found.length} models, ${added} new`);
-      if (added > longTail) {
-        for (const m of found) bySlug.set(m.slug, m);
-        longTail = added;
-      }
-      if (longTail >= LONG_TAIL_GOOD) break;
-    } catch (e) {
-      console.log(`probe ${slug} failed: ${e.message || e}`);
+  for (const [id, l] of board) {
+    const hs = idToSlug.get(id);
+    if (hs) {
+      // headline model: only fill fields the headline payload lacks
+      const m = bySlug.get(hs), t = trimLeaderboard(l, hs);
+      for (const k of Object.keys(m)) if (m[k] == null && t[k] != null) m[k] = t[k];
+      continue;
+    }
+    const old = prevByName.get(l.shortName) || prevByName.get(l.name);
+    const slug = old ? old.slug : slugify(`${l.release.slug} ${l.suffix || ""}`);
+    if (bySlug.has(slug)) continue;
+    const m = trimLeaderboard(l, slug);
+    if (old) for (const k of STATIC_FIELDS) if (m[k] == null && old[k] != null) m[k] = old[k];
+    bySlug.set(slug, m);
+    longTail++;
+  }
+  console.log(`leaderboard: ${board.size} rows, ${longTail} long-tail models added`);
+
+  // AA's pages now list only current models, so models it has retired would
+  // vanish from the charts. Keep their last scraped values, flagged retired.
+  // Only when the scrape looks healthy, so a broken scrape cannot freeze the set.
+  // But not across an Intelligence Index version change (AA rescales every
+  // model), which shows up as models present in both scrapes shifting score.
+  const cur = [...bySlug.values()];
+  const prevBySlug = new Map(prev.filter((p) => !p.ii_src).map((p) => [p.slug, p]));
+  const shifts = cur
+    .filter((m) => m.ii != null && prevBySlug.get(m.slug)?.ii != null)
+    .map((m) => Math.abs(m.ii - prevBySlug.get(m.slug).ii))
+    .sort((a, b) => a - b);
+  const medShift = shifts.length ? shifts[shifts.length >> 1] : Infinity;
+  let kept = 0;
+  if (board.size >= 50 && shifts.length >= 20 && medShift < 1) {
+    for (const m of prevBySlug.values()) {
+      if (bySlug.has(m.slug)) continue;
+      // same model under a renamed variant (e.g. "GLM-5.3-Flash" -> "... (max)")
+      if (cur.some((c) => normName(c.name) === normName(m.name) && Math.abs(c.ii - m.ii) < 0.3)) continue;
+      bySlug.set(m.slug, { ...m, retired: true });
+      kept++;
     }
   }
+  console.log(
+    `kept ${kept} retired models from the previous snapshot` +
+      ` (median score shift ${medShift.toFixed(2)} over ${shifts.length} shared models)`
+  );
 
   const all = [...bySlug.values()];
 
