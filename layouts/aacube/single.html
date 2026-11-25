@@ -162,7 +162,7 @@ const AX = {
   ttft  : {label:'Time to first token', short:'Latency', unit:'s',             goodLow:true,  log:true,
            ticks:[[0.5,'0.5'],[1,'1'],[2,'2'],[5,'5'],[10,'10'],[30,'30'],[100,'100']]},
   params: {label:'Total parameters', short:'Params', unit:'B',                  goodLow:false, log:true,
-           ticks:[[0.3,'0.3B'],[1,'1B'],[3,'3B'],[10,'10B'],[30,'30B'],[100,'100B'],[300,'300B'],[1000,'1T']]},
+           ticks:[[0.1,'0.1B'],[0.3,'0.3B'],[1,'1B'],[3,'3B'],[10,'10B'],[30,'30B'],[100,'100B'],[300,'300B'],[1000,'1T']]},
   context:{label:'Context window', short:'Context', unit:'tokens',              goodLow:false, log:true,
            ticks:[[4096,'4k'],[8192,'8k'],[32768,'32k'],[65536,'64k'],[131072,'128k'],[262144,'256k'],[1000000,'1M'],[2000000,'2M'],[10000000,'10M']]},
   lcr   : {label:'Long-context reasoning (AA-LCR)', short:'AA-LCR', unit:'%',    goodLow:false, log:false, ticks:null},
@@ -219,7 +219,7 @@ function syncVerticalUI(){ const vk=vAxis();
   document.querySelectorAll('.axis').forEach(l=>{ const inp=l.querySelector('.ax'); const isV=inp.value===vk;
     inp.disabled=isV; l.classList.toggle('dis',isV); }); }
 
-function fmtP(p){ return p>=1000 ? (p/1000).toFixed(p%1000?2:0)+'T' : (p>=1?p.toFixed(p<10?1:0):p.toFixed(2))+'B'; }
+function fmtP(p){ return p>=1000 ? (p/1000).toFixed(p%1000?2:0)+'T' : p<1 ? Math.round(p*1000)+'M' : p.toFixed(p<10?1:0)+'B'; }
 function fmtUSD(v){ return v>=1000 ? '$'+(v/1000).toFixed(v%1000?1:0)+'k' : (v>=1?'$'+v.toFixed(v<10?2:0):'$'+v.toFixed(3)); }
 function fmtCtx(v){ return v>=1e6 ? (v/1e6).toFixed(v%1e6?1:0)+'M' : v>=1e3 ? Math.round(v/1e3)+'k' : ''+v; }
 function fmtVal(k,v){
@@ -247,12 +247,13 @@ function hoverHTML(d){
   const est=d.ii_est?"  <i>(est.)</i>":"";
   const op=d.open?(d.openness||"Open weights"):"Proprietary";
   const L=[`<b>${d.name}</b>`,`${d.creator||"Other"} · ${op}`,`Intelligence Index: <b>${(+d.ii).toFixed(1)}</b>${est}`];
-  if(d.ii_src) L.push(`<span style="color:var(--muted)">Converted from Epoch ECI (linear fit, n=${d.ii_fit.n}, R²=${d.ii_fit.r2})</span>`);
+  if(d.ii_src==='aa-benchmarks') L.push(`<span style="color:var(--muted)">Not scored by AA on the current index; estimated from its ${d.ii_fit.from.length} AA benchmark score${d.ii_fit.from.length>1?'s':''} (fit on n=${d.ii_fit.n}, R²=${d.ii_fit.r2}, typical error ±${d.ii_fit.rmse})</span>`);
+  else if(d.ii_src) L.push(`<span style="color:var(--muted)">Converted from Epoch ECI (linear fit, n=${d.ii_fit.n}, R²=${d.ii_fit.r2})</span>`);
   if(d.cost!=null)  L.push(`Cost to run AAII: <b>${fmtUSD(d.cost)}</b>`+(d.cost_est?` <i>(est. from price, ±2.4×)</i>`:''));
   if(d.price!=null) L.push(`Price: <b>${fmtUSD(d.price)}/M</b>`+(d.price_in!=null?` <span style="color:var(--muted)">(in ${fmtUSD(d.price_in)} / out ${fmtUSD(d.price_out)})</span>`:''));
   if(d.speed!=null) L.push(`Output speed: <b>${(+d.speed).toFixed(0)} tok/s</b>`);
   if(d.ttft!=null)  L.push(`Latency (TTFT): <b>${d.ttft}s</b>`);
-  if(d.params!=null)L.push(`Total params: <b>${fmtP(d.params)}</b>`);
+  if(d.params!=null)L.push(`Total params: <b>${fmtP(d.params)}</b>`+(d.params_src==='name'?' <i>(from name)</i>':''));
   if(d.context!=null)L.push(`Context window: <b>${fmtCtx(d.context)}</b>`);
   if(d.lcr!=null)   L.push(`AA-LCR (long-context reasoning): <b>${(+d.lcr).toFixed(0)}%</b>`);
   if(d.release)     L.push(`<span style="color:var(--muted)">Released ${d.release}</span>`);

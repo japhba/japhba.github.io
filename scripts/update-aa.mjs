@@ -65,7 +65,114 @@ const slugify = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]+/g, "-").repla
 
 // Fields the leaderboard rows lack that do not change once AA has measured a
 // model, so carrying them over from the last snapshot is safe.
-const STATIC_FIELDS = ["params", "active", "openness", "release", "gpqa", "aime25", "mmlu_pro", "coding", "agentic", "license", "cost"];
+const STATIC_FIELDS = ["params", "params_src", "active", "openness", "release", "gpqa", "aime25", "mmlu_pro", "coding", "agentic", "license", "cost"];
+
+// Nominal size from the model name: "Gemma 3 270M" -> 0.27, "Qwen3 30B A3B" ->
+// 30 total / 3 active, "Qwen3.8 2.4T A95B" -> 2400 / 95. Used only when AA
+// gives no parameter count. "E4B" (Gemma's effective size) is not matched.
+function sizeFromName(name) {
+  const unit = { M: 1e-3, B: 1, T: 1e3 };
+  const m = (name || "").match(/(?:^|[\s\-_(])(\d+(?:\.\d+)?)([MBT])(?=$|[\s\-_)])/i);
+  if (!m) return null;
+  const a = (name || "").match(/(?:^|[\s\-_(])A(\d+(?:\.\d+)?)([MB])(?=$|[\s\-_)])/i);
+  return {
+    params: +(+m[1] * unit[m[2].toUpperCase()]).toPrecision(6),
+    active: a ? +(+a[1] * unit[a[2].toUpperCase()]).toPrecision(6) : null,
+  };
+}
+
+// --- Intelligence for models AA lists but has not scored ---------------------
+// After AA's autumn 2026 index revision only current models were rescored;
+// ~170 listed models (most of the small ones among them) keep only individual
+// benchmark scores. Estimate the index from those: per model, regress the index
+// on the benchmarks that model has, over the scored models that also have
+// them (standardised log-space least squares, small ridge). Flagged ii_est/ii_src.
+const MIN_EST_N = 30;
+const MAX_EST_FEATS = 5;
+
+// Least squares in log space (the index is positive and the small models sit
+// near its floor, where a linear fit extrapolates below zero; leave-one-out
+// error on low scorers is ~15-30% lower this way). Reported r2/rmse are on the
+// original scale.
+function solveRidge(X, yRaw, lambda = 1e-3) {
+  const y = yRaw.map((v) => Math.log(v));
+  const k = X[0].length, n = X.length;
+  const mu = Array(k).fill(0), sd = Array(k).fill(0);
+  for (const x of X) x.forEach((v, j) => (mu[j] += v / n));
+  for (const x of X) x.forEach((v, j) => (sd[j] += (v - mu[j]) ** 2 / n));
+  sd.forEach((v, j) => (sd[j] = Math.sqrt(v) || 1));
+  const Z = X.map((x) => [1, ...x.map((v, j) => (v - mu[j]) / sd[j])]);
+  const p = k + 1, A = Array.from({ length: p }, () => Array(p).fill(0)), B = Array(p).fill(0);
+  Z.forEach((z, i) => {
+    for (let a = 0; a < p; a++) {
+      B[a] += z[a] * y[i];
+      for (let b = 0; b < p; b++) A[a][b] += z[a] * z[b];
+    }
+  });
+  for (let a = 1; a < p; a++) A[a][a] += lambda * n;
+  for (let i = 0; i < p; i++) {
+    let piv = i;
+    for (let r = i + 1; r < p; r++) if (Math.abs(A[r][i]) > Math.abs(A[piv][i])) piv = r;
+    [A[i], A[piv]] = [A[piv], A[i]];
+    [B[i], B[piv]] = [B[piv], B[i]];
+    const v = A[i][i];
+    for (let j = 0; j < p; j++) A[i][j] /= v;
+    B[i] /= v;
+    for (let r = 0; r < p; r++)
+      if (r !== i) {
+        const f = A[r][i];
+        for (let j = 0; j < p; j++) A[r][j] -= f * A[i][j];
+        B[r] -= f * B[i];
+      }
+  }
+  const predict = (x) => Math.exp(B[0] + x.reduce((s, v, j) => s + B[j + 1] * ((v - mu[j]) / sd[j]), 0));
+  const my = yRaw.reduce((a, b) => a + b, 0) / n;
+  const sse = X.reduce((s, x, i) => s + (yRaw[i] - predict(x)) ** 2, 0);
+  const sst = yRaw.reduce((s, v) => s + (v - my) ** 2, 0);
+  return { predict, n, r2: +(1 - sse / sst).toFixed(3), rmse: +Math.sqrt(sse / n).toFixed(1) };
+}
+
+// Map AA id -> { ii, fit } for unscored leaderboard rows.
+function estimateUnscored(board) {
+  const rows = [...board.values()];
+  const scored = rows.filter((l) => l.intelligenceIndex > 0 && l.scores);
+  const cover = {};
+  for (const l of scored) for (const k of Object.keys(l.scores)) if (num(l.scores[k]) != null) cover[k] = (cover[k] || 0) + 1;
+  const fits = new Map(), out = new Map();
+  for (const l of rows) {
+    if (l.intelligenceIndex != null || !l.scores) continue;
+    let feats = Object.keys(l.scores)
+      .filter((k) => num(l.scores[k]) != null && (cover[k] || 0) >= MIN_EST_N)
+      .sort((a, b) => cover[b] - cover[a] || (a < b ? -1 : 1))
+      .slice(0, MAX_EST_FEATS);
+    while (feats.length) {
+      const key = feats.join("|");
+      if (!fits.has(key)) {
+        const tr = scored.filter((s) => feats.every((k) => num(s.scores[k]) != null));
+        fits.set(key, tr.length >= MIN_EST_N
+          ? solveRidge(tr.map((s) => feats.map((k) => s.scores[k])), tr.map((s) => s.intelligenceIndex))
+          : null);
+      }
+      const f = fits.get(key);
+      if (f) {
+        const ii = f.predict(feats.map((k) => l.scores[k]));
+        out.set(l.id, { ii, fit: { n: f.n, r2: f.r2, rmse: f.rmse, from: feats } });
+        break;
+      }
+      feats = feats.slice(0, -1);
+    }
+  }
+  return out;
+}
+
+// Release dates per model family, from the catalog on the /models page.
+function parseReleaseDates(flight) {
+  const out = new Map();
+  scanObjects(flight, 20, 20000, ['"modelNames":[', '"releaseDate":'], (d) => {
+    if (d.slug && d.releaseDate && !out.has(d.slug)) out.set(d.slug, d.releaseDate);
+  });
+  return out;
+}
 
 function trim(m) {
   const cr = m.creator || {};
@@ -177,7 +284,7 @@ async function epochConverted(aaModels) {
   const best = new Map(), aaKeys = new Set();
   for (const m of aaModels) {
     const k = normName(m.name); aaKeys.add(k);
-    if (m.ii != null && (!best.has(k) || m.ii > best.get(k).ii)) best.set(k, m);
+    if (m.ii != null && !m.ii_est && (!best.has(k) || m.ii > best.get(k).ii)) best.set(k, m);
   }
   const xs = [], ys = [];
   for (const [k, e] of eci) { const m = best.get(k); if (m) { xs.push(e.score); ys.push(m.ii); } }
@@ -237,7 +344,7 @@ async function openRouterInfo(models) {
 // apply it to converted models that have an OpenRouter price. Estimates are
 // flagged cost_est; typical error is about 2.4x either way.
 function fitCost(aaModels) {
-  const rows = aaModels.filter((m) => m.cost != null && m.price != null && m.ii != null && !m.ii_src);
+  const rows = aaModels.filter((m) => m.cost != null && m.price != null && m.ii != null && !m.ii_est);
   const X = rows.map((m) => [1, Math.log(m.price), m.ii]), y = rows.map((m) => Math.log(m.cost));
   const k = 3, n = X.length;
   const A = Array.from({ length: k }, () => Array(k).fill(0)), B = Array(k).fill(0);
@@ -298,7 +405,7 @@ function extractFlight(html) {
 function parseLeaderboard(flight) {
   const out = new Map();
   scanObjects(flight, 500, 50000, ['"release":{', '"intelligenceIndex":', '"isOpenWeights":'], (d) => {
-    if (d.id && d.release && d.release.slug && d.intelligenceIndex != null && "isOpenWeights" in d && !out.has(d.id))
+    if (d.id && d.release && d.release.slug && "intelligenceIndex" in d && "isOpenWeights" in d && !out.has(d.id))
       out.set(d.id, d);
   });
   return out;
@@ -390,7 +497,8 @@ async function main() {
   } catch (e) {
     console.log(`leaderboard fetch failed: ${e.message || e}`);
   }
-  let longTail = 0;
+  const est = estimateUnscored(board);
+  let longTail = 0, nEst = 0;
   for (const [id, l] of board) {
     const hs = idToSlug.get(id);
     if (hs) {
@@ -404,10 +512,33 @@ async function main() {
     if (bySlug.has(slug)) continue;
     const m = trimLeaderboard(l, slug);
     if (old) for (const k of STATIC_FIELDS) if (m[k] == null && old[k] != null) m[k] = old[k];
+    const e = est.get(id);
+    if (m.ii == null && e) {
+      m.ii = Math.round(e.ii * 100) / 100;
+      m.ii_est = true;
+      m.ii_src = "aa-benchmarks";
+      m.ii_fit = e.fit;
+      nEst++;
+    }
     bySlug.set(slug, m);
     longTail++;
   }
-  console.log(`leaderboard: ${board.size} rows, ${longTail} long-tail models added`);
+  console.log(`leaderboard: ${board.size} rows, ${longTail} long-tail models added (${nEst} with estimated intelligence)`);
+
+  // Fill release dates and (nominal, from the name) sizes AA rows lack.
+  const dates = parseReleaseDates(flight);
+  const relOf = new Map([...board.values()].map((l) => [l.shortName || l.name, l.release.slug]));
+  for (const m of bySlug.values()) {
+    if (!m.release) m.release = dates.get(relOf.get(m.name)) || null;
+    if (m.params == null) {
+      const sz = sizeFromName(m.name);
+      if (sz) {
+        m.params = sz.params;
+        if (m.active == null) m.active = sz.active;
+        m.params_src = "name";
+      }
+    }
+  }
 
   // AA's pages now list only current models, so models it has retired would
   // vanish from the charts. Keep their last scraped values, flagged retired.
@@ -417,22 +548,37 @@ async function main() {
   const cur = [...bySlug.values()];
   const prevBySlug = new Map(prev.filter((p) => !p.ii_src).map((p) => [p.slug, p]));
   const shifts = cur
-    .filter((m) => m.ii != null && prevBySlug.get(m.slug)?.ii != null)
+    .filter((m) => m.ii != null && !m.ii_est && prevBySlug.get(m.slug)?.ii != null)
     .map((m) => Math.abs(m.ii - prevBySlug.get(m.slug).ii))
     .sort((a, b) => a - b);
   const medShift = shifts.length ? shifts[shifts.length >> 1] : Infinity;
-  let kept = 0;
+  let kept = 0, restored = 0;
   if (board.size >= 50 && shifts.length >= 20 && medShift < 1) {
     for (const m of prevBySlug.values()) {
-      if (bySlug.has(m.slug)) continue;
+      const now = bySlug.get(m.slug);
+      if (now) {
+        // AA dropped the score of a model it still lists: keep its last
+        // measured score rather than an estimate
+        if (now.ii_est && now.ii_src === "aa-benchmarks" && m.ii != null && !m.ii_est) {
+          now.ii = m.ii;
+          now.ii_est = false;
+          delete now.ii_src;
+          delete now.ii_fit;
+          restored++;
+        }
+        continue;
+      }
       // same model under a renamed variant (e.g. "GLM-5.3-Flash" -> "... (max)")
-      if (cur.some((c) => normName(c.name) === normName(m.name) && Math.abs(c.ii - m.ii) < 0.3)) continue;
+      if (cur.some((c) => !c.ii_est && normName(c.name) === normName(m.name) && Math.abs(c.ii - m.ii) < 0.3)) continue;
+      // a measured (retired) score beats an estimate for the same model
+      const dup = cur.find((c) => c.ii_est && c.name === m.name);
+      if (dup) bySlug.delete(dup.slug);
       bySlug.set(m.slug, { ...m, retired: true });
       kept++;
     }
   }
   console.log(
-    `kept ${kept} retired models from the previous snapshot` +
+    `kept ${kept} retired models and ${restored} last measured scores from the previous snapshot` +
       ` (median score shift ${medShift.toFixed(2)} over ${shifts.length} shared models)`
   );
 
